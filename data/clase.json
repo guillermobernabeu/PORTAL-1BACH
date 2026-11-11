@@ -57,7 +57,7 @@
   {
    "asig": "ingles",
    "estado": "sin",
-   "nota": "Entra la lista del 1st term (135 palabras). Examen el 12 de noviembre",
+   "nota": "Todo el vocabulary del 1st term. Examen el 12 de noviembre",
    "orden": 7,
    "titulo": "Vocabulary",
    "tri": 1,
@@ -92,8 +92,8 @@
    "cat": "App",
    "claude": true,
    "destacado": true,
-   "titulo": "Vocabulary 1st Term",
-   "nota": "Definición ↔ palabra · la lista de la clase",
+   "titulo": "Vocabulary 1st Term · app",
+   "nota": "Definición ↔ palabra, español → inglés y añadir palabras",
    "url": "vocabulary/"
   },
   {
@@ -102,13 +102,12 @@
    "tri": 1,
    "tema": "i7",
    "tipo": "doc",
-   "cat": "Lista oficial",
-   "titulo": "Vocabulary 1st term (lista oficial)",
-   "paginas": [
-    "docs/p/vocab1t/p-001.jpg",
-    "docs/p/vocab1t/p-002.jpg"
-   ],
-   "url": ""
+   "cat": "Lista",
+   "claude": true,
+   "destacado": true,
+   "titulo": "Vocabulary 1st Term · lista completa",
+   "nota": "Todas las palabras en una sola lista",
+   "url": "vocabulary/lista.html"
   },
   {
    "id": "p-verbos",
@@ -213,7 +212,7 @@
    "nota": null
   },
   {
-   "alcance": "Un solo examen: la lista Vocabulary 1st term (135 palabras) y word formation (prefijos y sufijos).",
+   "alcance": "Un solo examen: todo el vocabulario del 1st term (144 palabras, más las que añada la clase) y word formation (prefijos y sufijos).",
    "asig": "ingles",
    "fecha": "2026-11-12",
    "hecho": false,

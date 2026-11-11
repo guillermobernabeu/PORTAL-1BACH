@@ -650,7 +650,7 @@ function link(r){const x=link0(r);return S.canWrite?`<span class="rw">${x}<butto
 function link0(r){const pg=(r.paginas||[]).filter(esDoc);
   if(pg.length)return `<button class="r ${r.claude?"hc":""}" data-doc="${esc(r.id)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span></button>`;
   if(r.examen)return `<button class="r ${r.claude?"hc":""}" data-exam="${esc(r.examen)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||"Examen")}</span><span class="n">${esc(r.titulo)}</span></button>`;
-  const interno=/^[a-z0-9-]+\/$/.test(r.url||"");const safe=/^https:\/\//.test(r.url||"")||esDoc(r.url)||interno?r.url:null;
+  const interno=/^[a-z0-9-]+\/([a-z0-9-]+\.html)?$/.test(r.url||"");const safe=/^https:\/\//.test(r.url||"")||esDoc(r.url)||interno?r.url:null;
   const inner=`<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span>`;
   const cb=r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':"",hc=r.claude?" hc":"";
   return safe?`<a class="r${hc}" href="${esc(safe)}" ${interno?"":`target="_blank" rel="noopener"`} title="${esc(r.nota||r.titulo)}">${cb}${inner}</a>`:`<span class="r${hc}" title="${esc(r.nota||"")}">${cb}${inner}</span>`}

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vocabulary 1st Term · lista</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#e9e9e9;color:#111}
+body{font:15px/1.25 Calibri,Carlito,"Segoe UI",Arial,sans-serif}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:10px 16px;background:#fff;border-bottom:1px solid #cfcfcf}
+.bar a,.bar button{font:700 14px system-ui,sans-serif;color:#111;text-decoration:none;background:#fff;border:1.5px solid #111;border-radius:999px;padding:7px 14px;cursor:pointer}
+.bar .n{font:600 13px system-ui,sans-serif;color:#555}
+.bar input{flex:1;min-width:140px;max-width:320px;font:500 14px system-ui,sans-serif;padding:8px 12px;border:1.5px solid #bbb;border-radius:999px}
+.marca{position:fixed;right:12px;bottom:12px;z-index:9;font:700 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #c3132b;color:#c3132b;border-radius:999px;background:rgba(255,255,255,.95)}
+.hoja{width:min(820px,100% - 24px);margin:18px auto 60px;background:#fff;padding:56px 56px 64px;box-shadow:0 2px 14px rgba(0,0,0,.18)}
+h1{margin:0 0 34px;text-align:center;font:800 28px/1 Arial,Helvetica,sans-serif;letter-spacing:.01em}
+h1 sup{font-size:.5em}
+.tabla{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #111;border-left:1px solid #111}
+.c{position:relative;border-right:1px solid #111;border-bottom:1px solid #111;padding:2px 5px;text-align:center;min-height:22px;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center}
+.c.en{background:#c9c9c9}
+.c small{font-size:.8em;color:#333;margin-left:4px;white-space:nowrap}
+.c.pocas{font-size:.86em}
+.autor{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;overflow:hidden;background:#111;color:#fff;font:800 10px/20px system-ui,sans-serif;text-align:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);z-index:2}
+.autor img{width:100%;height:100%;object-fit:cover;display:block}
+.vacio{grid-column:1/-1;padding:24px;text-align:center;color:#555;border-right:1px solid #111;border-bottom:1px solid #111}
+.pie{margin-top:14px;font-size:12px;color:#555;text-align:center}
+@media (max-width:640px){.hoja{padding:26px 10px 34px;width:100%;margin:0}h1{font-size:22px;margin-bottom:20px}.tabla{grid-template-columns:repeat(2,minmax(0,1fr))}.c{font-size:14px}}
+@media print{.bar,.marca{display:none}html,body{background:#fff}.hoja{box-shadow:none;margin:0;width:100%;padding:0}.autor{display:none}@page{size:A4;margin:16mm}}
+</style></head><body>
+<div class="bar"><a href="./" id="volver">← Volver</a><input id="q" type="search" placeholder="Buscar palabra…" aria-label="Buscar palabra"><span class="n" id="n"></span><button type="button" onclick="print()">Imprimir</button></div>
+<span class="marca" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<main class="hoja"><h1>VOCABULARY 1<sup>ST</sup> TERM</h1><div class="tabla" id="tabla"></div>
+<p class="pie">Lista de la clase. Las palabras con un circulito las ha añadido un compañero desde la app.</p></main>
+<script src="palabras.js"></script>
+<script>
+const S={words:[],users:{}};
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function autor(w){if(!w.por||w.por==="lista")return"";const u=S.users[w.por]||{},n=u.nombre||u.nombreGoogle||w.porNombre||"?",f=u.fotoPropia||u.fotoGoogle||"";
+  return `<span class="autor" title="Añadida por ${esc(n)}">${f?`<img src="${esc(f)}" alt="" referrerpolicy="no-referrer">`:esc(n.charAt(0).toUpperCase())}</span>`}
+function pinta(){const q=norm(document.getElementById("q").value);
+  const ws=S.words.filter(w=>!q||norm(w.en+" "+w.es+" "+(w.plural||"")).includes(q));
+  document.getElementById("n").textContent=ws.length+" palabras";
+  const T=document.getElementById("tabla");
+  if(!ws.length){T.innerHTML='<div class="vacio">No hay ninguna palabra así.</div>';return}
+  T.innerHTML=ws.map(w=>{const en=esc(w.en)+(w.plural&&w.plural!==w.en?` <small>(pl. ${esc(w.plural)})</small>`:w.plural?` <small>(pl. igual)</small>`:"");const larga=(w.en+w.es).length>34;
+    return `<div class="c en${larga?" pocas":""}">${en}${autor(w)}</div><div class="c${larga?" pocas":""}">${esc(w.es)}</div>`}).join("")}
+const BASE=window.SEED.map(w=>({...w,por:"lista"}));
+let remotas=[];
+function juntar(){const m=new Map(BASE.map(w=>[w.id,w]));for(const w of remotas)m.set(w.id,{...(m.get(w.id)||{}),...w});
+  S.words=[...m.values()].filter(w=>w.en).sort((a,b)=>(a.orden??999)-(b.orden??999)||(a.creado||0)-(b.creado||0));pinta()}
+juntar();
+document.getElementById("q").oninput=pinta;
+document.getElementById("volver").onclick=e=>{try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}};
+</script>
+<script type="module">
+import { db, fs, alCambiarSesion, alCambiarClase } from "../shared/fb.js";
+fs.onSnapshot(fs.collection(db, "vocabulary_palabras"), snap => { remotas = snap.docs.map(d => ({ id: d.id, ...d.data() })); juntar(); }, () => {});
+let quitar = null;
+alCambiarSesion(user => { if (quitar) { quitar(); quitar = null; } if (user) quitar = alCambiarClase(us => { S.users = us; pinta(); }); });
+</script>
+</body></html>
