@@ -117,13 +117,15 @@ function stats(){dominio();const s=$("#stats");s.textContent="";const add=(l,v)=
  add("Palabras",pool().length);add("Aciertos",S.ok);add("Fallos",S.ko);add("Racha",S.ra);add("Fallos guardados",FALLOS.length)}
 // ---------- comprobación ----------
 const sinT=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
-const norm=s=>sinT(String(s).toLowerCase()).replace(/[’´`]/g,"'").replace(/[.,!?¡¿;:()…]/g," ").replace(/\s+/g," ").trim().replace(/^to /,"");
+const norm=s=>sinT(String(s).toLowerCase()).replace(/[’´`]/g,"'").replace(/[.,!?¡¿;:()…]/g," ").replace(/\s+/g," ").trim().replace(/^to /,"").replace(/^(a|an|the) (?=\S)/,"");
 function variantes(en){const out=new Set();const base=String(en);
  for(const part of base.split(/\s*[\/=]\s*/)){out.add(norm(part));out.add(norm(part.replace(/\(s\)/,"")));out.add(norm(part.replace(/\(s\)/,"s")))}
  out.add(norm(base));return [...out].filter(Boolean)}
-function corrige(ans,w){const a=norm(ans);if(!a)return 0;if(variantes(w.en).includes(a))return 2;
+// 2 = bien (la de la lista o un sinónimo que vale), 1 = casi (una letra), 0 = mal. S.altUsada = sinónimo aceptado
+function corrige(ans,w){S.altUsada=null;const a=norm(ans);if(!a)return 0;if(variantes(w.en).includes(a))return 2;
+ const alts=(w.ok||[]).filter(x=>norm(x)===a||variantes(x).includes(a));if(alts.length){S.altUsada=alts[0];return 2}
  // un despiste de una letra
- for(const v of variantes(w.en)){if(Math.abs(v.length-a.length)<=1&&lev(v,a)<=1&&v.length>4)return 1}return 0}
+ for(const v of [...variantes(w.en),...(w.ok||[]).flatMap(variantes)]){if(Math.abs(v.length-a.length)<=1&&lev(v,a)<=1&&v.length>4)return 1}return 0}
 function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=m[0];m[0]=i;for(let j=1;j<=b.length;j++){const t=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return m[b.length]}
 function apunta(w,bien){const antes=nivel(w.id),t=ST[w.id]=ST[w.id]||{a:0,f:0,r:0};if(bien){t.a++;t.r++}else{t.f++;t.r=0}saveST();S.cambio=antes!==nivel(w.id)?nivel(w.id):null;if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats();window.trasApuntar&&window.trasApuntar(w,bien)}
 // ---------- vistas ----------
@@ -144,7 +146,7 @@ function nueva(){stats();S.done=false;main.textContent="";
  const fb=el("div");c.append(fb);inp.focus({preventScroll:true});
  const go=()=>{if(S.done)return nueva();S.done=true;const alt=w.alt&&w.alt[norm(inp.value)];let r=corrige(inp.value,w);if(alt&&!dw&&!r)r=2;inp.readOnly=true;inp.classList.add(r?"ok":"ko");apunta(w,r>0);
   const f=el("div","fb "+(r===2?"ok":r===1?"warn":"ko"));f.append(el("div","h",r===2?"¡Correcto!":r===1?"Casi: revisa cómo se escribe":inp.value.trim()?"No es esa":"Solución"));
-  f.append(el("div","sol",w.en));if(alt)f.append(el("div","es","💡 "+alt));if(S.cambio)f.append(el("div","sube-n",S.cambio==="dom"?"🏆 ¡Palabra dominada!":S.cambio==="ctrl"?"🟡 Ya la vas controlando":"Vuelve a «sin saber»"));f.append(el("div","es",(dw?w.es:w.def)+(w.plural?" · plural: "+w.plural:"")));fb.append(f);
+  f.append(el("div","sol",w.en));if(S.altUsada&&r===2)f.append(el("div","es","✔️ «"+inp.value.trim()+"» también vale. En la lista aparece como «"+w.en+"»."));if(alt)f.append(el("div","es","💡 "+alt));if(S.cambio)f.append(el("div","sube-n",S.cambio==="dom"?"🏆 ¡Palabra dominada!":S.cambio==="ctrl"?"🟡 Ya la vas controlando":"Vuelve a «sin saber»"));f.append(el("div","es",(dw?w.es:w.def)+(w.plural?" · plural: "+w.plural:"")));fb.append(f);
   const n=el("div","nav"),nx=el("button","btn","Siguiente →");nx.onclick=nueva;n.append(nx);fb.append(n);b.textContent="Siguiente";nx.focus({preventScroll:true})};
  b.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go()}}}
 function tipoTest(c,w,p){c.append(el("p","ask","¿Qué definición corresponde a…?"));c.append(el("p","prompt big",w.en));
