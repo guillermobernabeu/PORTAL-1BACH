@@ -182,7 +182,7 @@ mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding
 
 <div class="wrap">
   <header>
-    <div class="modes" role="group" aria-label="Apartado">
+    <div class="modes" role="group" aria-label="Apartado" hidden style="display:none">
       <button class="mode" id="mode-wf" data-mode="wf">Word Formation<small>prefijos y sufijos</small></button>
       <button class="mode" id="mode-ut" data-mode="ut">Used to<small>solía · acostumbrarse</small></button>
     </div>
@@ -877,7 +877,7 @@ var store = {
   get:function(k,d){try{var v=localStorage.getItem("wf_"+k);return v?JSON.parse(v):d}catch(e){return d}},
   set:function(k,v){try{localStorage.setItem("wf_"+k,JSON.stringify(v))}catch(e){}}
 };
-var mode = store.get("mode", "wf"); if (mode!=="ut") mode = "wf";
+var mode = "wf"; // en el portal: solo Word Formation (Used to no entra en este examen)
 var ITEMS, GROUPS, byId, seen, fails, group;
 function K(k){ return mode==="ut" ? "ut2_"+k : k }
 function loadMode(){
@@ -1268,7 +1268,7 @@ document.querySelector(".modes").addEventListener("click", function(e){
 applyMode(); renderHome(); route();
 </script>
 
-<a href="../" class="b1-back" title="Volver a 1 BACH">← 1 BACH</a><span class="b1-claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<a href="../" class="b1-back" title="Volver">← Volver</a><span class="b1-claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
 <style>.b1-back{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:700 13px/1 system-ui,sans-serif;text-decoration:none;color:#141a2e;background:#fff;border-radius:999px;padding:9px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 .b1-claude{position:fixed;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:600 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #c3132b;color:#c3132b;border-radius:999px;background:rgba(255,255,255,.92)}
 @media (min-width:1024px){.b1-back,.b1-claude{bottom:18px}}</style>
@@ -1281,4 +1281,4 @@ function enviar(){let r=null;try{r=resumen()}catch(e){}if(!r)return;const k=r.jo
 let t=null;alCambiarSesion(u=>{clearInterval(t);if(u){ult="";enviar();t=setInterval(enviar,8000)}});
 addEventListener("visibilitychange",enviar);addEventListener("pagehide",enviar);
 </script>
-</body></html>
+<script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a.b1-back,a.vback1");if(!a)return;try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}});</script></body></html>

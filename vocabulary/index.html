@@ -48,9 +48,9 @@ form.add input,form.add select,form.add textarea{border:1.5px solid var(--rule);
 .empty{color:var(--ink2);text-align:center;padding:28px 10px}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
-<section id="start"><h1>Vocabulary 1st Term</h1><p>Definición ↔ palabra · 1.º Bachillerato · lista compartida de la clase</p><button class="go" id="go">Empezar</button></section>
+<section id="start"><a href="../" class="vback1" style="position:fixed;top:44px;left:12px;color:var(--acc);font-weight:700;text-decoration:none">← Volver</a><h1>Vocabulary 1st Term</h1><p>Definición ↔ palabra · 1.º Bachillerato · lista compartida de la clase</p><button class="go" id="go">Empezar</button></section>
 <div class="wrap" id="app" hidden>
-<header><p style="margin:0 0 6px"><a href="../" style="color:var(--acc);font-weight:700;text-decoration:none">← 1 BACH</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p><button class="btn sec" id="gbtn" hidden style="margin-top:8px;height:38px">Entrar con Google</button></header>
+<header><p style="margin:0 0 6px"><a href="../" class="vback1" style="color:var(--acc);font-weight:700;text-decoration:none">← Volver</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p><button class="btn sec" id="gbtn" hidden style="margin-top:8px;height:38px">Entrar con Google</button></header>
 <div id="login" hidden></div>
 <nav class="tabs" id="tabs">
  <button data-t="dw" aria-pressed="true">Definición → palabra</button>
@@ -193,4 +193,4 @@ alCambiarSesion(user => {
     remotas = snap.docs.map(d => ({ id: d.id, ...d.data() })); juntar();
   }, () => {}));
 });
-</script></body></html>
+</script><script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a.b1-back,a.vback1");if(!a)return;try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}});</script></body></html>
