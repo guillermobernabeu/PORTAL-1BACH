@@ -592,6 +592,30 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .lider-i{font-size:24px}.lider-t{flex:1;min-width:0}.lider-go{font-weight:800}
 .lider .ava{border:2px solid #fff}
 .hoy-p{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--ok);text-align:right;font-family:var(--f-body)}
+
+.ctabs2{display:flex;gap:8px}
+.ctabs2 button{position:relative;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:rgba(255,255,255,.75);color:#141a2e}
+.ctabs2 button[aria-pressed=true]{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.ava-b{border:0;background:none;padding:0;cursor:pointer;flex:none;border-radius:50%}
+.nombre-b{cursor:pointer}.nombre-b:hover{text-decoration:underline}
+.rk[data-perfil],.mini-rk>div[data-perfil]{cursor:pointer}.rk[data-perfil]:hover{border-color:var(--accent)}
+.convs{display:flex;flex-direction:column;gap:6px}
+.conv{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--rule);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--paper)}
+.conv:hover{border-color:var(--accent)}.conv-t{display:flex;flex-direction:column;min-width:0}.conv-t span{font-size:13.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.conv.nl .conv-t span{color:var(--ink);font-weight:700}.conv-h{font-size:12px;color:var(--ink-2);display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.punto{width:11px;height:11px;border-radius:50%;background:#e5231b}
+.gente{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px}
+.persona{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:14px;padding:10px 6px;cursor:pointer;font:inherit;font-size:13px;font-weight:700}
+.persona:hover{border-color:var(--accent)}.on-dot{position:absolute;top:10px;right:18px;width:12px;height:12px;border-radius:50%;background:#2fb35f;border:2px solid var(--paper)}
+.priv-h{justify-content:flex-start!important}.priv-p{display:flex;gap:10px;align-items:center;border:0;background:none;padding:0;cursor:pointer;color:var(--ink);text-align:left;font:inherit}
+.priv-p span{display:flex;flex-direction:column}.priv-p b{font-size:18px}.priv-p small{font-size:12px;color:var(--ink-2)}.priv-p small.on{color:var(--ok);font-weight:700}
+.pfm{position:fixed;inset:0;z-index:85;background:rgba(8,12,26,.65);display:grid;place-items:center;padding:16px;backdrop-filter:blur(3px)}
+.pfm-c{position:relative;width:min(420px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--sheet);color:var(--ink);border-radius:20px;padding:22px 22px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.pfm-x{align-self:flex-start;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 13px;font-weight:700;cursor:pointer}
+.pfm-f{width:170px;height:170px;border-radius:50%;object-fit:cover;display:grid;place-items:center;font:800 70px/1 var(--f-display);box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:zoom-in}
+.pfm-c h2{margin:4px 0 0;font-size:24px}.pfm-on{font-size:13px;color:var(--ink-2)}.pfm-on.on{color:var(--ok);font-weight:700}
+.pfm-n{display:flex;gap:22px;justify-content:center}.pfm-n span{display:flex;flex-direction:column}.pfm-n b{font:800 28px/1 var(--f-display);color:var(--accent)}.pfm-n small{font-size:12px;color:var(--ink-2)}
+.pfm-c .rk-apps{width:100%}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -617,6 +641,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 </style>
 
 <div class="wallpaper" aria-hidden="true"></div>
+<div class="pfm" id="pfm" hidden></div>
 <div class="pide" id="pide" hidden role="dialog" aria-modal="true" aria-labelledby="pideT"><div class="pide-c"><div class="pide-i" aria-hidden="true">🔒</div><h2 id="pideT">Inicia sesión con Google</h2><p>Para acceder a los contenidos de 1 BACH tienes que entrar con tu cuenta de Google. Solo la primera vez: luego se queda guardado.</p><div class="pide-b"><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button><button class="btn-sec" data-pidecerrar>Ahora no</button></div></div></div>
 <input type="file" id="fotoIn" accept="image/*" hidden>
 <input type="file" id="chatFotoIn" accept="image/*" multiple hidden>
@@ -689,7 +714,7 @@ const hojas=e=>(e.paginas||[]).filter(esDoc);
 function progreso(list){if(!list.length)return null;return list.reduce((s,t)=>s+pTema(t),0)/list.length}
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,2200)}
 
-function route(){const h=location.hash.slice(1);return AN[h]||h==="amigos"||h==="perfil"||h==="chat"||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
+function route(){const h=location.hash.slice(1);return AN[h]||h==="amigos"||h==="perfil"||h==="chat"||h==="privados"||/^privado-[A-Za-z0-9]+$/.test(h)||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
 
 
 function limite(e){const d=parseF(e.fecha);return d?new Date(d.getFullYear(),d.getMonth(),d.getDate()-1,23,59,59):null}
@@ -907,7 +932,7 @@ function renderResumen(){
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.sinLeer?`<span class="badge">${S.sinLeer>99?"99+":S.sinLeer}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div>${renderLider()}${renderRecos()}<nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div>${renderLider()}${renderRecos()}<nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
@@ -937,27 +962,63 @@ function renderEntra(r){const t={amigos:"Amigos y ranking",perfil:"Tu perfil",ch
 const MAXF=3;window.ADJ=window.ADJ||[];
 function pintarAdj(){const a=document.getElementById("chatAdj");if(!a)return;a.innerHTML=window.ADJ.map((u,i)=>`<span class="adj"><img src="${u}" alt=""><button type="button" data-quitaadj="${i}" aria-label="Quitar foto">×</button></span>`).join("")}
 const ETQ={general:"💬 General",mal:"❌ Pregunta o respuesta mal",fecha:"📅 Fecha mal",noentra:"📚 Qué entra",idea:"💡 Idea"};
+function tabsChat(){const p=S.sinLeerPriv||0,g=route()==="chat"?0:(S.sinLeer||0),r=route();
+  return `<div class="ctabs2" id="ctabs2" role="tablist"><button data-go="chat" aria-pressed="${r==="chat"}">👥 Clase${g?`<span class="badge">${g}</span>`:""}</button><button data-go="privados" aria-pressed="${r!=="chat"}">🔒 Privados${p?`<span class="badge">${p}</span>`:""}</button></div>`}
+function pintarTabsChat(){const t=document.getElementById("ctabs2");if(t)t.outerHTML=tabsChat()}
 function renderChat(){
-  return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>
-   <section class="sheet"><header><h2>Chat</h2><span class="note">Lo leen todos los que han entrado</span></header>
+  return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}
+   <section class="sheet"><header><h2>Chat de la clase</h2><span class="note">Lo leen todos los que han entrado</span></header>
    <p class="note" style="margin:0">Avisa aquí si una pregunta está mal, si algo no entra en el examen o si una fecha no es la buena.</p>
    <div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
-   <form class="chatform" id="chatform"><select id="chatTag" aria-label="Tipo de mensaje">${Object.entries(ETQ).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+   <form class="chatform" id="chatform" data-ruta="chat"><select id="chatTag" aria-label="Tipo de mensaje">${Object.entries(ETQ).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
      <div class="chatadj" id="chatAdj"></div>
      <div class="chatin"><button class="clip" type="button" data-adjuntar title="Adjuntar fotos (hasta ${MAXF})" aria-label="Adjuntar fotos">📷</button><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe un mensaje para la clase…"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div>
      <p class="note" style="margin:0">Puedes adjuntar hasta ${MAXF} fotos por mensaje; se reducen solas para que no pesen.</p></form>
    </section></div>`}
 function horaChat(t){const d=new Date(t),h=new Date();const mismo=d.toDateString()===h.toDateString();
   return (mismo?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short"})+" · ")+d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}
-function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)return;const ms=S.chat||[];
+function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)return;const priv=route().startsWith("privado-"),ms=(priv?S.privMsgs:S.chat)||[];
   const pegado=abajo||L.scrollHeight-L.scrollTop-L.clientHeight<60;
-  if(S.chatError){L.innerHTML=`<div class="empty">${esc(S.chatError)}</div>`;return}
+  if(priv&&S.privError){L.innerHTML=`<div class="empty">${esc(S.privError)}</div>`;return}
+  if(!priv&&S.chatError){L.innerHTML=`<div class="empty">${esc(S.chatError)}</div>`;return}
   L.innerHTML=ms.length?ms.map(m=>{const yo=m.uid===S.uid;
-    return `<div class="msg ${yo?"mio":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}">${avatar(m.uid,32)}<div class="bur"><div class="mh"><b>${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div>${m.texto?`<p>${esc(m.texto)}</p>`:""}${Array.isArray(m.fotos)&&m.fotos.length?`<div class="mfotos">${m.fotos.filter(u=>/^data:image\/(jpeg|png|webp);base64,/.test(u)).map(u=>`<img src="${u}" alt="Foto" loading="lazy" data-verfoto>`).join("")}</div>`:""}${yo||S.esAdmin?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
+    return `<div class="msg ${yo?"mio":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}"><button class="ava-b" data-perfil="${esc(m.uid)}" aria-label="Ver perfil">${avatar(m.uid,32)}</button><div class="bur"><div class="mh"><b class="nombre-b" data-perfil="${esc(m.uid)}">${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div>${m.texto?`<p>${esc(m.texto)}</p>`:""}${Array.isArray(m.fotos)&&m.fotos.length?`<div class="mfotos">${m.fotos.filter(u=>/^data:image\/(jpeg|png|webp);base64,/.test(u)).map(u=>`<img src="${u}" alt="Foto" loading="lazy" data-verfoto>`).join("")}</div>`:""}${yo||(S.esAdmin&&!priv)?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
   if(pegado)L.scrollTop=L.scrollHeight;
-  if(ms.length){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0}}
+  if(ms.length&&!priv){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0}
+  if(ms.length&&priv&&window.marcarLeido)window.marcarLeido()}
+
+const convId=(a,b)=>[a,b].sort().join("_");
+const otroDe=c=>(c.miembros||[]).find(x=>x!==S.uid)||"";
+function noLeido(c){const u=c.ultimo||{};return !!u.t&&u.uid!==S.uid&&u.t>((c.leido||{})[S.uid]||0)}
+function renderPrivados(){const cs=(S.privs||[]).filter(c=>c.ultimo&&c.ultimo.t).sort((a,b)=>(b.ultimo.t||0)-(a.ultimo.t||0));
+  const ya=new Set(cs.map(otroDe));
+  const otros=Object.keys(S.amigos||{}).filter(id=>id!==S.uid).sort((a,b)=>nombreDe(a).localeCompare(nombreDe(b)));
+  return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}
+   <section class="sheet"><header><h2>Chats privados</h2><span class="note">Solo los ves tú y la otra persona</span></header>
+   <div class="convs">${cs.length?cs.map(c=>{const o=otroDe(c),u=c.ultimo||{},nl=noLeido(c);
+     return `<a class="conv ${nl?"nl":""}" href="#privado-${esc(o)}">${avatar(o,44)}<span class="conv-t"><b>${esc(nombreDe(o)||"Alguien")}</b><span>${u.uid===S.uid?"Tú: ":""}${esc(u.texto||"")}</span></span><span class="conv-h">${horaChat(u.t)}${nl?'<i class="punto" aria-label="Sin leer"></i>':""}</span></a>`}).join(""):'<div class="empty">Todavía no tienes chats privados. Empieza uno con alguien de la clase.</div>'}</div></section>
+   <section class="sheet"><header><h2>Empezar un chat</h2><span class="note">Toca a alguien para ver su perfil y escribirle</span></header>
+   <div class="gente">${otros.length?otros.map(id=>`<button class="persona" data-perfil="${esc(id)}">${avatar(id,52)}<span>${esc((nombreDe(id)||"Alguien").split(" ")[0])}</span>${ya.has(id)?"":""}${enLinea((S.amigos||{})[id])?'<i class="on-dot" aria-label="Conectado"></i>':""}</button>`).join(""):'<div class="empty">Aún no ha entrado nadie más.</div>'}</div></section></div>`}
+function renderPrivado(o){const n=nombreDe(o)||"Alguien",u=(S.amigos||{})[o];
+  return `<div class="vista chatv"><button class="back" data-go="privados">← Privados</button>
+   <section class="sheet"><header class="priv-h"><button class="priv-p" data-perfil="${esc(o)}">${avatar(o,40)}<span><b>${esc(n)}</b><small class="${enLinea(u)?"on":""}">${enLinea(u)?"● conectado ahora":"chat privado"}</small></span></button></header>
+   <div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
+   <form class="chatform" id="chatform" data-ruta="privado-${esc(o)}">
+     <div class="chatadj" id="chatAdj"></div>
+     <div class="chatin"><button class="clip" type="button" data-adjuntar title="Adjuntar fotos (hasta ${MAXF})" aria-label="Adjuntar fotos">📷</button><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe a ${esc(n.split(" ")[0])}…"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div></form>
+   </section></div>`}
+// tarjeta de perfil de cualquiera (foto grande, puntos y mensaje privado)
+function abrirPerfil(id){if(!id)return;const lista=clasificacion(),pos=lista.findIndex(x=>x.id===id),p=(S.rank||{})[id]||{},u=(S.amigos||{})[id]||{},f=fotoDe(id),n=nombreDe(id)||"Alguien";
+  $("#pfm").innerHTML=`<div class="pfm-c" role="dialog" aria-modal="true" aria-label="Perfil de ${esc(n)}"><button class="pfm-x" data-pfmcerrar aria-label="Cerrar">← Volver</button>
+    ${f?`<img class="pfm-f" src="${esc(f)}" alt="" referrerpolicy="no-referrer" data-verfoto>`:`<span class="pfm-f av0">${esc(n[0].toUpperCase())}</span>`}
+    <h2>${esc(n)}${id===S.uid?" (tú)":""}</h2><span class="pfm-on ${enLinea(u)?"on":""}">${enLinea(u)?"● conectado ahora":"última vez "+new Date(u.visto||0).toLocaleDateString("es-ES")}</span>
+    <div class="pfm-n"><span><b>${puntos(p)}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>en la clase</small></span><span><b>+${puntosHoy(p)}</b><small>hoy</small></span></div>
+    ${barrasApps(p)}
+    ${id===S.uid?`<button class="btn-sec" data-go="perfil" data-pfmcerrar>Ir a mi perfil</button>`:`<button class="btn-p" style="--cf:var(--accent)" data-privado="${esc(id)}">💬 Enviar mensaje privado</button>`}</div>`;
+  $("#pfm").hidden=false;history.pushState({modal:"p"},"")}
+function cerrarPerfil(pop){if($("#pfm").hidden)return;if(pop!==true&&history.state&&history.state.modal==="p"){history.back();return}$("#pfm").hidden=true;$("#pfm").innerHTML=""}
 function renderAmigos(){const lista=clasificacion();
-  const filas=lista.map((x,i)=>`<div class="rk ${x.id===S.uid?"yo-fila":""}"><span class="pos">${i<3?["🥇","🥈","🥉"][i]:i+1}</span>
+  const filas=lista.map((x,i)=>`<div class="rk ${x.id===S.uid?"yo-fila":""}" data-perfil="${esc(x.id)}" role="button" tabindex="0" title="Ver perfil"><span class="pos">${i<3?["🥇","🥈","🥉"][i]:i+1}</span>
     ${avatar(x.id,42)}
     <div class="rk-n"><b>${esc(nombreDe(x.id)||"Sin nombre")}${x.id===S.uid?" (tú)":""}</b><span class="${enLinea(x.u)?"on":""}">${enLinea(x.u)?"● conectado ahora":"última vez "+new Date(x.u.visto||0).toLocaleDateString("es-ES")}</span>
     ${barrasApps(x.p)}</div>
@@ -981,7 +1042,7 @@ function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id=
        return `<div class="pf-app"><div><b>${t}</b><span>${a?a.ok+" de "+a.total+" dominados":"Sin empezar"}</span></div><div class="barra"><i style="width:${v}%"></i></div><b class="mono">${v} pts</b></div>`}).join("")}</div>
    </section>
    <section class="sheet"><header><h2>Ranking de la clase</h2><button class="btn-sec" data-go="amigos">Ver con detalle</button></header>
-     <div class="mini-rk">${lista.slice(0,10).map((x,i)=>`<div class="${x.id===S.uid?"yo-fila":""}"><span>${i+1}</span>${avatar(x.id,26)}<b>${esc(nombreDe(x.id)||"Sin nombre")}</b><em>${x.pts} pts</em></div>`).join("")}</div>
+     <div class="mini-rk">${lista.slice(0,10).map((x,i)=>`<div class="${x.id===S.uid?"yo-fila":""}" data-perfil="${esc(x.id)}" role="button" tabindex="0"><span>${i+1}</span>${avatar(x.id,26)}<b>${esc(nombreDe(x.id)||"Sin nombre")}</b><em>${x.pts} pts</em></div>`).join("")}</div>
    </section>
    <button class="btn-sec" data-salir style="align-self:center">Cerrar sesión</button></div>`}
 
@@ -1052,16 +1113,16 @@ document.addEventListener("click",ev=>{if(S.uid||!ev.target.closest)return;
   const go=ev.target.closest("[data-go]");if(go&&go.dataset.go==="resumen")return;
   const bloq=ev.target.closest("[data-go],[data-a],[data-det],[data-ir],[data-dia],[data-exam],[data-doc],[data-apt],a[href]:not([href^='#'])");
   if(bloq){ev.preventDefault();ev.stopImmediatePropagation();window.pideCuenta()}},true);
-addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#pide").hidden)$("#pide").hidden=true});
+addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#pide").hidden)$("#pide").hidden=true;if(ev.key==="Escape"&&!$("#pfm").hidden)cerrarPerfil();if(ev.key==="Enter"&&ev.target.dataset&&ev.target.dataset.perfil&&ev.target.getAttribute("role")==="button")abrirPerfil(ev.target.dataset.perfil)});
 document.addEventListener("click",ev=>{const a=ev.target.closest&&ev.target.closest("[data-ocultar]");if(a){ev.preventDefault();ev.stopPropagation();marcarOculto(a.dataset.ocultar,true);return}
   const b=ev.target.closest&&ev.target.closest("[data-restaurar]");if(b){abiertaPap=true;marcarOculto(b.dataset.restaurar,false)}},true);
 document.addEventListener("toggle",ev=>{if(ev.target.classList&&ev.target.classList.contains("papelera"))abiertaPap=ev.target.open},true);
 
 function render(){actualizarSplash();const r=route(),v=$("#view");
-  if(r==="chat"&&S.uid&&S.loaded&&document.getElementById("chatform")){pintarChat();return}
+  {const f=document.getElementById("chatform");if(S.uid&&S.loaded&&f&&f.dataset.ruta===r){pintarChat();pintarTabsChat();return}}
   if(S.error){v.innerHTML=`<div class="sheet"><b>No se ha podido cargar el curso.</b><span class="muted">${esc(S.error)} Abre la página de nuevo en un rato.</span></div>`;return}
   if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">Cargando temas y exámenes…</span></div>`;return}
-  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();if(r==="chat"&&S.uid){pintarChat(true);pintarAdj()}
+  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r==="privados"?renderPrivados():r.startsWith("privado-")?renderPrivado(r.slice(8)):r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();if((r==="chat"||r.startsWith("privado-"))&&S.uid){pintarChat(true);pintarAdj()}
   if(enfocar&&r!=="resumen"){const el=document.querySelector(`[data-det="${CSS.escape(enfocar)}"],[data-exam="${CSS.escape(enfocar)}"]`);enfocar=null;
     if(el){el.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});el.classList.add("flash")}}}
 
@@ -1112,7 +1173,7 @@ function abrirExamen(id){const e=S.examenes.find(x=>x.id===id);if(!e)return;cons
   $("#vpages").innerHTML=p.map((u,i)=>`<figure><img src="${esc(u)}" alt="Hoja ${i+1} del examen" loading="${i<2?"eager":"lazy"}"><figcaption>Hoja ${i+1} de ${p.length}</figcaption></figure>`).join("");
   $("#vpages").classList.remove("zoom");$("#vzoom").textContent="Ampliar";$("#vpages").scrollTop=0;
   $("#viewer").hidden||history.pushState({modal:"v"},"");$("#viewer").hidden=false;document.body.style.overflow="hidden";$("#vclose").focus()}
-addEventListener("popstate",()=>{if(!$("#lb").hidden){$("#lb").hidden=true;return}if(!$("#viewer").hidden)cerrarExamen(true);else if(!$("#ficha").hidden)cerrarFicha(true)});
+addEventListener("popstate",()=>{if(!$("#pfm").hidden){cerrarPerfil(true);return}if(!$("#lb").hidden){$("#lb").hidden=true;return}if(!$("#viewer").hidden)cerrarExamen(true);else if(!$("#ficha").hidden)cerrarFicha(true)});
 function cerrarExamen(pop){if(pop!==true&&!$("#viewer").hidden&&history.state&&history.state.modal==="v"){history.back();return}$("#viewer").hidden=true;document.body.style.overflow=$("#ficha").hidden?"":"hidden"}
 $("#vclose").addEventListener("click",cerrarExamen);$("#vback").addEventListener("click",cerrarExamen);
 $("#vzoom").addEventListener("click",()=>{const z=$("#vpages").classList.toggle("zoom");$("#vzoom").textContent=z?"Ajustar":"Ampliar"});
@@ -1122,6 +1183,9 @@ addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#ficha").hidden){cerra
   const it=ev.target.closest&&ev.target.closest("[data-det],[data-ir],[data-dia]");if(it&&(ev.key==="Enter"||ev.key===" ")){ev.preventDefault();it.click();return}
   const r=ev.target.closest&&ev.target.closest(".exam[data-exam]");if(r&&(ev.key==="Enter"||ev.key===" ")){ev.preventDefault();abrirExamen(r.dataset.exam)}});
 document.addEventListener("click",async ev=>{
+  if(ev.target.closest("[data-pfmcerrar]")||ev.target.id==="pfm"){const g=ev.target.closest("[data-go]");cerrarPerfil(!!g);if(g){$("#pfm").hidden=true;location.hash=g.dataset.go}return}
+  {const pv=ev.target.closest("[data-privado]");if(pv){$("#pfm").hidden=true;$("#pfm").innerHTML="";location.replace("#privado-"+pv.dataset.privado);return}}
+  {const pf=ev.target.closest("[data-perfil]");if(pf&&!ev.target.closest("#pfm")){abrirPerfil(pf.dataset.perfil);return}}
   if(ev.target.closest("[data-adjuntar]")){if(window.ADJ.length>=MAXF){toast(`Máximo ${MAXF} fotos por mensaje.`);return}document.getElementById("chatFotoIn").click();return}
   {const q=ev.target.closest("[data-quitaadj]");if(q){window.ADJ.splice(+q.dataset.quitaadj,1);pintarAdj();return}}
   {const f=ev.target.closest("[data-verfoto]");if(f){$("#lbImg").src=f.src;history.pushState({modal:"l"},"");$("#lb").hidden=false;return}}
@@ -1262,29 +1326,65 @@ alCambiarSesion(async user => {
   quitar.push(fs.onSnapshot(fs.collection(fdb, "progreso"), snap => {
     const r = {}; snap.docs.forEach(d => r[d.id] = d.data()); S.rank = r; if (RUTAS_VIVAS.includes(route())) render();
   }, () => {}));
+  quitar.push(suscribirPrivados(user.uid));
+  quitar.push(() => { if (quitarConv) { quitarConv(); quitarConv = null; } convAbierta = null; });
+  setTimeout(abrirConv, 0);
   quitar.push(fs.onSnapshot(fs.query(fs.collection(fdb, "chat"), fs.orderBy("t"), fs.limitToLast(80)), snap => {
     S.chatError = null; S.chat = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     let visto = 0; try { visto = +localStorage.getItem("chatVisto") || 0; } catch (e) {}
     if (route() === "chat") pintarChat();
     else { S.sinLeer = S.chat.filter(m => (m.t || 0) > visto && m.uid !== S.uid).length; if (route() === "resumen") render(); }
-  }, (err) => { S.chatError = err && err.code === "permission-denied" ? "El chat todavía no tiene permiso en Firebase: hay que pegar las reglas nuevas (Firestore → Reglas)." : "No se puede cargar el chat ahora mismo."; if (route() === "chat") pintarChat(); }));
+  }, (err) => { S.chatError0 = 1; S.chatError = err && err.code === "permission-denied" ? "El chat todavía no tiene permiso en Firebase: hay que pegar las reglas nuevas (Firestore → Reglas)." : "No se puede cargar el chat ahora mismo."; if (route() === "chat") pintarChat(); }));
 });
+// ---------- chats privados: privados/{uidA_uidB} con mensajes dentro ----------
+let quitarConv = null, convAbierta = null;
+function suscribirPrivados(uid) {
+  return fs.onSnapshot(fs.query(fs.collection(fdb, "privados"), fs.where("miembros", "array-contains", uid)), snap => {
+    S.privs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    S.sinLeerPriv = S.privs.filter(noLeido).length;
+    const r = route();
+    if (r === "privados" || r === "resumen") render(); else if (r === "chat" || r.startsWith("privado-")) pintarTabsChat();
+  }, () => { S.privs = []; S.sinLeerPriv = 0; });
+}
+function abrirConv() {
+  const r = route(), o = r.startsWith("privado-") ? r.slice(8) : null;
+  const c = o && S.uid ? convId(S.uid, o) : null;
+  if (c === convAbierta) return;
+  if (quitarConv) { quitarConv(); quitarConv = null; }
+  convAbierta = c; S.privMsgs = []; S.privError = null;
+  if (!c) return;
+  quitarConv = fs.onSnapshot(fs.query(fs.collection(fdb, "privados", c, "mensajes"), fs.orderBy("t"), fs.limitToLast(80)), snap => {
+    S.privError = null; S.privMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (route() === "privado-" + o) pintarChat();
+  }, err => { S.privError = err && err.code === "permission-denied" ? "Los chats privados todavía no tienen permiso en Firebase: hay que añadir la regla nueva de «privados»." : "No se puede cargar este chat ahora mismo."; pintarChat(); });
+}
+addEventListener("hashchange", abrirConv);
+let tLeido = null;
+window.marcarLeido = () => { if (!convAbierta || !S.uid) return; const c = (S.privs || []).find(x => x.id === convAbierta); if (c && !noLeido(c)) return;
+  clearTimeout(tLeido); tLeido = setTimeout(() => fs.setDoc(fs.doc(fdb, "privados", convAbierta), { miembros: convAbierta.split("_"), leido: { [S.uid]: Date.now() } }, { merge: true }).catch(() => {}), 400); };
 setInterval(() => { if (route() === "amigos") render(); }, 60000);
 // ---------- chat ----------
 window.enviarMsg = async (tag, texto, form) => {
   texto = String(texto || "").trim().slice(0, 800); const fotos = window.ADJ.slice(0, MAXF);
   if ((!texto && !fotos.length) || !S.uid) return;
   const b = form.querySelector("button[type=submit]"); b.disabled = true;
-  try { await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, fotos, tag: ETQ[tag] ? tag : "general", t: Date.now() }); form.querySelector("textarea").value = ""; window.ADJ = []; pintarAdj(); }
+  const r = route();
+  try {
+    if (r.startsWith("privado-")) {
+      const o = r.slice(8), c = convId(S.uid, o), t = Date.now();
+      await fs.addDoc(fs.collection(fdb, "privados", c, "mensajes"), { uid: S.uid, texto, fotos, t });
+      await fs.setDoc(fs.doc(fdb, "privados", c), { miembros: c.split("_"), ultimo: { texto: texto ? texto.slice(0, 120) : "📷 Foto", t, uid: S.uid }, leido: { [S.uid]: t } }, { merge: true });
+    } else
+    await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, fotos, tag: ETQ[tag] ? tag : "general", t: Date.now() }); form.querySelector("textarea").value = ""; window.ADJ = []; pintarAdj(); }
   catch (e) { toast(e && e.code === "permission-denied" ? "Firebase no deja escribir: faltan las reglas nuevas del chat." : e && /size|exceeds|too large/i.test(e.message || "") ? "El mensaje pesa demasiado: quita alguna foto." : "No se ha podido enviar (" + (e.code || "error") + ")."); }
   b.disabled = false; form.querySelector("textarea").focus();
 };
 window.borrarMsg = async (id, btn) => {
   if (!btn.dataset.c) { btn.dataset.c = 1; btn.textContent = "¿Seguro? Pulsa otra vez"; return; }
-  try { await fs.deleteDoc(fs.doc(fdb, "chat", id)); } catch (e) { toast("No se ha podido borrar."); }
+  const r = route();
+  try { await fs.deleteDoc(r.startsWith("privado-") ? fs.doc(fdb, "privados", convId(S.uid, r.slice(8)), "mensajes", id) : fs.doc(fdb, "chat", id)); } catch (e) { toast("No se ha podido borrar."); }
 };
 document.addEventListener("submit", ev => { if (ev.target.id !== "chatform") return; ev.preventDefault();
-  window.enviarMsg(document.getElementById("chatTag").value, document.getElementById("chatTxt").value, ev.target); });
+  window.enviarMsg(document.getElementById("chatTag")?.value || "general", document.getElementById("chatTxt").value, ev.target); });
 document.addEventListener("keydown", ev => { if (ev.target.id === "chatTxt" && ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); ev.target.form.requestSubmit(); } });
 // ---------- fotos: se reducen en el navegador y se guardan como texto (Firebase gratis, sin Storage) ----------
 async function cargarImg(file) {
