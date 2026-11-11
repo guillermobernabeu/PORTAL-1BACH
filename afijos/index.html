@@ -1622,7 +1622,8 @@ boot();
 .b1-claude{position:fixed;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:600 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #c3132b;color:#c3132b;border-radius:999px;background:rgba(255,255,255,.92)}
 @media (min-width:1024px){.b1-back,.b1-claude{bottom:18px}}</style>
 <script type="module">
-import { alCambiarSesion, guardarProgreso } from "../shared/fb.js";
+import { alCambiarSesion, guardarProgreso, exigirCuenta } from "../shared/fb.js";
+exigirCuenta();
 const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
 function resumen(){ const st=lee("afijomat_v1");if(!st||!st.stats)return null;const ok=Object.values(st.stats).filter(x=>(x.streak|0)>=3).length;return [ok,179]; }
 let ult="";

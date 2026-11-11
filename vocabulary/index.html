@@ -167,7 +167,8 @@ $("#go").onclick=abrir;addEventListener("keydown",k);
 <script type="module">
 // La lista de clase va en palabras.js (SEED): funciona siempre, con o sin cuenta.
 // Con cuenta se suman las palabras que añade la clase (Firestore) y se guarda el progreso.
-import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso } from "../shared/fb.js";
+import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso, exigirCuenta } from "../shared/fb.js";
+exigirCuenta();
 const COL = "vocabulary_palabras";
 const who = document.getElementById("who"), gbtn = document.getElementById("gbtn");
 document.getElementById("login").hidden = true;

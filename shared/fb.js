@@ -59,3 +59,12 @@ export function guardarProgreso(app, ok, total) {
   const u = auth.currentUser; if (!u) return Promise.resolve();
   return fs.setDoc(fs.doc(db, "progreso", u.uid), { apps: { [app]: { ok, total, t: Date.now() } } }, { merge: true }).catch(() => {});
 }
+// Páginas que solo se ven con cuenta: si no has entrado, te manda a la portada para entrar con Google
+// y, al entrar, te devuelve aquí.
+export function exigirCuenta() {
+  const html = document.documentElement; html.style.visibility = "hidden";
+  const raiz = new URL("../", import.meta.url);
+  const ir = () => location.replace(raiz.href + "?volver=" + encodeURIComponent(location.pathname + location.search + location.hash));
+  const t = setTimeout(ir, 8000);
+  onAuthStateChanged(auth, (u) => { clearTimeout(t); if (u) html.style.visibility = ""; else ir(); });
+}

@@ -52,7 +52,8 @@ document.getElementById("q").oninput=pinta;
 document.getElementById("volver").onclick=e=>{try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}};
 </script>
 <script type="module">
-import { db, fs, alCambiarSesion, alCambiarClase } from "../shared/fb.js";
+import { db, fs, alCambiarSesion, alCambiarClase, exigirCuenta } from "../shared/fb.js";
+exigirCuenta();
 fs.onSnapshot(fs.collection(db, "vocabulary_palabras"), snap => { remotas = snap.docs.map(d => ({ id: d.id, ...d.data() })); juntar(); }, () => {});
 let quitar = null;
 alCambiarSesion(user => { if (quitar) { quitar(); quitar = null; } if (user) quitar = alCambiarClase(us => { S.users = us; pinta(); }); });

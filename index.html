@@ -1116,7 +1116,7 @@ document.addEventListener("submit",ev=>{if(ev.target.id==="fchat"){ev.preventDef
 
 function saludo(){const h=new Date().getHours();return h>=6&&h<13?"Buenos días":h>=13&&h<21?"Buenas tardes":"Buenas noches"}
 function actualizarSplash(){const el=$("#splash");if(!el||el.hidden)return;$("#hola").textContent=S.nombre?`¡Hola, ${S.nombre}! ${saludo()}.`:`${saludo()}.`}
-function entrar(){const el=$("#splash");if(!el||el.hidden||el.classList.contains("out")||!S.listo)return;
+function entrar(){const el=$("#splash");if(!el||el.hidden||el.classList.contains("out")||!S.listo||!S.uid)return;
   el.classList.add("out");document.body.classList.remove("con-splash");try{sessionStorage.setItem("dentro","1")}catch(e){}
   setTimeout(()=>{el.hidden=true},matchMedia("(prefers-reduced-motion: reduce)").matches?0:460)}
 $("#splash").hidden=false;document.body.classList.add("con-splash");actualizarSplash();
@@ -1161,13 +1161,18 @@ function adaptador(uid) {
 }
 function listo() {
   S.listo = true;
-  document.getElementById("entrar").hidden = false;
-  document.getElementById("gbtn").hidden = true;
-  const m = document.getElementById("splmsg"); if (m) m.textContent = "";
+  const dentro = !!S.uid;
+  document.getElementById("entrar").hidden = !dentro;
+  document.getElementById("gbtn").hidden = dentro;
+  const m = document.getElementById("splmsg"); if (m) m.textContent = dentro ? "" : "Para entrar en 1 BACH necesitas tu cuenta de Google. Solo la primera vez: se queda guardado.";
   actualizarSplash();
+  if (!dentro) { const el = document.getElementById("splash"); if (el) { el.hidden = false; el.classList.remove("out"); document.body.classList.add("con-splash"); } setTimeout(() => document.getElementById("gbtn")?.focus(), 50); return; }
+  const volver = new URLSearchParams(location.search).get("volver");
+  if (volver && /^\/[\w\-./%#?=&]*$/.test(volver) && !volver.startsWith("//")) { location.replace(volver); return; }
   let ya = false; try { ya = sessionStorage.getItem("dentro") === "1"; } catch (e) {}
   if (ya) entrar(); else setTimeout(() => document.getElementById("entrar")?.focus(), 50);
 }
+document.getElementById("gbtn").onclick = () => gEntrar().catch(e => { const m = document.getElementById("splmsg"); if (m) m.textContent = "No se pudo entrar (" + (e.code || "error") + "). Inténtalo otra vez."; });
 function primerNombre() { const u = (S.amigos || {})[S.uid] || {}; return String(u.nombre || S.nombreCompleto || "").trim().split(/\s+/)[0] || ""; }
 window.entrarGoogle = () => gEntrar().catch(e => toast("No se pudo entrar (" + (e.code || "error") + ")."));
 window.salirPortal = async () => { try { sessionStorage.removeItem("dentro"); } catch (e) {} await gSalir(); location.hash = ""; location.reload(); };
@@ -1178,7 +1183,8 @@ alCambiarSesion(async user => {
   quitar.forEach(f => f()); quitar = [];
   if (!user) {
     S.uid = null; S.canWrite = false; S.nombre = ""; S.amigos = {}; S.rank = {}; S.chat = []; S.conectados = 0; S.sinLeer = 0; db = null;
-    prog = {}; aplicar(); listo(); return;
+    try { sessionStorage.removeItem("dentro"); } catch (e) {}
+    S.loaded = false; listo(); render(); return;
   }
   S.uid = user.uid; S.canWrite = true;
   S.nombreCompleto = user.displayName || ""; S.nombre = primerNombre(); S.foto = user.photoURL || "";
