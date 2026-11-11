@@ -58,7 +58,7 @@ function pinta(){const q=norm(document.getElementById("q").value),ord=document.g
 const BASE=window.SEED.map(w=>({...w,por:"lista"}));
 let remotas=[];
 function juntar(){const m=new Map(BASE.map(w=>[w.id,w]));for(const w of remotas)m.set(w.id,{...(m.get(w.id)||{}),...w});
-  S.words=[...m.values()].filter(w=>w.en).sort((a,b)=>(a.orden??999)-(b.orden??999)||(a.creado||0)-(b.creado||0));pinta()}
+  S.words=[...m.values()].filter(w=>w.en&&!w.borrada).sort((a,b)=>(a.orden??999)-(b.orden??999)||(a.creado||0)-(b.creado||0));pinta()}
 juntar();
 document.getElementById("q").oninput=pinta;document.getElementById("orden").onchange=pinta;
 document.getElementById("volver").onclick=e=>{try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}};

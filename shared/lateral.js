@@ -1,6 +1,6 @@
 // Paneles laterales para las apps en el ordenador: casa, modo concentración, cuenta atrás del examen,
 // porcentaje de lo que dominas y el ranking (los 3 primeros · … · tú).
-import { auth, alCambiarClase, nombreDe, fotoDe, concentracion, ponerConcentracion } from "./fb.js";
+import { auth, db, fs, alCambiarClase, nombreDe, fotoDe, concentracion, ponerConcentracion } from "./fb.js";
 
 const RAIZ = new URL("../", import.meta.url).href;
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -58,6 +58,9 @@ export async function iniciarLateral({ recurso, stats }) {
   let examen = null;
   try {
     const c = await (await fetch(RAIZ + "data/clase.json", { cache: "no-store" })).json();
+    try { const cs = await fs.getDoc(fs.doc(db, "clase", "cambios")); const cb = (cs.exists() && cs.data().examenes) || {};
+      c.examenes = c.examenes.map(e => cb[e.id] ? { ...e, ...cb[e.id] } : e).concat(Object.keys(cb).filter(id => cb[id].nuevo && !c.examenes.some(e => e.id === id)).map(id => ({ id, temas: [], ...cb[id] }))).filter(e => !e.borrado);
+    } catch (e) {}
     const r = c.recursos.find(x => x.id === recurso), tema = r && r.tema;
     const inicio = e => { const [y, m, dd] = e.fecha.split("-").map(Number); return new Date(y, m - 1, dd, 8, 0, 0); };
     const fin = e => { const t = inicio(e); t.setHours(14); return t; };

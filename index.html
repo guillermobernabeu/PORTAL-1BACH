@@ -614,6 +614,24 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .pfm-c h2{margin:4px 0 0;font-size:24px}.pfm-on{font-size:13px;color:var(--ink-2)}.pfm-on.on{color:var(--ok);font-weight:700}
 .pfm-n{display:flex;gap:22px;justify-content:center}.pfm-n span{display:flex;flex-direction:column}.pfm-n b{font:800 28px/1 var(--f-display);color:var(--accent)}.pfm-n small{font-size:12px;color:var(--ink-2)}
 .pfm-c .rk-apps{width:100%}
+
+.adm-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#141a2e;color:#fff;border-radius:14px;padding:10px 14px;margin-bottom:14px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.adm-bar b{color:#ffd75e}.adm-bar span{font-size:13px;opacity:.8;flex:1;min-width:160px}
+.adm-bar button{border:0;border-radius:999px;padding:7px 13px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;background:#fff;color:#141a2e}
+.admx{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+.admx button{border:1px solid #e5231b;background:#fff;color:#c3132b;border-radius:8px;padding:2px 6px;font-size:13px;cursor:pointer;line-height:1.2}
+.exam .admx,.ce .admx{position:absolute;top:6px;right:6px}.exam,.ce{position:relative}
+.admx-f{display:flex;gap:8px}.admx-f button{padding:6px 12px;font-weight:700}
+.adm{position:fixed;inset:0;z-index:88;background:rgba(8,12,26,.65);display:grid;place-items:center;padding:16px}
+.adm-c{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--sheet);color:var(--ink);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.adm-c h2{margin:0;font-size:20px}.adm-c p{margin:0;color:var(--ink-2)}
+#admForm{display:flex;flex-direction:column;gap:10px}
+#admForm label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--ink-2)}
+#admForm label.chk{flex-direction:row;align-items:center;gap:8px;color:var(--ink)}
+#admForm input:not([type=checkbox]),#admForm select,#admForm textarea{font:inherit;font-size:15px;font-weight:400;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink)}
+.adm-b{display:flex;gap:10px;flex-wrap:wrap}
+.adm-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.adm-l li{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--rule);border-radius:10px;padding:8px 10px}
+.adm-l button{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -640,6 +658,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 
 <div class="wallpaper" aria-hidden="true"></div>
 <div class="pfm" id="pfm" hidden></div>
+<div class="adm" id="adm" hidden></div>
 <div class="pide" id="pide" hidden role="dialog" aria-modal="true" aria-labelledby="pideT"><div class="pide-c"><div class="pide-i" aria-hidden="true">🔒</div><h2 id="pideT">Inicia sesión con Google</h2><p>Para acceder a los contenidos de 1 BACH tienes que entrar con tu cuenta de Google. Solo la primera vez: luego se queda guardado.</p><div class="pide-b"><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button><button class="btn-sec" data-pidecerrar>Ahora no</button></div></div></div>
 <input type="file" id="fotoIn" accept="image/*" hidden>
 <input type="file" id="chatFotoIn" accept="image/*" multiple hidden>
@@ -699,7 +718,7 @@ const triAbierto=n=>!ABRE_TRI[n]||Date.now()>=ABRE_TRI[n].getTime();
 function triActual(){return triAbierto(3)?3:triAbierto(2)?2:1}
 const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 function fechaCorta(f){const d=parseF(f);return d?{d:d.getDate(),m:MES[d.getMonth()]}:null}
-function link(r){const x=link0(r);return S.canWrite?`<span class="rw">${x}<button class="rx-del" type="button" data-ocultar="${esc(r.id)}" title="Quitar de aquí" aria-label="Quitar ${esc(r.titulo)}">×</button></span>`:x}
+function link(r){const x=link0(r);return S.canWrite?`<span class="rw" data-rid="${esc(r.id)}">${x}<button class="rx-del" type="button" data-ocultar="${esc(r.id)}" title="Quitar de aquí" aria-label="Quitar ${esc(r.titulo)}">×</button></span>`:x}
 function link0(r){const pg=(r.paginas||[]).filter(esDoc);
   if(pg.length)return `<button class="r ${r.claude?"hc":""}" data-doc="${esc(r.id)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span></button>`;
   if(r.examen)return `<button class="r ${r.claude?"hc":""}" data-exam="${esc(r.examen)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||"Examen")}</span><span class="n">${esc(r.titulo)}</span></button>`;
@@ -745,7 +764,7 @@ function examRow(e){const f=fechaCorta(e.fecha),d=dias(e.fecha),hp=hojas(e).leng
   else if(d<0)c=`<span class="count">Pasado</span>`;
   else c=`<span class="count ${d<=7?"soon":""}">${d===0?"Hoy":d===1?"Mañana":"En "+d+" días"}</span>`;
   const det=!e.hecho&&!hp?`data-det="${esc(e.id)}" role="button" tabindex="0" title="Ver qué entra"`:"";
-  return `<div class="exam" data-a="${e.asig}" ${hp?`data-exam="${esc(e.id)}" role="button" tabindex="0" title="Ver el examen"`:det}><div class="date">${f?`<b>${f.d}</b>${f.m}`:"—"}</div>
+  return `<div class="exam" data-exid="${esc(e.id)}" data-a="${e.asig}" ${hp?`data-exam="${esc(e.id)}" role="button" tabindex="0" title="Ver el examen"`:det}><div class="date">${f?`<b>${f.d}</b>${f.m}`:"—"}</div>
    <div class="t"><span class="chip-asig" data-a="${e.asig}">${esc(NOM[e.asig]||e.asig)}</span><b>${esc(e.titulo)}</b><span>${esc(e.alcance||"")}</span></div>${c}</div>`}
 
 function docCard(e){const f=fechaCorta(e.fecha),p=hojas(e);
@@ -799,7 +818,7 @@ function renderLeyenda(){
   const fila=(e,i)=>{const d=dias(e.fecha),f=fechaCorta(e.fecha),h=hrs(e);
     const u=d<=3?"u1":d<=7?"u2":"lejos";
     const ritmo=h?` · ≈${h} h${d>0?`, unas ${(Math.round(h/d*10)/10).toString().replace(".",",")} h/día`:""}`:"";
-    return `<div class="ce ${u} ${d<5?"urge":""}" data-a="${e.asig}" ${AN[e.asig]?`data-ir="${e.asig}" data-ex="${esc(e.id)}" role="button" tabindex="0" title="Ir a ${esc(AN[e.asig])}"`:""}><div class="num">${d===0?"HOY":d}<small>${d===0?"":d===1?"día":"días"}</small></div>
+    return `<div class="ce ${u} ${d<5?"urge":""}" data-exid="${esc(e.id)}" data-a="${e.asig}" ${AN[e.asig]?`data-ir="${e.asig}" data-ex="${esc(e.id)}" role="button" tabindex="0" title="Ir a ${esc(AN[e.asig])}"`:""}><div class="num">${d===0?"HOY":d}<small>${d===0?"":d===1?"día":"días"}</small></div>
       <div class="info"><span class="chip-asig" data-a="${e.asig}">${esc(NOM[e.asig]||e.asig)}</span><b>${esc(e.titulo)}</b><span class="m">${f.d} ${f.m}${ritmo}</span></div></div>`};
   const carga=up.filter(hrs).sort((a,b)=>hrs(b)-hrs(a)),max=Math.max(1,...carga.map(hrs));
   const total=up.filter(e=>dias(e.fecha)<=14).reduce((s,e)=>s+(hrs(e)||0),0);
@@ -905,7 +924,7 @@ function abrirFicha(id){const e=S.examenes.find(x=>x.id===id);if(!e)return;ficha
     ${aptsHTML(e)}
     ${rec.length?`<div style="display:flex;flex-direction:column;gap:8px"><h3>Material para estudiarlo</h3><div class="res">${rec.map(link).join("")}</div></div>`:""}
     ${S.practica.some(x=>x.examen===e.id)?`<div class="acciones"><button class="btn-empezar" data-practicar="${esc(e.id)}">Practicar el examen aquí</button></div>`:""}</div>`;
-  $("#ficha").hidden||history.pushState({modal:"f"},"");$("#ficha").hidden=false;document.body.style.overflow="hidden";$("#fcerrar").focus()}
+  $("#ficha").hidden||history.pushState({modal:"f"},"");$("#ficha").hidden=false;admDecorar();document.body.style.overflow="hidden";$("#fcerrar").focus()}
 function cerrarFicha(pop){if(pop!==true&&!$("#ficha").hidden&&history.state&&history.state.modal==="f"){history.back();return}$("#ficha").hidden=true;$("#ficha").innerHTML="";document.body.style.overflow="";fichaActual=null}
 let enfocar=null;
 
@@ -1015,6 +1034,52 @@ function abrirPerfil(id){if(!id)return;const lista=clasificacion(),pos=lista.fin
     ${id===S.uid?`<button class="btn-sec" data-go="perfil" data-pfmcerrar>Ir a mi perfil</button>`:`<button class="btn-p" style="--cf:var(--accent)" data-privado="${esc(id)}">💬 Enviar mensaje privado</button>`}</div>`;
   $("#pfm").hidden=false;history.pushState({modal:"p"},"")}
 function cerrarPerfil(pop){if($("#pfm").hidden)return;if(pop!==true&&history.state&&history.state.modal==="p"){history.back();return}$("#pfm").hidden=true;$("#pfm").innerHTML=""}
+
+// ---------- modo administrador: editar, borrar y añadir exámenes y materiales ----------
+const ADM_CAMPOS={examenes:[["asig","Asignatura","asig"],["titulo","Título","text"],["fecha","Fecha","date"],["alcance","Qué entra","area"],["horas","Horas de estudio (aprox.)","num"],["hecho","Ya hecho","check"]],
+  recursos:[["asig","Asignatura","asig"],["tri","Trimestre","tri"],["tema","Tema","tema"],["titulo","Título","text"],["nota","Descripción corta","text"],["url","Enlace (https://… o carpeta del portal, p. ej. verbos/)","text"]]};
+function admDecorar(){document.querySelectorAll(".admx,.adm-bar").forEach(x=>x.remove());if(!S.admin)return;
+  const pon=(sel,tipo,attr)=>document.querySelectorAll(sel).forEach(el=>{const id=el.getAttribute(attr);const b=document.createElement("span");b.className="admx";
+    b.innerHTML=`<button type="button" data-admedit="${tipo}:${esc(id)}" title="Editar">✏️</button><button type="button" data-admdel="${tipo}:${esc(id)}" title="Borrar para todos">🗑</button>`;el.append(b)});
+  pon("[data-exid]","examenes","data-exid");pon("[data-rid]","recursos","data-rid");
+  const f=document.querySelector("#ficha .ficha");if(f&&fichaActual){const b=document.createElement("div");b.className="admx admx-f";b.innerHTML=`<button type="button" data-admedit="examenes:${esc(fichaActual.id)}">✏️ Editar examen</button><button type="button" data-admdel="examenes:${esc(fichaActual.id)}">🗑 Borrar examen</button>`;f.insertBefore(b,f.children[1]||null)}
+  const v=$("#view");if(v&&!v.querySelector(".adm-bar")){const nb=(S.borradosEx||[]).length+(S.borradosRec||[]).length;const bar=document.createElement("div");bar.className="adm-bar";
+    bar.innerHTML=`<b>🛠 Modo administrador</b><span>Los cambios los ven todos al momento.</span><button type="button" data-admnew="examenes">+ Añadir examen</button><button type="button" data-admnew="recursos">+ Añadir material</button>${nb?`<button type="button" data-admpapelera>🗑 Borrados (${nb})</button>`:""}`;v.prepend(bar)}}
+function admModal(html){$("#adm").innerHTML=`<div class="adm-c" role="dialog" aria-modal="true">${html}</div>`;$("#adm").hidden=false;$("#adm").querySelector("input,select,textarea,button")?.focus()}
+function admCerrar(){$("#adm").hidden=true;$("#adm").innerHTML=""}
+function admForm(tipo,id){const nuevo=!id,o=nuevo?{asig:route()!=="resumen"&&AN[route()]?route():"ingles",tri:triActual(),hecho:false}:(tipo==="examenes"?S.examenes:S.recursos).find(x=>x.id===id)||{};
+  const temasDe2=a=>S.temas.filter(t=>t.asig===a);
+  const campo=([k,l,t])=>{const v=o[k]??"";
+    if(t==="asig")return `<label>${l}<select name="${k}">${[...ASIG.map(a=>[a.id,a.n]),...(tipo==="examenes"?[["global","Globales"]]:[])].map(([i,n])=>`<option value="${i}" ${i===v?"selected":""}>${esc(n)}</option>`).join("")}</select></label>`;
+    if(t==="tri")return `<label>${l}<select name="${k}">${[1,2,3].map(n=>`<option value="${n}" ${n==v?"selected":""}>${n}.º</option>`).join("")}</select></label>`;
+    if(t==="tema")return `<label>${l}<select name="${k}"><option value="">(sin tema)</option>${temasDe2(o.asig||"ingles").map(x=>`<option value="${esc(x.id)}" ${x.id===v?"selected":""}>${esc(x.titulo)}</option>`).join("")}</select></label>`;
+    if(t==="area")return `<label>${l}<textarea name="${k}" rows="3">${esc(v)}</textarea></label>`;
+    if(t==="check")return `<label class="chk"><input type="checkbox" name="${k}" ${v?"checked":""}> ${l}</label>`;
+    return `<label>${l}<input name="${k}" type="${t==="num"?"number":t==="date"?"date":"text"}" ${t==="num"?'step="0.5" min="0"':""} value="${esc(v)}"></label>`};
+  admModal(`<h2>${nuevo?"Añadir":"Editar"} ${tipo==="examenes"?"examen":"material"}</h2><form id="admForm" data-tipo="${tipo}" data-id="${esc(id||"")}">${ADM_CAMPOS[tipo].map(campo).join("")}
+    <div class="adm-b"><button type="submit" class="btn-p" style="--cf:var(--accent)">Guardar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`)}
+async function admGuardar(form){const tipo=form.dataset.tipo,id=form.dataset.id||("n"+Date.now().toString(36)),c={};
+  for(const [k,,t] of ADM_CAMPOS[tipo]){const el=form.elements[k];if(!el)continue;c[k]=t==="check"?el.checked:t==="num"?(el.value===""?null:Number(el.value)):t==="tri"?Number(el.value):el.value.trim()}
+  if(!c.titulo){toast("Pon un título.");return}
+  if(tipo==="recursos"&&c.url&&!/^https:\/\//.test(c.url)&&!/^[a-z0-9-]+\/([a-z0-9-]+\.html)?$/.test(c.url)){toast("El enlace tiene que empezar por https:// o ser una carpeta del portal (p. ej. verbos/).");return}
+  if(!form.dataset.id)c.nuevo=true;c.borrado=false;
+  try{await window.guardarCambio(tipo,id,c);admCerrar();toast("Guardado. Ya lo ven todos.")}catch(e){toast("No se ha podido guardar ("+(e.code||"error")+").")}}
+document.addEventListener("click",ev=>{if(!ev.target.closest)return;
+  const ed=ev.target.closest("[data-admedit]"),dl=ev.target.closest("[data-admdel]"),nw=ev.target.closest("[data-admnew]"),pp=ev.target.closest("[data-admpapelera]"),rs=ev.target.closest("[data-admrest]");
+  if(ev.target.closest("[data-admcerrar]")||ev.target.id==="adm"){ev.preventDefault();admCerrar();return}
+  if(!ed&&!dl&&!nw&&!pp&&!rs)return;ev.preventDefault();ev.stopImmediatePropagation();
+  if(ed){const [t,id]=ed.dataset.admedit.split(":");admForm(t,id);return}
+  if(nw){admForm(nw.dataset.admnew,null);return}
+  if(dl){const [t,id]=dl.dataset.admdel.split(":");const o=(t==="examenes"?S.examenes:S.recursos).find(x=>x.id===id)||{};
+    admModal(`<h2>¿Borrar ${t==="examenes"?"el examen":"el material"}?</h2><p>«${esc(o.titulo||id)}» desaparecerá para todos. Lo puedes recuperar luego en «Borrados».</p><div class="adm-b"><button type="button" class="btn-p" style="--cf:#d4231c" data-admok="${t}:${esc(id)}">Sí, borrar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div>`);return}
+  if(pp){const fila=(t,x)=>`<li><span>${t==="examenes"?"📅":"📎"} ${esc(x.titulo||x.id)}</span><button type="button" data-admrest="${t}:${esc(x.id)}">Recuperar</button></li>`;
+    admModal(`<h2>Borrados</h2><ul class="adm-l">${(S.borradosEx||[]).map(x=>fila("examenes",x)).join("")}${(S.borradosRec||[]).map(x=>fila("recursos",x)).join("")}</ul><div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
+  if(rs){const [t,id]=rs.dataset.admrest.split(":");window.guardarCambio(t,id,{borrado:false}).then(()=>{rs.closest("li").remove();toast("Recuperado.")}).catch(()=>toast("No se ha podido."));return}
+},true);
+document.addEventListener("click",ev=>{const ok=ev.target.closest&&ev.target.closest("[data-admok]");if(!ok)return;ev.stopImmediatePropagation();const [t,id]=ok.dataset.admok.split(":");
+  window.guardarCambio(t,id,{borrado:true}).then(()=>{admCerrar();if(fichaActual&&fichaActual.id===id)cerrarFicha();toast("Borrado.")}).catch(e=>toast("No se ha podido borrar ("+(e.code||"error")+")."))},true);
+document.addEventListener("submit",ev=>{if(ev.target.id!=="admForm")return;ev.preventDefault();admGuardar(ev.target)});
+document.addEventListener("change",ev=>{if(ev.target.form&&ev.target.form.id==="admForm"&&ev.target.name==="asig"){const sel=ev.target.form.elements.tema;if(sel)sel.innerHTML=`<option value="">(sin tema)</option>`+S.temas.filter(t=>t.asig===ev.target.value).map(x=>`<option value="${esc(x.id)}">${esc(x.titulo)}</option>`).join("")}});
 function renderAmigos(){const lista=clasificacion();
   const filas=lista.map((x,i)=>`<div class="rk ${x.id===S.uid?"yo-fila":""}" data-perfil="${esc(x.id)}" role="button" tabindex="0" title="Ver perfil"><span class="pos">${i<3?["🥇","🥈","🥉"][i]:i+1}</span>
     ${avatar(x.id,42)}
@@ -1120,7 +1185,7 @@ function render(){actualizarSplash();const r=route(),v=$("#view");
   {const f=document.getElementById("chatform");if(S.uid&&S.loaded&&f&&f.dataset.ruta===r){pintarChat();pintarTabsChat();return}}
   if(S.error){v.innerHTML=`<div class="sheet"><b>No se ha podido cargar el curso.</b><span class="muted">${esc(S.error)} Abre la página de nuevo en un rato.</span></div>`;return}
   if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">Cargando temas y exámenes…</span></div>`;return}
-  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r==="privados"?renderPrivados():r.startsWith("privado-")?renderPrivado(r.slice(8)):r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();if((r==="chat"||r.startsWith("privado-"))&&S.uid){pintarChat(true);pintarAdj()}
+  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r==="privados"?renderPrivados():r.startsWith("privado-")?renderPrivado(r.slice(8)):r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();admDecorar();if((r==="chat"||r.startsWith("privado-"))&&S.uid){pintarChat(true);pintarAdj()}
   if(enfocar&&r!=="resumen"){const el=document.querySelector(`[data-det="${CSS.escape(enfocar)}"],[data-exam="${CSS.escape(enfocar)}"]`);enfocar=null;
     if(el){el.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});el.classList.add("flash")}}}
 
@@ -1255,25 +1320,39 @@ render();
 <script type="module">
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado } from "./shared/fb.js";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }
 // Los exámenes son por la mañana: a las 14:00 del día del examen pasa a "hecho".
 const caducado = e => { const d = parseF(e.fecha); if (!d) return false; d.setHours(14, 0, 0, 0); return Date.now() >= d.getTime(); };
 let firmaCad = "";
+// cambios hechos por el administrador desde la web (clase/cambios), encima de data/clase.json
+let cambios = {};
+function mezclar(base, cb) {
+  const out = [], borr = [], vistos = new Set();
+  for (const x of base) { vistos.add(x.id); const c = cb[x.id]; const y = c ? { ...x, ...c } : { ...x }; (y.borrado ? borr : out).push(y); }
+  for (const id in cb) if (!vistos.has(id) && cb[id] && cb[id].nuevo) { const y = { id, temas: [], ...cb[id] }; (y.borrado ? borr : out).push(y); }
+  return [out, borr];
+}
+fs.onSnapshot(fs.doc(fdb, "clase", "cambios"), snap => { cambios = (snap.exists() && snap.data()) || {}; aplicar(); }, () => {});
+window.guardarCambio = (tipo, id, campos) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: { [id]: campos } }, { merge: true });
+S.admin = modoAdmin();
+document.addEventListener("admin1b", e => { S.admin = !!e.detail; render(); if (!$("#ficha").hidden) admDecorar(); });
 function aplicar() {
   if (!datos) return;
   const pt = prog.temas || {}, pp = prog.practica || {}, oc = prog.ocultos || {};
-  S.temas = datos.temas.map(t => ({ ...t, ...(pt[t.id] || {}) }));
-  S.examenes = datos.examenes.map(e => { const x = pp[e.id] ? { ...e, practica: pp[e.id] } : { ...e }; if (caducado(x)) x.hecho = true; return x; });
+  const [exs, exB] = mezclar(datos.examenes, cambios.examenes || {}), [recs, recB] = mezclar(datos.recursos, cambios.recursos || {});
+  S.borradosEx = exB; S.borradosRec = recB;
+  S.temas = datos.temas.map(t => ({ ...t, ...((cambios.temas || {})[t.id] || {}), ...(pt[t.id] || {}) }));
+  S.examenes = exs.map(e => { const x = pp[e.id] ? { ...e, practica: pp[e.id] } : { ...e }; if (caducado(x)) x.hecho = true; return x; });
   firmaCad = S.examenes.filter(e => e.hecho).map(e => e.id).join();
-  S.recursos = datos.recursos.filter(r => !oc[r.id]);
-  S.ocultos = datos.recursos.filter(r => oc[r.id]);
+  S.recursos = recs.filter(r => !oc[r.id]);
+  S.ocultos = recs.filter(r => oc[r.id]);
   S.vocab = datos.vocab || []; S.practica = datos.practica || []; S.fallos = [];
   S.loaded = true; S.error = null; render();
 }
-setInterval(() => { if (!datos) return; const f = datos.examenes.filter(e => e.hecho || caducado(e)).map(e => e.id).join(); if (f !== firmaCad) aplicar(); }, 60000);
+setInterval(() => { if (!datos) return; const f = (S.examenes || []).filter(e => e.hecho || caducado(e)).map(e => e.id).join(); if (f !== firmaCad) aplicar(); }, 60000);
 // Mismo "db" que usaba el panel, pero cada uno guarda SU progreso en progreso/{uid}
 function adaptador(uid) {
   const ref = () => fs.doc(fdb, "progreso", uid);

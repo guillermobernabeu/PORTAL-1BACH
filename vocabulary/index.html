@@ -63,6 +63,12 @@ form.add input,form.add select,form.add textarea{border:1.5px solid var(--rule);
 .autor img{width:100%;height:100%;object-fit:cover;display:block}
 .row .acts{margin-right:18px}
 main{min-height:60vh}
+.admbar{position:absolute;top:10px;right:26px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.admbar button{padding:4px 10px!important;font-size:12px!important}
+.admbar .admt{font:800 11px system-ui;letter-spacing:.06em;text-transform:uppercase;color:#c3132b}
+.admbar button{font:700 13px system-ui;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.admbar button:last-child{border-color:#e5231b;color:#c3132b}
+.borradas{margin-top:18px;display:flex;flex-direction:column;gap:6px;padding:12px;border:1.5px dashed #e5231b;border-radius:14px}
 .lista-link{display:inline-block;margin-top:8px;font-weight:700;color:var(--acc);text-decoration:none}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
@@ -134,7 +140,7 @@ function pick(p){let w=p[Math.floor(Math.random()*p.length)];if(S.q&&p.length>1&
 function nueva(){stats();S.done=false;main.textContent="";
  if(S.tab==="list")return lista();if(S.tab==="clase")return clase();if(S.tab==="add")return anadir();
  const p=pool();if(!p.length){const c=el("div","card");c.append(el("p","empty",S.words.length?(S.soloF?"No tienes fallos guardados en estos bloques.":"No hay palabras en los bloques elegidos."):"Todavía no hay palabras."));main.append(c);return}
- const w=S.q=pick(p);const c=el("div","card");main.append(c);autor(c,w);c.append(el("span","tag",w.bloque||"Otras"));
+ const w=S.q=pick(p);const c=el("div","card");main.append(c);autor(c,w);admBar(c,w);c.append(el("span","tag",w.bloque||"Otras"));
  if(S.tab==="wd")return tipoTest(c,w,p);
  const dw=S.tab==="dw";
  c.append(el("p","ask",dw?"¿Qué palabra es?":"¿Cómo se dice en inglés?"));
@@ -170,20 +176,26 @@ function lista(){const c=el("div");main.append(c);const s=el("input","search");s
    if(S.db&&(w.por===S.me||S.owner)&&w.por!=="lista"||S.owner){const ed=el("button",null,"Editar");ed.onclick=()=>anadir(w);const dl=el("button",null,"Borrar");dl.onclick=async()=>{if(!confirmar(dl))return;try{await S.db.collection("palabras").doc(w.id).delete()}catch(e){dl.textContent="No se pudo"}};a.append(ed,dl)}
    r.append(a);r.append(el("span","es",w.es));r.append(el("span","de",w.def));
    r.append(el("span","by",(w.bloque||"Otras")+" · "+(w.por==="lista"?"lista de clase":"añadida por "+(w.por===S.me?"ti":((S.users[w.por]&&S.users[w.por].nombre)||w.porNombre||"un compañero")))));L.append(r)}};
+ if(S.owner&&S.db&&(S.borradas||[]).length){const bx=el("div","borradas");bx.append(el("p","prompt","🗑 Palabras eliminadas ("+S.borradas.length+")"));
+  for(const w of S.borradas){const r=el("div","row");r.append(el("span","en",w.en));const a=el("div","acts");const rb=el("button",null,"Recuperar");rb.onclick=async()=>{rb.disabled=true;try{await S.db.collection("palabras").doc(w.id).recuperar()}catch(e){rb.textContent="No se pudo";rb.disabled=false}};a.append(rb);r.append(a);r.append(el("span","es",w.es));bx.append(r)}c.append(bx)}
  s.oninput=pinta;pinta();nombres([...new Set(S.words.map(w=>w.por).filter(x=>x&&x!=="lista"&&!S.names[x]))]).then(pinta)}
 function autor(box,w){if(!w.por||w.por==="lista")return;const u=S.users[w.por]||{},n=u.nombre||w.porNombre||"Un compañero",f=u.fotoPropia||u.fotoGoogle||"";
  const a=el("span","autor");a.title="Añadida por "+(w.por===S.me?"ti":n);
  if(f){const i=el("img");i.src=f;i.alt="";i.referrerPolicy="no-referrer";a.append(i)}else a.textContent=n.charAt(0).toUpperCase();box.append(a)}
+function admBar(c,w){if(!S.owner||!S.db)return;const b=el("div","admbar");b.append(el("span","admt","🛠 Admin"));
+ const ed=el("button",null,"✏️ Editar");ed.onclick=()=>anadir(w);
+ const dl=el("button",null,"🗑 Eliminar palabra");dl.onclick=async()=>{if(!confirmar(dl))return;dl.disabled=true;try{await S.db.collection("palabras").doc(w.id).delete();S.q=null;nueva()}catch(e){dl.textContent="No se pudo";dl.disabled=false}};
+ b.append(ed,dl);c.append(b)}
 function confirmar(b){if(b.dataset.c)return true;b.dataset.c=1;b.textContent="¿Seguro? Pulsa otra vez";return false}
 function anadir(w){S.tab="add";document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.t==="add")));main.textContent="";
  const c=el("div","card");main.append(c);c.append(el("p","prompt",w?"Editar palabra":"Añadir una palabra para toda la clase"));
  if(!S.db){c.append(el("p","msg err","Para añadir palabras tienes que entrar con tu cuenta de Google."));return}
  const f=el("form","add");c.append(f);
  const campo=(lab,tag,ph,val)=>{const l=el("label",null,lab);const i=el(tag);if(ph)i.placeholder=ph;if(val)i.value=val;l.append(i);f.append(l);return i};
- const en=campo("Palabra en inglés","input","p. ej. to look up to",w&&w.en),es=campo("Traducción al español","input","p. ej. admirar",w&&w.es),de=campo("Definición en inglés","textarea","p. ej. to admire and respect someone",w&&w.def);
+ const en=campo("Palabra en inglés","input","p. ej. to look up to",w&&w.en),es=campo("Traducción al español","input","p. ej. admirar",w&&w.es),de=campo("Definición en inglés","textarea","p. ej. to admire and respect someone",w&&w.def);const okf=S.owner?campo("🛠 Otras respuestas que valen (separadas por comas)","input","p. ej. luggage, bags",(w&&w.ok||[]).join(", ")):null;
  const lb=el("label",null,"Bloque"),sel=el("select");for(const b of BLOQUES){const o=el("option",null,b);o.value=b;sel.append(o)}sel.value=(w&&w.bloque)||"Otras";lb.append(sel);f.append(lb);
  const msg=el("p","msg");const bt=el("button","btn",w?"Guardar cambios":"Añadir palabra");bt.type="submit";f.append(bt,msg);
- f.onsubmit=async e=>{e.preventDefault();const d={en:en.value.trim().slice(0,80),es:es.value.trim().slice(0,120),def:de.value.trim().slice(0,300),bloque:sel.value};
+ f.onsubmit=async e=>{e.preventDefault();const d={en:en.value.trim().slice(0,80),es:es.value.trim().slice(0,120),def:de.value.trim().slice(0,300),bloque:sel.value};if(okf)d.ok=okf.value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,25);
   if(!d.en||!d.def){msg.className="msg err";msg.textContent="Pon al menos la palabra y la definición.";return}
   if(!w&&S.words.some(x=>norm(x.en)===norm(d.en))){msg.className="msg err";msg.textContent="Esa palabra ya está en la lista.";return}
   bt.disabled=true;msg.className="msg";msg.textContent="Guardando…";
@@ -198,7 +210,7 @@ $("#go").onclick=abrir;addEventListener("keydown",k);
 <script type="module">
 // La lista de clase va en palabras.js (SEED): funciona siempre, con o sin cuenta.
 // Con cuenta se suman las palabras que añade la clase (Firestore) y se guarda el progreso.
-import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso, exigirCuenta } from "../shared/fb.js";
+import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso, exigirCuenta, modoAdmin } from "../shared/fb.js";
 exigirCuenta();
 import { iniciarLateral } from "../shared/lateral.js";
 iniciarLateral({ recurso: "p-vocab", stats: () => { const c = cuenta(); return { dom: c.dom, ctrl: c.ctrl, total: S.words.length }; } });
@@ -210,14 +222,19 @@ let remotas = [];
 function juntar() {
   const m = new Map(BASE.map(w => [w.id, w]));
   for (const w of remotas) m.set(w.id, { ...(m.get(w.id) || {}), ...w });
-  S.words = [...m.values()];
+  const todas = [...m.values()];
+  S.words = todas.filter(w => !w.borrada); S.borradas = todas.filter(w => w.borrada);
   if (!document.getElementById("app").hidden) { if (S.tab === "list" || !S.q) nueva(); else stats(); }
 }
 juntar();
 const DBW = { collection: () => ({
-  doc: (id) => ({ delete: () => fs.deleteDoc(fs.doc(db, COL, id)), update: (d) => fs.setDoc(fs.doc(db, COL, id), d, { merge: true }) }),
+  doc: (id) => ({ delete: () => BASE.some(w => w.id === id) ? fs.setDoc(fs.doc(db, COL, id), { borrada: true }, { merge: true }) : fs.deleteDoc(fs.doc(db, COL, id)),
+    recuperar: () => fs.setDoc(fs.doc(db, COL, id), { borrada: false }, { merge: true }), update: (d) => fs.setDoc(fs.doc(db, COL, id), d, { merge: true }) }),
   add: (d) => fs.addDoc(fs.collection(db, COL), d)
 }) };
+// modo administrador: editar y eliminar cualquier palabra
+S.owner = modoAdmin();
+document.addEventListener("admin1b", e => { S.owner = !!e.detail; if (!document.getElementById("app").hidden) nueva(); });
 gbtn.onclick = () => entrar().catch(e => who.textContent = "No se pudo entrar (" + e.code + ").");
 let quitar = [];
 function enviarVocab() {
