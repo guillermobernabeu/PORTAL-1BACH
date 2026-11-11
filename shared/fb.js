@@ -94,3 +94,57 @@ export function exigirCuenta() {
   mira(); setInterval(mira, 45000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) mira(); });
 })();
+// ---------- botón de casa (vuelve al inicio) en todas las páginas ----------
+const RAIZ = new URL("../", import.meta.url);
+(() => {
+  const st = document.createElement("style");
+  st.textContent = `.casa-1b{position:fixed;top:10px;left:10px;z-index:95;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.72);color:#8a919e;border:1px solid rgba(0,0,0,.08);box-shadow:0 1px 4px rgba(0,0,0,.12);text-decoration:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:color .15s,background .15s}
+.casa-1b:hover,.casa-1b:focus-visible{color:#141a2e;background:#fff}.casa-1b svg{width:19px;height:19px}
+.casa-1b[hidden]{display:none}
+.casa-1b.abajo{top:auto;left:12px;bottom:calc(136px + env(safe-area-inset-bottom,0px));width:40px;height:40px;background:rgba(255,255,255,.85)}
+@media (min-width:1024px){.casa-1b.abajo{bottom:66px}}
+.aviso-1b{position:fixed;left:50%;top:12px;transform:translate(-50%,-140%);z-index:9998;display:flex;align-items:center;gap:10px;max-width:min(92vw,460px);background:#141a2e;color:#fff;border-radius:16px;padding:11px 14px 11px 12px;box-shadow:0 10px 30px rgba(0,0,0,.4);font:600 14px/1.35 system-ui,sans-serif;cursor:pointer;transition:transform .35s ease}
+.aviso-1b.ver{transform:translate(-50%,0)}.aviso-1b b{color:#ffd75e}.aviso-1b .ic{font-size:22px}.aviso-1b img,.aviso-1b .av{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none;background:#3b4258;display:grid;place-items:center;font-weight:800}`;
+  document.head.append(st);
+  const a = document.createElement("a"); a.className = "casa-1b"; a.href = RAIZ.href; a.title = "Inicio"; a.setAttribute("aria-label", "Ir al inicio");
+  a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>';
+  const enPortal = location.pathname === RAIZ.pathname || location.pathname === RAIZ.pathname + "index.html";
+  if (enPortal) {
+    a.onclick = (e) => { e.preventDefault(); const f = document.getElementById("pfm"); if (f) f.hidden = true; if (location.hash) location.hash = ""; window.scrollTo({ top: 0 }); };
+    const ver = () => { a.hidden = !location.hash || location.hash === "#" || document.body.classList.contains("con-splash"); };
+    addEventListener("hashchange", ver); new MutationObserver(ver).observe(document.body, { attributes: true, attributeFilter: ["class"] }); ver();
+  }
+  if (document.querySelector(".b1-back")) a.classList.add("abajo");
+  document.body.append(a);
+})();
+// ---------- aviso cuando alguien te adelanta en el ranking ----------
+function avisar(html, ir) {
+  const d = document.createElement("div"); d.className = "aviso-1b"; d.setAttribute("role", "status"); d.innerHTML = html;
+  d.onclick = () => { location.href = RAIZ.href + "#" + ir; d.remove(); };
+  document.body.append(d); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("ver")));
+  setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, 7000);
+}
+const APPS_R = ["vocab", "verbos", "afijos", "wf"];
+const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
+const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+let quitarRank = null;
+onAuthStateChanged(auth, (u) => {
+  if (quitarRank) { quitarRank(); quitarRank = null; }
+  if (!u) return;
+  const clave = "rankDelante_" + u.uid;
+  quitarRank = fs.onSnapshot(fs.collection(db, "progreso"), async (snap) => {
+    const pts = {}; snap.docs.forEach(d => pts[d.id] = ptsDe(d.data()));
+    const mios = pts[u.uid] || 0;
+    const delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > mios);
+    let antes = null; try { antes = JSON.parse(localStorage.getItem(clave) || "null"); } catch (e) {}
+    try { localStorage.setItem(clave, JSON.stringify(delante)); } catch (e) {}
+    if (!Array.isArray(antes)) return;
+    const nuevos = delante.filter(id => !antes.includes(id));
+    if (!nuevos.length) return;
+    const yo = delante.length + 1;
+    const datos = await Promise.all(nuevos.slice(0, 3).map(id => fs.getDoc(fs.doc(db, "usuarios", id)).then(s => s.exists() ? s.data() : {}).catch(() => ({}))));
+    const n0 = datos[0] || {}, nom = n0.nombre || n0.nombreGoogle || "Alguien", foto = n0.fotoPropia || n0.fotoGoogle || "";
+    const quien = nuevos.length === 1 ? `<b>${escH(nom)}</b> te ha adelantado` : `<b>${escH(nom)}</b> y ${nuevos.length - 1} más te han adelantado`;
+    avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom.charAt(0).toUpperCase())}</span>`}<span>⚠️ ${quien} en el ranking. Ahora vas <b>${yo}.º</b> — ¡a estudiar!</span>`, "amigos");
+  }, () => {});
+});

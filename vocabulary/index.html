@@ -7,7 +7,7 @@
 :root[data-theme=dark]{--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
 [hidden]{display:none!important}
-.claude{position:fixed;top:12px;left:12px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #c3132b;color:#c3132b;border-radius:999px;background:var(--paper)}
+.claude{position:fixed;top:14px;left:56px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #c3132b;color:#c3132b;border-radius:999px;background:var(--paper)}
 #start{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
 #start h1{margin:0;font-size:clamp(30px,7vw,52px);letter-spacing:-.02em}#start p{margin:0;color:var(--ink2)}
 .go{font:700 20px/1 system-ui;padding:15px 44px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
@@ -66,7 +66,7 @@ main{min-height:60vh}
 .lista-link{display:inline-block;margin-top:8px;font-weight:700;color:var(--acc);text-decoration:none}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
-<section id="start"><a href="../" class="vback1" style="position:fixed;top:44px;left:12px;color:var(--acc);font-weight:700;text-decoration:none">← Volver</a><h1>Vocabulary 1st Term</h1><p>Definición ↔ palabra · 1.º Bachillerato · lista compartida de la clase</p><button class="go" id="go">Empezar</button></section>
+<section id="start"><a href="../" class="vback1" style="position:fixed;top:56px;left:12px;color:var(--acc);font-weight:700;text-decoration:none">← Volver</a><h1>Vocabulary 1st Term</h1><p>Definición ↔ palabra · 1.º Bachillerato · lista compartida de la clase</p><button class="go" id="go">Empezar</button></section>
 <div class="wrap" id="app" hidden>
 <header><p style="margin:0 0 6px"><a href="../" class="vback1" style="color:var(--acc);font-weight:700;text-decoration:none">← Volver</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p><a class="lista-link" href="lista.html">📄 Ver la lista completa</a><button class="btn sec" id="gbtn" hidden style="margin-top:8px;height:38px">Entrar con Google</button></header>
 <div id="login" hidden></div>
