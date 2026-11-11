@@ -200,6 +200,8 @@ $("#go").onclick=abrir;addEventListener("keydown",k);
 // Con cuenta se suman las palabras que añade la clase (Firestore) y se guarda el progreso.
 import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso, exigirCuenta } from "../shared/fb.js";
 exigirCuenta();
+import { iniciarLateral } from "../shared/lateral.js";
+iniciarLateral({ recurso: "p-vocab", stats: () => { const c = cuenta(); return { dom: c.dom, ctrl: c.ctrl, total: S.words.length }; } });
 const COL = "vocabulary_palabras";
 const who = document.getElementById("who"), gbtn = document.getElementById("gbtn");
 document.getElementById("login").hidden = true;

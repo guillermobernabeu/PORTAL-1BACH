@@ -125,7 +125,7 @@ function avisar(html, ir) {
   setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, 7000);
 }
 const APPS_R = ["vocab", "verbos", "afijos", "wf"];
-const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
+export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;
 onAuthStateChanged(auth, (u) => {
@@ -134,6 +134,7 @@ onAuthStateChanged(auth, (u) => {
   const clave = "rankDelante_" + u.uid;
   quitarRank = fs.onSnapshot(fs.collection(db, "progreso"), async (snap) => {
     const pts = {}; snap.docs.forEach(d => pts[d.id] = ptsDe(d.data()));
+    window.__rank1b = pts; document.dispatchEvent(new CustomEvent("rank1b", { detail: pts }));
     const mios = pts[u.uid] || 0;
     const delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > mios);
     let antes = null; try { antes = JSON.parse(localStorage.getItem(clave) || "null"); } catch (e) {}
@@ -145,6 +146,34 @@ onAuthStateChanged(auth, (u) => {
     const datos = await Promise.all(nuevos.slice(0, 3).map(id => fs.getDoc(fs.doc(db, "usuarios", id)).then(s => s.exists() ? s.data() : {}).catch(() => ({}))));
     const n0 = datos[0] || {}, nom = n0.nombre || n0.nombreGoogle || "Alguien", foto = n0.fotoPropia || n0.fotoGoogle || "";
     const quien = nuevos.length === 1 ? `<b>${escH(nom)}</b> te ha adelantado` : `<b>${escH(nom)}</b> y ${nuevos.length - 1} más te han adelantado`;
+    if (concentracion()) return;
     avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom.charAt(0).toUpperCase())}</span>`}<span>⚠️ ${quien} en el ranking. Ahora vas <b>${yo}.º</b> — ¡a estudiar!</span>`, "amigos");
   }, () => {});
+});
+
+// ---------- modo concentración y avisos del chat ----------
+export const concentracion = () => { try { return localStorage.getItem("concentracion") === "1"; } catch (e) { return false; } };
+export function ponerConcentracion(v) { try { localStorage.setItem("concentracion", v ? "1" : "0"); } catch (e) {} document.documentElement.classList.toggle("concentracion-1b", !!v); document.dispatchEvent(new CustomEvent("concentracion1b", { detail: !!v })); }
+document.documentElement.classList.toggle("concentracion-1b", concentracion());
+const enPortal1b = location.pathname === RAIZ.pathname || location.pathname === RAIZ.pathname + "index.html";
+async function quienEs(id) { try { const s = await fs.getDoc(fs.doc(db, "usuarios", id)); return s.exists() ? s.data() : {}; } catch (e) { return {}; } }
+async function avisoMensaje(uid, texto, ir, priv) {
+  if (concentracion()) return;
+  const h = location.hash.slice(1);
+  if (enPortal1b && (h === ir || (ir === "chat" && h === "chat"))) return;
+  const u = await quienEs(uid), nom = u.nombre || u.nombreGoogle || "Alguien", foto = u.fotoPropia || u.fotoGoogle || "";
+  avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom.charAt(0).toUpperCase())}</span>`}<span>${priv ? "🔒" : "💬"} <b>${escH(nom)}</b>${priv ? " te ha escrito" : " en el chat"}: ${escH(String(texto || "📷 Foto").slice(0, 90))}</span>`, ir);
+}
+let quitarAvisos = [];
+onAuthStateChanged(auth, (u) => {
+  quitarAvisos.forEach(f => f()); quitarAvisos = [];
+  if (!u) return;
+  const inicio = Date.now(); let ultChat = inicio; const ultPriv = {};
+  quitarAvisos.push(fs.onSnapshot(fs.query(fs.collection(db, "chat"), fs.orderBy("t"), fs.limitToLast(1)), snap => {
+    snap.docs.forEach(d => { const m = d.data(); if ((m.t || 0) > ultChat && m.uid !== u.uid) { ultChat = m.t; avisoMensaje(m.uid, m.texto, "chat", false); } });
+  }, () => {}));
+  quitarAvisos.push(fs.onSnapshot(fs.query(fs.collection(db, "privados"), fs.where("miembros", "array-contains", u.uid)), snap => {
+    snap.docs.forEach(d => { const c = d.data(), m = c.ultimo || {}; if (!m.t || m.uid === u.uid || m.t <= inicio || m.t <= (ultPriv[d.id] || 0)) return;
+      ultPriv[d.id] = m.t; avisoMensaje(m.uid, m.texto, "privado-" + m.uid, true); });
+  }, () => {}));
 });
