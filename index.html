@@ -588,9 +588,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .reco-v{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--ink-2)}.reco-a.sin{grid-template-columns:minmax(0,1fr) auto 14px}
 .reco-go{font-weight:800;color:var(--accent)}
 
-.lider{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:14px;padding:10px 14px;cursor:pointer;background:linear-gradient(90deg,#ffd75e,#ffb627);color:#2a1d00;font:inherit;font-size:15px;box-shadow:0 8px 22px rgba(0,0,0,.3)}
-.lider-i{font-size:24px}.lider-t{flex:1;min-width:0}.lider-go{font-weight:800}
-.lider .ava{border:2px solid #fff}
+.lider{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;background:#ffd75e;color:#2a1d00;font-size:12.5px;font-weight:800;vertical-align:1px}
 .hoy-p{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--ok);text-align:right;font-family:var(--f-body)}
 
 .ctabs2{display:flex;gap:8px}
@@ -932,7 +930,7 @@ function renderResumen(){
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div>${renderLider()}${renderRecos()}<nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}${renderLider()}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav>${renderRecos()}<div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
@@ -941,10 +939,10 @@ function pctApp(p,k){const a=p&&p.apps&&p.apps[k];return a&&a.total?Math.min(1,a
 function hoyStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function puntosHoy(p){const h=hoyStr();return Math.max(0,Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||a.dia!==h||!a.total)return s;return s+Math.max(0,(a.ok-(a.ok0||0))/a.total)*100},0)))}
 function renderLider(){if(!S.uid)return "";const us=S.amigos||{},pr=S.rank||{};
-  const l=Object.keys(us).map(id=>({id,h:puntosHoy(pr[id])})).filter(x=>x.h>0).sort((a,b)=>b.h-a.h||nombreDe(a.id).localeCompare(nombreDe(b.id)));
-  if(!l.length)return `<button class="lider" data-go="amigos"><span class="lider-i" aria-hidden="true">🏆</span><span class="lider-t">En el ranking de hoy todavía no ha sumado nadie. <b>¡Sé el primero!</b></span></button>`;
-  const g=l[0],yo=l.findIndex(x=>x.id===S.uid);
-  return `<button class="lider" data-go="amigos"><span class="lider-i" aria-hidden="true">🏆</span>${avatar(g.id,30)}<span class="lider-t">En el ranking de hoy va ganando <b>${esc(g.id===S.uid?"tú":(nombreDe(g.id)||"alguien"))}</b> con <b>${g.h} pts</b>${g.id!==S.uid?(yo>=0?` · tú vas ${yo+1}.º con ${l[yo].h}`:" · tú aún no has sumado hoy"):""}</span><span class="lider-go" aria-hidden="true">→</span></button>`}
+  const hoy=Object.keys(us).map(id=>({id,v:puntosHoy(pr[id])})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  const tot=Object.keys(us).map(id=>({id,v:puntos(pr[id])})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+  const g=(hoy[0]||tot[0]);if(!g)return "";
+  return `<span class="lider" title="${hoy.length?"Va primero en el ranking de hoy":"Va primero en el ranking"}">🏆 ${esc(g.id===S.uid?"Tú":(nombreDe(g.id)||"Alguien"))} en cabeza${hoy.length?" hoy":""}</span>`}
 function puntos(p){return Math.round(APPS.reduce((s,[k])=>s+pctApp(p,k)*100,0))}
 function nombreDe(id){const u=(S.amigos||{})[id]||{};return u.nombre||u.nombreGoogle||(id===S.uid?S.nombreCompleto:"")||""}
 function fotoDe(id){const u=(S.amigos||{})[id]||{};return u.fotoPropia||u.fotoGoogle||(id===S.uid?S.foto:"")||""}

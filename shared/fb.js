@@ -75,3 +75,22 @@ export function exigirCuenta() {
   const t = setTimeout(ir, 8000);
   onAuthStateChanged(auth, (u) => { clearTimeout(t); if (u) html.style.visibility = ""; else ir(); });
 }
+// Se actualiza sola: cuando se publica una versión nueva (version.json cambia), la página se recarga
+// (si estás escribiendo algo, espera a que termines).
+(() => {
+  const url = new URL("../version.json", import.meta.url).href; let v0 = null, pend = false;
+  const escribiendo = () => { const a = document.activeElement; return a && /^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName) && a.value; };
+  const recargar = () => {
+    if (escribiendo()) { setTimeout(recargar, 8000); return; }
+    const b = document.createElement("div"); b.textContent = "Hay una versión nueva · actualizando…";
+    b.style.cssText = "position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:9999;background:#141a2e;color:#fff;font:700 14px system-ui,sans-serif;padding:10px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.35)";
+    document.body.append(b); setTimeout(() => location.reload(), 900);
+  };
+  const mira = async () => {
+    if (pend) return;
+    try { const j = await (await fetch(url + "?t=" + Date.now(), { cache: "no-store" })).json();
+      if (v0 == null) v0 = j.v; else if (j.v !== v0) { pend = true; recargar(); } } catch (e) {}
+  };
+  mira(); setInterval(mira, 45000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) mira(); });
+})();
