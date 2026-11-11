@@ -563,6 +563,13 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .lb img{max-width:100%;max-height:100%;border-radius:8px}
 .lb-x{position:fixed;top:12px;left:12px;border:1px solid rgba(255,255,255,.5);background:none;color:#fff;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer}
 .claude-ov{font-weight:700}
+
+.aviso-cuenta{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:rgba(255,255,255,.95);color:#141a2e;border-radius:14px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.aviso-cuenta span{font-size:15px}
+.pide{position:fixed;inset:0;z-index:80;background:rgba(8,12,26,.6);display:grid;place-items:center;padding:16px;backdrop-filter:blur(3px)}
+.pide-c{width:min(420px,100%);background:var(--sheet,#fff);color:var(--ink);border-radius:18px;padding:26px 24px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.pide-i{font-size:38px}.pide-c h2{margin:0;font-size:22px}.pide-c p{margin:0;color:var(--ink-2)}
+.pide-b{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:4px}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -588,6 +595,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 </style>
 
 <div class="wallpaper" aria-hidden="true"></div>
+<div class="pide" id="pide" hidden role="dialog" aria-modal="true" aria-labelledby="pideT"><div class="pide-c"><div class="pide-i" aria-hidden="true">🔒</div><h2 id="pideT">Inicia sesión con Google</h2><p>Para acceder a los contenidos de 1 BACH tienes que entrar con tu cuenta de Google. Solo la primera vez: luego se queda guardado.</p><div class="pide-b"><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button><button class="btn-sec" data-pidecerrar>Ahora no</button></div></div></div>
 <input type="file" id="fotoIn" accept="image/*" hidden>
 <input type="file" id="chatFotoIn" accept="image/*" multiple hidden>
 <div class="lb" id="lb" hidden role="dialog" aria-label="Foto"><button class="lb-x" type="button" aria-label="Volver">← Volver</button><img id="lbImg" alt=""></div>
@@ -862,7 +870,7 @@ function renderResumen(){
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home"><div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.sinLeer?`<span class="badge">${S.sinLeer>99?"99+":S.sinLeer}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.sinLeer?`<span class="badge">${S.sinLeer>99?"99+":S.sinLeer}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
@@ -878,9 +886,9 @@ function clasificacion(){const us=S.amigos||{},pr=S.rank||{};
 function barrasApps(p){return `<div class="rk-apps">${APPS.map(([k,t])=>{const v=Math.round(pctApp(p,k)*100),a=p&&p.apps&&p.apps[k];
   return `<span title="${t}: ${a?a.ok+" de "+a.total:"sin empezar"}"><i style="width:${v}%"></i><em>${t} ${v}%</em></span>`}).join("")}</div>`}
 
-function renderEntra(r){const t={amigos:"Amigos y ranking",perfil:"Tu perfil",chat:"Chat"}[r];
+function renderEntra(r){const t={amigos:"Amigos y ranking",perfil:"Tu perfil",chat:"Chat"}[r]||(AN[r]?AN[r]:"Contenido del curso");
   return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button><section class="sheet entra"><header><h2>${t}</h2></header>
-   <p>Para ${r==="chat"?"leer y escribir en el chat":r==="perfil"?"tener perfil y sumar puntos":"ver a la clase y el ranking"} tienes que entrar con tu cuenta de Google. Solo una vez: se queda guardado.</p>
+   <p>🔒 Para acceder a los contenidos, inicia sesión con Google. Solo la primera vez: se queda guardado.</p>
    <button class="btn-p" data-login style="--cf:var(--accent);align-self:flex-start">Entrar con Google</button></section></div>`}
 const MAXF=3;window.ADJ=window.ADJ||[];
 function pintarAdj(){const a=document.getElementById("chatAdj");if(!a)return;a.innerHTML=window.ADJ.map((u,i)=>`<span class="adj"><img src="${u}" alt=""><button type="button" data-quitaadj="${i}" aria-label="Quitar foto">×</button></span>`).join("")}
@@ -991,6 +999,16 @@ async function marcarOculto(id,v){const lista=v?S.recursos:S.ocultos,r=lista.fin
   if(v){S.recursos=S.recursos.filter(x=>x!==r);r.oculto=true;S.ocultos.push(r)}else{S.ocultos=S.ocultos.filter(x=>x!==r);r.oculto=false;S.recursos.push(r)}
   render();toast(v?"Quitado. Lo puedes restaurar abajo del todo, en «Documentos eliminados».":"Restaurado en su sitio.");
   try{await db.collection("recursos").doc(id).update({oculto:v})}catch(e){toast("No se ha guardado el cambio. Inténtalo otra vez.")}}
+// Sin cuenta: se ve la pantalla principal, pero cualquier contenido pide entrar con Google
+window.pideCuenta=()=>{$("#pide").hidden=false;$("#pide [data-login]").focus()};
+document.addEventListener("click",ev=>{if(S.uid||!ev.target.closest)return;
+  if(ev.target.closest("[data-login]")){$("#pide").hidden=true;return}
+  if(ev.target.closest("[data-pidecerrar]")||ev.target.id==="pide"){$("#pide").hidden=true;ev.stopPropagation();return}
+  if(ev.target.closest("#splash"))return;
+  const go=ev.target.closest("[data-go]");if(go&&go.dataset.go==="resumen")return;
+  const bloq=ev.target.closest("[data-go],[data-a],[data-det],[data-ir],[data-dia],[data-exam],[data-doc],[data-apt],a[href]:not([href^='#'])");
+  if(bloq){ev.preventDefault();ev.stopImmediatePropagation();window.pideCuenta()}},true);
+addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#pide").hidden)$("#pide").hidden=true});
 document.addEventListener("click",ev=>{const a=ev.target.closest&&ev.target.closest("[data-ocultar]");if(a){ev.preventDefault();ev.stopPropagation();marcarOculto(a.dataset.ocultar,true);return}
   const b=ev.target.closest&&ev.target.closest("[data-restaurar]");if(b){abiertaPap=true;marcarOculto(b.dataset.restaurar,false)}},true);
 document.addEventListener("toggle",ev=>{if(ev.target.classList&&ev.target.classList.contains("papelera"))abiertaPap=ev.target.open},true);
@@ -999,7 +1017,7 @@ function render(){actualizarSplash();const r=route(),v=$("#view");
   if(r==="chat"&&S.uid&&S.loaded&&document.getElementById("chatform")){pintarChat();return}
   if(S.error){v.innerHTML=`<div class="sheet"><b>No se ha podido cargar el curso.</b><span class="muted">${esc(S.error)} Abre la página de nuevo en un rato.</span></div>`;return}
   if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">Cargando temas y exámenes…</span></div>`;return}
-  v.innerHTML=r==="resumen"?renderResumen():["amigos","perfil","chat"].includes(r)&&!S.uid?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();if(r==="chat"&&S.uid){pintarChat(true);pintarAdj()}
+  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();if(r==="chat"&&S.uid){pintarChat(true);pintarAdj()}
   if(enfocar&&r!=="resumen"){const el=document.querySelector(`[data-det="${CSS.escape(enfocar)}"],[data-exam="${CSS.escape(enfocar)}"]`);enfocar=null;
     if(el){el.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});el.classList.add("flash")}}}
 
@@ -1116,7 +1134,7 @@ document.addEventListener("submit",ev=>{if(ev.target.id==="fchat"){ev.preventDef
 
 function saludo(){const h=new Date().getHours();return h>=6&&h<13?"Buenos días":h>=13&&h<21?"Buenas tardes":"Buenas noches"}
 function actualizarSplash(){const el=$("#splash");if(!el||el.hidden)return;$("#hola").textContent=S.nombre?`¡Hola, ${S.nombre}! ${saludo()}.`:`${saludo()}.`}
-function entrar(){const el=$("#splash");if(!el||el.hidden||el.classList.contains("out")||!S.listo||!S.uid)return;
+function entrar(){const el=$("#splash");if(!el||el.hidden||el.classList.contains("out")||!S.listo)return;
   el.classList.add("out");document.body.classList.remove("con-splash");try{sessionStorage.setItem("dentro","1")}catch(e){}
   setTimeout(()=>{el.hidden=true},matchMedia("(prefers-reduced-motion: reduce)").matches?0:460)}
 $("#splash").hidden=false;document.body.classList.add("con-splash");actualizarSplash();
@@ -1161,16 +1179,16 @@ function adaptador(uid) {
 }
 function listo() {
   S.listo = true;
-  const dentro = !!S.uid;
-  document.getElementById("entrar").hidden = !dentro;
-  document.getElementById("gbtn").hidden = dentro;
-  const m = document.getElementById("splmsg"); if (m) m.textContent = dentro ? "" : "Para entrar en 1 BACH necesitas tu cuenta de Google. Solo la primera vez: se queda guardado.";
+  document.getElementById("entrar").hidden = false;
+  document.getElementById("gbtn").hidden = true;
+  const m = document.getElementById("splmsg"); if (m) m.textContent = "";
   actualizarSplash();
-  if (!dentro) { const el = document.getElementById("splash"); if (el) { el.hidden = false; el.classList.remove("out"); document.body.classList.add("con-splash"); } setTimeout(() => document.getElementById("gbtn")?.focus(), 50); return; }
   const volver = new URLSearchParams(location.search).get("volver");
-  if (volver && /^\/[\w\-./%#?=&]*$/.test(volver) && !volver.startsWith("//")) { location.replace(volver); return; }
+  const valido = volver && /^\/[\w\-./%#?=&]*$/.test(volver) && !volver.startsWith("//");
+  if (S.uid && valido) { location.replace(volver); return; }
   let ya = false; try { ya = sessionStorage.getItem("dentro") === "1"; } catch (e) {}
-  if (ya) entrar(); else setTimeout(() => document.getElementById("entrar")?.focus(), 50);
+  if (ya || (!S.uid && valido)) entrar(); else setTimeout(() => document.getElementById("entrar")?.focus(), 50);
+  if (!S.uid && valido) setTimeout(() => window.pideCuenta && window.pideCuenta(), 500);
 }
 document.getElementById("gbtn").onclick = () => gEntrar().catch(e => { const m = document.getElementById("splmsg"); if (m) m.textContent = "No se pudo entrar (" + (e.code || "error") + "). Inténtalo otra vez."; });
 function primerNombre() { const u = (S.amigos || {})[S.uid] || {}; return String(u.nombre || S.nombreCompleto || "").trim().split(/\s+/)[0] || ""; }
@@ -1184,7 +1202,7 @@ alCambiarSesion(async user => {
   if (!user) {
     S.uid = null; S.canWrite = false; S.nombre = ""; S.amigos = {}; S.rank = {}; S.chat = []; S.conectados = 0; S.sinLeer = 0; db = null;
     try { sessionStorage.removeItem("dentro"); } catch (e) {}
-    S.loaded = false; listo(); render(); return;
+    prog = {}; aplicar(); listo(); return;
   }
   S.uid = user.uid; S.canWrite = true;
   S.nombreCompleto = user.displayName || ""; S.nombre = primerNombre(); S.foto = user.photoURL || "";
