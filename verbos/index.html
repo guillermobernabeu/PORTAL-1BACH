@@ -1622,6 +1622,7 @@ setTimeout(function(){ boot({}); }, 1500);
 <script type="module">
 import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js";
 exigirCuenta();
+import { iniciarLateral } from "../shared/lateral.js";
 copiaEnLaNube("verbos", () => ["verbomat_v1"]);
 const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
 function resumen(){ const st=lee("verbomat_v1");if(!st||!st.stats)return null;const ok=Object.values(st.stats).filter(x=>(x.streak|0)>=2).length;return [ok,124]; }
@@ -1629,5 +1630,6 @@ let ult="";
 function enviar(){let r=null;try{r=resumen()}catch(e){}if(!r)return;const k=r.join("/");if(k===ult)return;ult=k;guardarProgreso("verbos",r[0],r[1])}
 let t=null;alCambiarSesion(u=>{clearInterval(t);if(u){ult="";enviar();t=setInterval(enviar,8000)}});
 addEventListener("visibilitychange",enviar);addEventListener("pagehide",enviar);
+iniciarLateral({ recurso: "p-verbos", stats: () => { try { const st=lee("verbomat_v1"),v=Object.values((st&&st.stats)||{});return {dom:v.filter(x=>(x.streak|0)>=2).length,ctrl:v.filter(x=>(x.streak|0)<2).length,total:124}; } catch (e) { return null; } } });
 </script>
 <script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a.b1-back,a.vback1");if(!a)return;try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}});</script></body></html>

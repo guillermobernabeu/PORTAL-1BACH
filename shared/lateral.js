@@ -1,4 +1,4 @@
-// Paneles laterales para las apps en el ordenador: casa, modo concentración, cuenta atrás del examen,
+// Paneles laterales para las apps en el ordenador: casa, modo Deep Work, cuenta atrás del examen,
 // porcentaje de lo que dominas y el ranking (los 3 primeros · … · tú).
 import { auth, db, fs, alCambiarClase, nombreDe, fotoDe, concentracion, ponerConcentracion } from "./fb.js";
 
@@ -51,7 +51,7 @@ export async function iniciarLateral({ recurso, stats }) {
   const d = document.createElement("aside"); d.className = "lat-d"; d.setAttribute("aria-label", "Tu progreso");
   d.innerHTML = `<section class="lat-c lat-reloj" id="latReloj" hidden></section><section class="lat-c lat-dom" id="latDom"></section><section class="lat-c lat-rk" id="latRk"><h3>🏆 Ranking de hoy</h3><ol id="latRkL"><li class="dots">cargando</li></ol><a href="${RAIZ}#amigos">Ver el ranking completo →</a></section>`;
   const i = document.createElement("aside"); i.className = "lat-i";
-  i.innerHTML = `<button class="lat-conc" type="button" aria-pressed="${concentracion()}" title="Quita todo lo de los lados y los avisos para concentrarte"><span class="sw" aria-hidden="true"></span>🎯 Concentración</button>`;
+  i.innerHTML = `<button class="lat-conc" type="button" aria-pressed="${concentracion()}" title="Deep Work: quita todo lo de los lados y los avisos para que te centres solo en estudiar"><span class="sw" aria-hidden="true"></span>🎯 Deep Work</button>`;
   document.body.append(d, i);
   const bt = i.querySelector(".lat-conc");
   bt.onclick = () => { const v = !concentracion(); ponerConcentracion(v); bt.setAttribute("aria-pressed", String(v)); };

@@ -137,7 +137,17 @@ export const ptsHoyDe = (p, hoy = hoyISO()) => Math.max(ganadoHoy(p, hoy), Numbe
 const lunes = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
 const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 export const diasSemana = (atras = 0) => { const l = lunes(new Date()); l.setDate(l.getDate() - 7 * atras); return Array.from({ length: 7 }, (_, i) => { const d = new Date(l); d.setDate(l.getDate() + i); return iso(d); }); };
-export const ptsSemanaDe = (p, atras = 0) => diasSemana(atras).reduce((s, d) => s + ptsHoyDe(p, d), 0);
+// Semana en la que empezaron los puntos diarios: lo que ya tenías antes se suma a esa semana y se guarda una vez
+const SEM0 = "2026-11-09";
+function calcLegado(p) { const h = hoyISO();
+  const base = Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || !a.total) return s; return s + Math.min(1, (a.dia === h ? (a.ok0 || 0) : a.ok) / a.total) * 100; }, 0));
+  const prev = diasSemana(0)[0] === SEM0 ? diasSemana(0).filter(f => f < h).reduce((s, f) => s + ptsHoyDe(p, f), 0) : 0; return Math.max(0, base - prev); }
+export const ptsSemanaDe = (p, atras = 0) => { const d = diasSemana(atras); return d.reduce((s, x) => s + ptsHoyDe(p, x), 0) + (d[0] === SEM0 ? (typeof (p && p.legado) === "number" ? p.legado : calcLegado(p)) : 0); };
+onAuthStateChanged(auth, async (u) => {
+  if (!u || diasSemana(0)[0] !== SEM0) return;
+  try { const ref = fs.doc(db, "progreso", u.uid), s = await fs.getDoc(ref), p = s.exists() ? s.data() : {};
+    if (typeof p.legado !== "number") await fs.setDoc(ref, { legado: calcLegado(p) }, { merge: true }); } catch (e) {}
+});
 export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;

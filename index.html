@@ -986,7 +986,12 @@ function ganadoHoy(p,h){return Math.max(0,Math.round(APPS.reduce((s,[k])=>{const
 function puntosHoy(p,h=hoyStr()){return Math.max(ganadoHoy(p,h),Number(((p&&p.dias)||{})[h])||0)}
 function isoD(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function diasSemana(atras=0){const n=new Date(),l=new Date(n.getFullYear(),n.getMonth(),n.getDate());l.setDate(l.getDate()-((l.getDay()+6)%7)-7*atras);return Array.from({length:7},(_,i)=>{const d=new Date(l);d.setDate(l.getDate()+i);return isoD(d)})}
-function puntosSemana(p,atras=0){return diasSemana(atras).reduce((s,f)=>s+puntosHoy(p,f),0)}
+// Semana en la que empezaron los puntos diarios: se suman también los puntos que ya tenías antes (no se pierden)
+const SEM0="2026-11-09";
+function legado(p){if(p&&typeof p.legado==="number")return p.legado;const h=hoyStr();if(h<SEM0)return 0;
+  const base=Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||!a.total)return s;return s+Math.min(1,(a.dia===h?(a.ok0||0):a.ok)/a.total)*100},0));
+  const prev=diasSemana(0)[0]===SEM0?diasSemana(0).filter(f=>f<h).reduce((s,f)=>s+puntosHoy(p,f),0):0;return Math.max(0,base-prev)}
+function puntosSemana(p,atras=0){const d=diasSemana(atras);return d.reduce((s,f)=>s+puntosHoy(p,f),0)+(d[0]===SEM0?legado(p):0)}
 function ganadorSemana(atras){const us=S.amigos||{},pr=S.rank||{};const L=Object.keys(us).filter(id=>!us[id].baneado).map(id=>({id,v:puntosSemana(pr[id],atras)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);return L[0]||null}
 function fechaCorta(f){const [y,m,d]=f.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-ES",{day:"numeric",month:"short"})}
 function renderLider(){if(!S.uid)return "";const us=S.amigos||{},pr=S.rank||{};

@@ -1158,6 +1158,7 @@ applyMode(); renderHome(); route();
 <script type="module">
 import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js";
 exigirCuenta();
+import { iniciarLateral } from "../shared/lateral.js";
 copiaEnLaNube("wf", () => Object.keys(localStorage).filter(k => k.startsWith("wf_")));
 const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
 function resumen(){ const n=(s,f)=>{s=s||{};f=f||{};return Object.keys(s).filter(k=>!f[k]).length};const ok=n(lee("wf_seen"),lee("wf_fails"))+n(lee("wf_ut2_seen"),lee("wf_ut2_fails"));if(!localStorage.getItem("wf_seen")&&!localStorage.getItem("wf_ut2_seen"))return null;return [ok,376]; }
@@ -1165,5 +1166,6 @@ let ult="";
 function enviar(){let r=null;try{r=resumen()}catch(e){}if(!r)return;const k=r.join("/");if(k===ult)return;ult=k;guardarProgreso("wf",r[0],r[1])}
 let t=null;alCambiarSesion(u=>{clearInterval(t);if(u){ult="";enviar();t=setInterval(enviar,8000)}});
 addEventListener("visibilitychange",enviar);addEventListener("pagehide",enviar);
+iniciarLateral({ recurso: "p-wf", stats: () => { try { const s=lee("wf_seen")||{},f=lee("wf_fails")||{};const vistos=Object.keys(s).length,fallos=Object.keys(s).filter(k=>f[k]).length;return {dom:vistos-fallos,ctrl:fallos,total:376}; } catch (e) { return null; } } });
 </script>
 <script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a.b1-back,a.vback1");if(!a)return;try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}});</script></body></html>
