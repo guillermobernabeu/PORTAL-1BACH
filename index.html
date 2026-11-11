@@ -1098,6 +1098,7 @@ function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id=
      <div class="pf-datos"><div class="eyebrow">Tu perfil</div><h2>${esc(nombreDe(S.uid)||"Sin nombre")}</h2>
        <div class="pf-big"><span><b>${pts}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>de ${lista.length} en la clase</small></span></div></div></div>
      <div class="pf-acc"><button class="btn-p" data-foto style="--cf:var(--accent)">Subir foto de mi galería</button>${u.fotoPropia?'<button class="btn-sec" data-quitafoto>Volver a la foto de Google</button>':""}</div>
+     <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.</p>
      <div class="pf-nom"><label for="nomIn">Nombre que ven los demás</label><div><input id="nomIn" maxlength="30" value="${esc(nombreDe(S.uid))}"><button class="btn-sec" data-guardanombre>Guardar</button></div></div>
    </section>
    <section class="sheet"><header><h2>Tus puntos por app</h2><span class="note">100 por app · máximo 400</span></header>
@@ -1390,7 +1391,7 @@ alCambiarSesion(async user => {
     prog = {}; aplicar(); listo(); return;
   }
   S.uid = user.uid; S.canWrite = true;
-  S.nombreCompleto = user.displayName || ""; S.nombre = primerNombre(); S.foto = user.photoURL || "";
+  S.nombreCompleto = user.displayName || ""; S.email = user.email || ""; S.nombre = primerNombre(); S.foto = user.photoURL || "";
   try { S.esAdmin = (await sha(String(user.email || "").toLowerCase())) === ADMIN; } catch (e) { S.esAdmin = false; }
   db = adaptador(user.uid);
   listo();
