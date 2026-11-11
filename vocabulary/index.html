@@ -7,7 +7,7 @@
 :root[data-theme=dark]{--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
 [hidden]{display:none!important}
-.claude{position:fixed;top:12px;left:12px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #d97757;color:#d97757;border-radius:999px;background:var(--paper)}
+.claude{position:fixed;top:12px;left:12px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #c3132b;color:#c3132b;border-radius:999px;background:var(--paper)}
 #start{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
 #start h1{margin:0;font-size:clamp(30px,7vw,52px);letter-spacing:-.02em}#start p{margin:0;color:var(--ink2)}
 .go{font:700 20px/1 system-ui;padding:15px 44px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
@@ -47,18 +47,17 @@ form.add input,form.add select,form.add textarea{border:1.5px solid var(--rule);
 .msg{font-size:14px;color:var(--ink2)}.msg.err{color:var(--ko)}
 .empty{color:var(--ink2);text-align:center;padding:28px 10px}
 </style></head><body>
-<span class="claude">Claude</span>
+<span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
 <section id="start"><h1>Vocabulary 1st Term</h1><p>Definición ↔ palabra · 1.º Bachillerato · lista compartida de la clase</p><button class="go" id="go">Empezar</button></section>
 <div class="wrap" id="app" hidden>
-<header><p style="margin:0 0 6px"><a href="../" style="color:var(--acc);font-weight:700;text-decoration:none">← 1 BACH</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p></header>
-<div class="card" id="login" hidden><p class="prompt">Entra con tu cuenta de Google</p><p class="msg">Es la misma cuenta del portal: entras una vez y queda guardada.</p><p style="margin-top:12px"><button class="btn" id="gbtn">Entrar con Google</button></p><p class="msg" id="lmsg"></p></div>
+<header><p style="margin:0 0 6px"><a href="../" style="color:var(--acc);font-weight:700;text-decoration:none">← 1 BACH</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p><button class="btn sec" id="gbtn" hidden style="margin-top:8px;height:38px">Entrar con Google</button></header>
+<div id="login" hidden></div>
 <nav class="tabs" id="tabs">
  <button data-t="dw" aria-pressed="true">Definición → palabra</button>
  <button data-t="wd" aria-pressed="false">Palabra → definición</button>
  <button data-t="es" aria-pressed="false">Español → inglés</button>
  <button data-t="list" aria-pressed="false">Lista</button>
  <button data-t="add" aria-pressed="false">+ Añadir palabra</button>
- <button data-t="clase" aria-pressed="false">Clase</button>
 </nav>
 <div class="filt" id="filt"><span class="lb">Bloques</span></div>
 <div class="filt"><span class="lb">Repaso</span><button class="chip" id="fallosB" aria-pressed="false">Solo mis fallos</button><button class="chip" id="ofiB" aria-pressed="false">Solo la lista oficial</button></div>
@@ -158,38 +157,40 @@ const k=e=>{if(e.code==="Space"){e.preventDefault();abrir()}};
 $("#go").onclick=abrir;addEventListener("keydown",k);
 </script>
 <script type="module">
+// La lista oficial va dentro de la página (SEED): funciona siempre, con o sin cuenta.
+// Con cuenta se suman las palabras que añade la clase (Firestore) y se guarda el progreso.
 import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso } from "../shared/fb.js";
 const COL = "vocabulary_palabras";
-const tabs = document.getElementById("tabs"), login = document.getElementById("login"), who = document.getElementById("who");
-const resto = [...document.querySelectorAll(".filt"), document.getElementById("stats"), document.getElementById("main")];
-const verApp = (si) => { tabs.hidden = !si; resto.forEach(x => x.hidden = !si); login.hidden = si; };
-document.querySelector('[data-t=clase]').hidden = true;
-S.db = { collection: () => ({
-  doc: (id) => ({ delete: () => fs.deleteDoc(fs.doc(db, COL, id)), update: (d) => fs.updateDoc(fs.doc(db, COL, id), d) }),
+const who = document.getElementById("who"), gbtn = document.getElementById("gbtn");
+document.getElementById("login").hidden = true;
+const BASE = window.SEED.map(w => ({ ...w, por: "lista" }));
+let remotas = [];
+function juntar() {
+  const m = new Map(BASE.map(w => [w.id, w]));
+  for (const w of remotas) m.set(w.id, { ...(m.get(w.id) || {}), ...w });
+  S.words = [...m.values()];
+  if (!document.getElementById("app").hidden) { if (S.tab === "list" || !S.q) nueva(); else stats(); }
+}
+juntar();
+const DBW = { collection: () => ({
+  doc: (id) => ({ delete: () => fs.deleteDoc(fs.doc(db, COL, id)), update: (d) => fs.setDoc(fs.doc(db, COL, id), d, { merge: true }) }),
   add: (d) => fs.addDoc(fs.collection(db, COL), d)
 }) };
-document.getElementById("gbtn").onclick = () => entrar().catch(e => document.getElementById("lmsg").textContent = "No se pudo entrar (" + e.code + ").");
+gbtn.onclick = () => entrar().catch(e => who.textContent = "No se pudo entrar (" + e.code + ").");
 let quitar = [];
 let OK = new Set(); try { OK = new Set(JSON.parse(localStorage.getItem("vocabOk") || "[]")); } catch (e) {}
-function enviarVocab() { const base = S.words.filter(w => w.por === "lista"); if (!base.length) return; const n = base.filter(w => OK.has(w.id)).length; guardarProgreso("vocab", n, base.length); }
+function enviarVocab() { if (!S.me) return; const n = BASE.filter(w => OK.has(w.id)).length; guardarProgreso("vocab", n, BASE.length).catch(() => {}); }
 let tEnv = null;
 window.trasApuntar = (w, bien) => { bien ? OK.add(w.id) : OK.delete(w.id); try { localStorage.setItem("vocabOk", JSON.stringify([...OK])); } catch (e) {} clearTimeout(tEnv); tEnv = setTimeout(enviarVocab, 1500); };
 alCambiarSesion(user => {
   quitar.forEach(f => f()); quitar = [];
-  if (!user) { verApp(false); who.textContent = "Tienes que entrar con tu cuenta de Google."; return; }
-  S.me = user.uid; S.nombre = user.displayName || ""; verApp(true);
+  if (!user) { S.me = null; S.db = null; gbtn.hidden = false; who.textContent = "Sin cuenta: puedes practicar la lista. Entra para añadir palabras y sumar puntos."; remotas = []; juntar(); return; }
+  S.me = user.uid; S.nombre = user.displayName || ""; S.db = DBW; gbtn.hidden = true;
   who.textContent = "Conectado como " + (user.displayName || "tú");
-  quitar.push(alCambiarClase(us => { S.users = {}; for (const k in us) S.users[k] = { ...us[k], nombre: nombreDe(us[k]) }; if (S.tab === "list") nueva(); }));
-  let sembrado = false;
-  quitar.push(fs.onSnapshot(fs.collection(db, COL), async (snap) => {
-    if (snap.empty && !sembrado) {
-      sembrado = true; const b = fs.writeBatch(db);
-      for (const w of window.SEED) { const { id, ...d } = w; b.set(fs.doc(db, COL, id), { ...d, por: "lista" }); }
-      try { await b.commit(); } catch (e) { console.warn(e); }
-      return;
-    }
-    const nuevo = !S.words.length; S.words = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (nuevo) enviarVocab();
-    if (nuevo || S.tab === "list") nueva(); else stats();
-  }, (err) => { who.textContent = "No se puede leer la lista (" + (err.code || "error") + ")."; }));
+  enviarVocab();
+  quitar.push(alCambiarClase(us => { S.users = {}; for (const k in us) S.users[k] = { ...us[k], nombre: nombreDe(us[k]) }; if (S.tab === "clase") nueva(); }));
+  quitar.push(fs.onSnapshot(fs.collection(db, COL), snap => {
+    remotas = snap.docs.map(d => ({ id: d.id, ...d.data() })); juntar();
+  }, () => {}));
 });
 </script></body></html>

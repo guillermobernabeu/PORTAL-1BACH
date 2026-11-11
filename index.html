@@ -41,8 +41,8 @@
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
 /* fondo de pantalla: foto fija con un velo oscuro para que se lea lo que va encima */
-.wallpaper{position:fixed;inset:0;z-index:0;pointer-events:none;background:#0b1020 url("fondo.jpg") 50% 40%/cover no-repeat}
-.wallpaper::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,26,.25) 0%,rgba(8,12,26,.45) 45%,rgba(8,12,26,.7) 100%)}
+.wallpaper{position:fixed;inset:0;z-index:0;pointer-events:none;background:#fbfaf7 url("fondo.svg") 50% 50%/cover no-repeat}
+.wallpaper::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,26,.18) 0%,rgba(8,12,26,.08) 40%,rgba(8,12,26,.22) 100%)}
 .onphoto{color:#ffffff;text-shadow:0 1px 12px rgba(0,0,0,.55)}
 .onphoto .eyebrow{color:rgba(255,255,255,.8)}
 .wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding-block:20px 64px;
@@ -526,19 +526,69 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .papelera ul{list-style:none;margin:8px 0 2px;padding:0;display:flex;flex-direction:column;gap:6px;text-align:left;color:#3a3a3a}
 .papelera li{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .papelera li button{border:1px solid #d4231c;background:#fff;color:#d4231c;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer}
+
+
+.amis{display:flex;gap:10px;flex-wrap:wrap}
+.badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#c3132b;color:#fff;font-size:12px;margin-left:4px}
+.entra p{margin:0}.entra{display:flex;flex-direction:column;gap:14px}
+.chatv .sheet{display:flex;flex-direction:column;gap:12px}
+.chatlist{display:flex;flex-direction:column;gap:10px;max-height:min(58vh,560px);overflow-y:auto;padding:4px 2px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.msg{display:flex;gap:10px;align-items:flex-start}.msg.mio{flex-direction:row-reverse}
+.bur{position:relative;max-width:min(560px,80%);background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:8px 12px}
+.msg.mio .bur{background:color-mix(in oklab,var(--accent) 10%,var(--paper))}
+.msg.t-mal .bur,.msg.t-fecha .bur,.msg.t-noentra .bur{border-color:#c3132b}
+.mh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}.mh b{color:var(--ink);font-size:13.5px}.mh em{font-style:normal;font-weight:700;color:#c3132b}
+.bur p{margin:3px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.mdel{border:0;background:none;color:var(--ink-2);font-size:11.5px;padding:2px 0 0;cursor:pointer;text-decoration:underline}
+.chatform{display:flex;flex-direction:column;gap:8px}
+.chatform select{align-self:flex-start;font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink)}
+.chatin{display:flex;gap:8px;align-items:stretch}.chatin textarea{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:var(--ink);resize:vertical}
+@media (max-width:600px){.amis{width:100%}.amis .amigos-btn{flex:1;font-size:13px;padding:9px 10px}.chatlist{max-height:55vh}.bur{max-width:85%}}
+/* fondo claro (Cruz de Borgoña): textos oscuros con halo blanco */
+.onphoto,.splash{color:#141a2e;text-shadow:none}
+.onphoto .eyebrow,.splash .eyebrow{color:#3b4258}
+.brand h1 span,.splash h1 span{color:#c3132b}
+.splash h1,.splash .hola,.splash .sub,.brand h1{text-shadow:none}
+.splash .sub{color:#3b4258}
+.splash .in{background:rgba(251,250,247,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:28px;padding:34px clamp(22px,5vw,56px) 30px;box-shadow:0 20px 60px rgba(20,26,46,.25)}
+.brand.onphoto{display:inline-block;align-self:flex-start;background:rgba(251,250,247,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:16px;padding:10px 16px}
+.entrar{background:#141a2e;color:#fff;box-shadow:0 8px 26px rgba(20,26,46,.35)}
+.claude-ov{border-color:#c3132b;color:#c3132b}
+/* calendario más pequeño */
+@media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
+.cal{padding:24px 16px 16px}
+.cal-head{margin-bottom:8px}.cal-head h2{font-size:19px}
+.dia{min-height:34px}.dia .n{font-size:12px;width:21px;height:21px}
+.mk{font-size:11px}
+.par{gap:14px 18px}
+.cal-key{margin-top:10px;gap:10px;font-size:11px}
+/* móvil: calendario fijo en los meses de ahora, sin moverse, en pequeño */
+@media (max-width:600px){
+  .cal{padding:12px 10px 10px;background-image:none}
+  .cal .holes,.cal .ctabs,.cal-key{display:none}
+  .cal-head{padding-left:0;margin-bottom:6px}.cal-head h2{font-size:15px}.cal-head .sub{font-size:11px}.calY{font-size:12px}
+  .mscroll{overflow:hidden!important;padding-left:0;scroll-snap-type:none}
+  .par{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
+  .mes h3{font-size:11px;padding-bottom:2px;margin-bottom:3px;border-bottom-width:1px}
+  .dow span{font-size:9px;padding:0}
+  .dia{min-height:22px;padding:1px 0;border:0}
+  .dia .n{font-size:10px;width:18px;height:18px}
+  .dia .mk{display:none}
+  .dia.ex .n{border-width:1.5px}
+}
 </style>
 
 <div class="wallpaper" aria-hidden="true"></div>
-<span class="claude-ov">Claude</span>
+<span class="claude-ov" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
 <div class="splash" id="splash" role="dialog" aria-label="Bienvenida" hidden>
   <div class="in">
     <div class="eyebrow">Primero de Bachillerato · curso 2026-27</div>
     <h1>1 <span>BACH</span></h1>
-    <p class="hola" id="hola">Hola, Guillermo</p>
+    <p class="hola" id="hola">Hola</p>
     <p class="sub">¿Qué vamos a trabajar hoy?</p>
     <button class="entrar" id="entrar" type="button" hidden>Empezar</button>
     <button class="entrar" id="gbtn" type="button" hidden>Entrar con Google</button>
-    <p class="tecla" id="splmsg">Conectando…</p>
+    <p class="tecla" id="splmsg"></p>
   </div>
 </div>
 <div class="wrap">
@@ -583,18 +633,18 @@ const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","di
 function fechaCorta(f){const d=parseF(f);return d?{d:d.getDate(),m:MES[d.getMonth()]}:null}
 function link(r){const x=link0(r);return S.canWrite?`<span class="rw">${x}<button class="rx-del" type="button" data-ocultar="${esc(r.id)}" title="Quitar de aquí" aria-label="Quitar ${esc(r.titulo)}">×</button></span>`:x}
 function link0(r){const pg=(r.paginas||[]).filter(esDoc);
-  if(pg.length)return `<button class="r ${r.claude?"hc":""}" data-doc="${esc(r.id)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Claude">Claude</span>':""}<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span></button>`;
-  if(r.examen)return `<button class="r ${r.claude?"hc":""}" data-exam="${esc(r.examen)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Claude">Claude</span>':""}<span class="k">${esc(r.cat||"Examen")}</span><span class="n">${esc(r.titulo)}</span></button>`;
+  if(pg.length)return `<button class="r ${r.claude?"hc":""}" data-doc="${esc(r.id)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span></button>`;
+  if(r.examen)return `<button class="r ${r.claude?"hc":""}" data-exam="${esc(r.examen)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||"Examen")}</span><span class="n">${esc(r.titulo)}</span></button>`;
   const interno=/^[a-z0-9-]+\/$/.test(r.url||"");const safe=/^https:\/\//.test(r.url||"")||esDoc(r.url)||interno?r.url:null;
   const inner=`<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span>`;
-  const cb=r.claude?'<span class="cb" title="Hecho por Claude">Claude</span>':"",hc=r.claude?" hc":"";
+  const cb=r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':"",hc=r.claude?" hc":"";
   return safe?`<a class="r${hc}" href="${esc(safe)}" ${interno?"":`target="_blank" rel="noopener"`} title="${esc(r.nota||r.titulo)}">${cb}${inner}</a>`:`<span class="r${hc}" title="${esc(r.nota||"")}">${cb}${inner}</span>`}
 const esDoc=u=>/^docs\/[\w.-]+(\/[\w.-]+)*$/.test(u||"");
 const hojas=e=>(e.paginas||[]).filter(esDoc);
 function progreso(list){if(!list.length)return null;return list.reduce((s,t)=>s+pTema(t),0)/list.length}
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,2200)}
 
-function route(){const h=location.hash.slice(1);return AN[h]||h==="amigos"||h==="perfil"||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
+function route(){const h=location.hash.slice(1);return AN[h]||h==="amigos"||h==="perfil"||h==="chat"||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
 
 
 function limite(e){const d=parseF(e.fecha);return d?new Date(d.getFullYear(),d.getMonth(),d.getDate()-1,23,59,59):null}
@@ -633,7 +683,7 @@ function examRow(e){const f=fechaCorta(e.fecha),d=dias(e.fecha),hp=hojas(e).leng
 function docCard(e){const f=fechaCorta(e.fecha),p=hojas(e);
   const nota=e.nota!=null&&e.nota!==""?`<span class="nota">Nota: ${esc(e.nota)}</span>`:"";
   return `<button class="doc" data-a="${e.asig}" ${p.length?`data-exam="${esc(e.id)}" aria-label="Ver el examen ${esc(e.titulo)}"`:"disabled"}>
-    <span class="paper ${p.length>1?"stack":""}">${e.claude?'<span class="cb" title="Reconstruido por Claude">Claude</span>':""}${p.length?`<img src="${esc(p[0])}" alt="" loading="lazy"><span class="pages">${p.length} ${p.length===1?"hoja":"hojas"}</span>`:`<span class="blank">Sin escanear.<br>Pásale las fotos a Claude.</span>`}</span>
+    <span class="paper ${p.length>1?"stack":""}">${e.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}${p.length?`<img src="${esc(p[0])}" alt="" loading="lazy"><span class="pages">${p.length} ${p.length===1?"hoja":"hojas"}</span>`:`<span class="blank">Sin escanear.<br>Sin fotos todavía.</span>`}</span>
     <span class="doc-meta"><b>${esc(e.titulo)}</b><span>${e.modelo?`Modelo · curso ${esc(e.curso||"")}`:f?f.d+" "+f.m:"Sin fecha"}</span>${nota}</span></button>`}
 
 const ABR={filosofia:"Filo",lengua:"Len",fyq:"Quí",mates:"Mat",economia:"Eco",ingles:"Ing",bio:"Bio",ef:"EF",tic:"TIC",global:"Glob"};
@@ -667,7 +717,7 @@ function renderCal(){const M=porDia(),c=cabeceraPar(calPar);
       <div class="ctabs" role="group" aria-label="Cambiar de meses"><button data-calmov="-1" aria-label="Meses anteriores">▲</button><button data-calhoy title="Volver a los meses de hoy">Hoy</button><button data-calmov="1" aria-label="Meses siguientes">▼</button></div></div>
     <div class="mscroll" id="mscroll" tabindex="0" aria-label="Meses del curso. Desliza arriba o abajo">${PARES.map((pr,i)=>`<div class="par" data-par="${i}">${pr.map(([y,m])=>mesHTML(y,m,M)).join("")}</div>`).join("")}</div>
     <div class="cal-key"><span><i class="k-hoy"></i>Hoy</span><span><i class="k-ex"></i>Examen (color de la asignatura)</span><span><i class="k-hecho"></i>Ya hecho</span><span>Desliza arriba o abajo para cambiar de meses</span></div></section>`}
-function montarCal(){const sc=$("#mscroll");if(!sc)return;const pars=[...sc.querySelectorAll(".par")];
+function montarCal(){const sc=$("#mscroll");if(!sc)return;if(matchMedia("(max-width:600px)").matches){calPar=parActual();const c=cabeceraPar(calPar);$("#calTit").firstChild.textContent=c.t+" ";$("#calY").textContent=c.y;$("#calSub").textContent=c.sub;sc.querySelectorAll(".par").forEach((p,i)=>p.hidden=i!==calPar);sc.style.height="";sc.onscroll=null;return}sc.querySelectorAll(".par").forEach(p=>p.hidden=false);const pars=[...sc.querySelectorAll(".par")];
   const h=Math.max(...pars.map(p=>{p.style.minHeight="";return p.offsetHeight}));pars.forEach(p=>p.style.minHeight=h+"px");sc.style.height=h+"px";
   sc.scrollTop=calPar*h;
   let t=null;sc.onscroll=()=>{clearTimeout(t);t=setTimeout(()=>{const i=Math.round(sc.scrollTop/h);if(i!==calPar&&PARES[i]){calPar=i;const c=cabeceraPar(i);
@@ -687,12 +737,12 @@ function renderLeyenda(){
   const total=up.filter(e=>dias(e.fecha)<=14).reduce((s,e)=>s+(hrs(e)||0),0);
   return `<div class="leyenda">
     <section class="sheet"><header><h2>Próximos exámenes</h2><span class="note">${up.length} con fecha</span></header>
-      ${up.length?`<div class="cuenta">${up.map(fila).join("")}</div>`:`<div class="empty">No tienes exámenes con fecha. Díselos a Claude y aparecerán aquí y en el calendario.</div>`}
+      ${up.length?`<div class="cuenta">${up.map(fila).join("")}</div>`:`<div class="empty">No tienes exámenes con fecha. Cuando haya fechas aparecerán aquí y en el calendario.</div>`}
       ${sinF.length?`<div class="note">Sin fecha todavía: ${sinF.map(e=>`${esc(NOM[e.asig]||e.asig)} (${esc(e.titulo)})`).join(", ")}.</div>`:""}
     </section>
     ${carga.length?`<section class="sheet"><header><h2>Lo que más te va a costar</h2></header>
       <div class="carga">${carga.map(e=>`<div class="cg" data-a="${e.asig}"><span class="lab">${esc(ABRL[e.asig]||e.asig)} · ${esc(e.titulo)}</span><span class="bar2"><i style="width:${Math.round(hrs(e)/max*100)}%"></i></span><span class="h">${hrs(e)} h</span></div>`).join("")}</div>
-      <p class="ritmo">En las próximas dos semanas suman <b>${total} h</b> de estudio. Horas estimadas por Claude según el temario de cada examen; dile si te cuesta más o menos y las ajusta.</p></section>`:""}
+      <p class="ritmo">En las próximas dos semanas suman <b>${total} h</b> de estudio. Horas estimadas según el temario de cada examen.</p></section>`:""}
   </div>`}
 const PANEL="https://claude.ai/artifact/Np3XpCt8KZ7UtnWXBBqbsE";
 function temasDe(e){const ids=Array.isArray(e.temas)?e.temas:[];return ids.map(id=>S.temas.find(t=>t.id===id)).filter(Boolean)}
@@ -717,7 +767,7 @@ function nuevaTanda(d,parte){const n=d.n||{test:10,defs:3,ejer:2};
     P.ejer=[barajar(t1)[0],barajar(t2)[0]].filter(x=>x!=null).slice(0,n.ejer);Object.keys(P.corr).filter(k=>k.startsWith("e")).forEach(k=>delete P.corr[k])}}
 let sampleFn=undefined;
 function renderPractica(id){const d=prepararPractica(id);
-  if(!d)return `<div class="sheet"><b>Todavía no hay práctica para este examen.</b><span class="muted">Pídele a Claude que la prepare.</span><button class="back" data-go="resumen">← Volver</button></div>`;
+  if(!d)return `<div class="sheet"><b>Todavía no hay práctica para este examen.</b><span class="muted">Pronto estará.</span><button class="back" data-go="resumen">← Volver</button></div>`;
   const e=S.examenes.find(x=>x.id===d.examen),dd=e?dias(e.fecha):null;
   const test=P.test.map((qi,k)=>{const q=d.test[qi],r=P.resp[qi];
     return `<div class="pq"><b>${k+1}. ${esc(q.q)}</b>${q.o.map((o,j)=>{const cls=P.corregido?(j===q.a?"ok":(r===j?"ko":"")):"";
@@ -762,7 +812,7 @@ Responde solo con JSON: {"nota": número de 0 a 10 con medios puntos, "bien": [f
   finally{P.busy[key]=false;render()}}
 async function preguntar(q){const d=prepararPractica(P.id);if(!d||!sampleFn||!q.trim())return;
   P.chat.push({role:"user",content:q.trim()});P.busy.chat=true;render();
-  const reglas=`Eres Claude ayudando a Guillermo, alumno de 1.º de Bachillerato, a preparar un examen. Responde en español, claro y breve, basándote en este temario y sin salirte de él salvo que lo pida.\n${contextoPractica(d)}`;
+  const reglas=`Eres un profesor ayudando a un alumno de 1.º de Bachillerato a preparar un examen. Responde en español, claro y breve, basándote en este temario y sin salirte de él salvo que lo pida.\n${contextoPractica(d)}`;
   const turns=[{role:"user",content:reglas},{role:"assistant",content:"Entendido. ¿Qué quieres repasar?"},...P.chat.slice(-10)];
   const m={role:"assistant",content:"Pensando…"};P.chat.push(m);render();
   try{const {text}=await sampleFn(turns,{cache:false,onText:({text})=>{m.content=text;const b=document.querySelectorAll(".msg.cl");if(b.length)b[b.length-1].textContent=text}});m.content=text}
@@ -778,7 +828,7 @@ function abrirFicha(id){const e=S.examenes.find(x=>x.id===id);if(!e)return;ficha
   const pr=promptDe(e),url="https://claude.ai/new?q="+encodeURIComponent(pr);
   const cuando=d==null?"Sin fecha":d<0?"Ya pasó":d===0?"Hoy":d===1?"Mañana":`En ${d} días`;
   const idx=ts.length?`<ol class="indice">${ts.map(t=>`<li><b>${esc(t.titulo)}</b>${t.nota?`<p>${esc(t.nota)}</p>`:""}${(t.puntos||[]).length?`<ul>${t.puntos.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}<span class="st" data-s="${esc(t.estado||"sin")}" style="cursor:default">${esc(ESTN[t.estado]||"Sin ver")}</span></li>`).join("")}</ol>`
-    :`<div class="empty">${esc(e.alcance||"Todavía no sé qué entra. Díselo a Claude y lo apunta aquí.")}</div>`;
+    :`<div class="empty">${esc(e.alcance||"Todavía no se sabe qué entra.")}</div>`;
   $("#ficha").innerHTML=`<div class="ficha" data-a="${e.asig}" role="dialog" aria-modal="true" aria-labelledby="ftit">
     <button class="cerrar" id="fcerrar" aria-label="Cerrar">×</button>
     <div><span class="chip-asig" data-a="${e.asig}">${esc(NOM[e.asig]||e.asig)}</span><h2 id="ftit">${esc(e.titulo)}</h2></div>
@@ -800,7 +850,7 @@ function renderResumen(){
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home"><div class="amibar"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button></div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home"><div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn" data-go="chat">💬 Chat de la clase${S.sinLeer?` <span class="badge">${S.sinLeer}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
@@ -815,6 +865,28 @@ function clasificacion(){const us=S.amigos||{},pr=S.rank||{};
   return Object.keys(us).map(id=>({id,u:us[id],p:pr[id]||{},pts:puntos(pr[id]||{})})).sort((a,b)=>b.pts-a.pts||nombreDe(a.id).localeCompare(nombreDe(b.id)))}
 function barrasApps(p){return `<div class="rk-apps">${APPS.map(([k,t])=>{const v=Math.round(pctApp(p,k)*100),a=p&&p.apps&&p.apps[k];
   return `<span title="${t}: ${a?a.ok+" de "+a.total:"sin empezar"}"><i style="width:${v}%"></i><em>${t} ${v}%</em></span>`}).join("")}</div>`}
+
+function renderEntra(r){const t={amigos:"Amigos y ranking",perfil:"Tu perfil",chat:"Chat de la clase"}[r];
+  return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button><section class="sheet entra"><header><h2>${t}</h2></header>
+   <p>Para ${r==="chat"?"leer y escribir en el chat":r==="perfil"?"tener perfil y sumar puntos":"ver a la clase y el ranking"} tienes que entrar con tu cuenta de Google. Solo una vez: se queda guardado.</p>
+   <button class="btn-p" data-login style="--cf:var(--accent);align-self:flex-start">Entrar con Google</button></section></div>`}
+const ETQ={general:"💬 General",mal:"❌ Pregunta o respuesta mal",fecha:"📅 Fecha mal",noentra:"📚 Qué entra",idea:"💡 Idea"};
+function renderChat(){
+  return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>
+   <section class="sheet"><header><h2>Chat de la clase</h2><span class="note">Lo leen todos los que han entrado</span></header>
+   <p class="note" style="margin:0">Avisa aquí si una pregunta está mal, si algo no entra en el examen o si una fecha no es la buena.</p>
+   <div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
+   <form class="chatform" id="chatform"><select id="chatTag" aria-label="Tipo de mensaje">${Object.entries(ETQ).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+     <div class="chatin"><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe un mensaje para la clase…"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div></form>
+   </section></div>`}
+function horaChat(t){const d=new Date(t),h=new Date();const mismo=d.toDateString()===h.toDateString();
+  return (mismo?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short"})+" · ")+d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}
+function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)return;const ms=S.chat||[];
+  const pegado=abajo||L.scrollHeight-L.scrollTop-L.clientHeight<60;
+  L.innerHTML=ms.length?ms.map(m=>{const yo=m.uid===S.uid;
+    return `<div class="msg ${yo?"mio":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}">${avatar(m.uid,32)}<div class="bur"><div class="mh"><b>${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div><p>${esc(m.texto||"")}</p>${yo||S.esAdmin?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
+  if(pegado)L.scrollTop=L.scrollHeight;
+  if(ms.length){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0}}
 function renderAmigos(){const lista=clasificacion();
   const filas=lista.map((x,i)=>`<div class="rk ${x.id===S.uid?"yo-fila":""}"><span class="pos">${i<3?["🥇","🥈","🥉"][i]:i+1}</span>
     ${avatar(x.id,42)}
@@ -854,7 +926,7 @@ function renderVocab(id){const doc=S.vocab.find(v=>v.asig===id);if(!doc||!Array.
       ${nt1?fb("t1",`1st term · examen (${nt1})`):""}${fb("todas","Todas")}${fb("ojo",`Ojo con la traducción (${nojo})`)}${fb("claude",`Añadidas por Claude (${ncl})`)}
       <button class="fchip" id="vtapar" aria-pressed="${V.tapar}">Tapar español</button></div>
     <div class="vlist ${V.tapar?"tapar":""}" id="vlist">${it.map((x,i)=>`<div class="vrow" data-i="${i}" data-s="${esc((x.en+" "+x.es).toLowerCase())}" data-k="${x.term===1?"t1 ":""}${x.ojo?"ojo ":""}${x.origen==="claude"?"claude":""}">
-      <span class="en">${esc(x.en)}${x.term===1?'<span class="tagc">1st term</span>':""}${x.origen==="claude"?'<span class="tagc">Claude</span>':""}</span><span class="es">${esc(x.es)}</span>
+      <span class="en">${esc(x.en)}${x.term===1?'<span class="tagc">1st term</span>':""}${x.origen==="claude"?'<span class="tagc">Bernabéu</span>':""}</span><span class="es">${esc(x.es)}</span>
       ${x.ojo?`<span class="ojo">Ojo: ${esc(x.ojo)}</span>`:""}${x.nota?`<span class="nv">${esc(x.nota)}</span>`:""}</div>`).join("")}</div>
     <p class="note">Para practicarla, entra en <a href="vocabulary/"><b>Vocabulary 1st Term</b></a>. Las marcadas con «Ojo» tienen una traducción que conviene revisar.</p></section>`}
 function filtrarVocab(){const l=$("#vlist");if(!l)return;const q=V.q.trim().toLowerCase();let n=0;
@@ -909,8 +981,8 @@ document.addEventListener("toggle",ev=>{if(ev.target.classList&&ev.target.classL
 
 function render(){actualizarSplash();const r=route(),v=$("#view");
   if(S.error){v.innerHTML=`<div class="sheet"><b>No se ha podido cargar el curso.</b><span class="muted">${esc(S.error)} Abre la página de nuevo en un rato.</span></div>`;return}
-  if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">${S.uid?"Cargando temas y exámenes…":"Entra con tu cuenta de Google para ver el curso."}</span></div>`;return}
-  v.innerHTML=r==="resumen"?renderResumen():r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();
+  if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">Cargando temas y exámenes…</span></div>`;return}
+  v.innerHTML=r==="resumen"?renderResumen():["amigos","perfil","chat"].includes(r)&&!S.uid?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();if(r==="chat"&&S.uid)pintarChat(true);
   if(enfocar&&r!=="resumen"){const el=document.querySelector(`[data-det="${CSS.escape(enfocar)}"],[data-exam="${CSS.escape(enfocar)}"]`);enfocar=null;
     if(el){el.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});el.classList.add("flash")}}}
 
@@ -939,7 +1011,7 @@ function resItem(it){const[k,v,n]=it;
 function ovHTML(u){const L=RESOL[u];if(!L)return "";
   return L.map(e=>`<button class="rb" type="button" data-res="${e.id}" aria-pressed="false" style="top:${(e.by/18.71).toFixed(2)}%" title="Ver la resolución">✎ Ver</button>`
     +(e.m||[]).map(([x,y,t,c])=>`<span class="mk ${c||""}" data-resx="${e.id}" style="left:${(x/13.23).toFixed(2)}%;top:${(y/18.71).toFixed(2)}%">${esc(t)}</span>`).join("")
-    +`<div class="rc" data-resx="${e.id}" data-top="${(e.cy/18.71).toFixed(2)}" style="top:${(e.cy/18.71).toFixed(2)}%"><span class="cbx">Claude · resolución</span>${e.c.map(resItem).join("")}</div>`).join("")}
+    +`<div class="rc" data-resx="${e.id}" data-top="${(e.cy/18.71).toFixed(2)}" style="top:${(e.cy/18.71).toFixed(2)}%"><span class="cbx">Bernabéu · resolución</span>${e.c.map(resItem).join("")}</div>`).join("")}
 document.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest(".rb");if(!b)return;
   const pg=b.closest(".pg"),id=b.dataset.res,abre=b.getAttribute("aria-pressed")!=="true";
   pg.querySelectorAll(".rb").forEach(x=>{const on=abre&&x===b;x.setAttribute("aria-pressed",on);x.textContent=on?"✕":"✎ Ver"});
@@ -970,6 +1042,8 @@ addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#ficha").hidden){cerra
   const it=ev.target.closest&&ev.target.closest("[data-det],[data-ir],[data-dia]");if(it&&(ev.key==="Enter"||ev.key===" ")){ev.preventDefault();it.click();return}
   const r=ev.target.closest&&ev.target.closest(".exam[data-exam]");if(r&&(ev.key==="Enter"||ev.key===" ")){ev.preventDefault();abrirExamen(r.dataset.exam)}});
 document.addEventListener("click",async ev=>{
+  if(ev.target.closest("[data-login]")){window.entrarGoogle&&window.entrarGoogle();return}
+  {const d=ev.target.closest("[data-delmsg]");if(d){window.borrarMsg&&window.borrarMsg(d.dataset.delmsg,d);return}}
   if(ev.target.closest("[data-salir]")){window.salirPortal&&window.salirPortal();return}
   if(ev.target.closest("[data-foto]")){document.getElementById("fotoIn")?.click();return}
   if(ev.target.closest("[data-quitafoto]")){window.quitarFoto&&window.quitarFoto();return}
@@ -1018,7 +1092,7 @@ document.addEventListener("submit",ev=>{if(ev.target.id==="fchat"){ev.preventDef
 
 function saludo(){const h=new Date().getHours();return h>=6&&h<13?"Buenos días":h>=13&&h<21?"Buenas tardes":"Buenas noches"}
 function actualizarSplash(){const el=$("#splash");if(!el||el.hidden)return;$("#hola").textContent=S.nombre?`¡Hola, ${S.nombre}! ${saludo()}.`:`${saludo()}.`}
-function entrar(){const el=$("#splash");if(!el||el.hidden||el.classList.contains("out")||!S.uid)return;
+function entrar(){const el=$("#splash");if(!el||el.hidden||el.classList.contains("out")||!S.listo)return;
   el.classList.add("out");document.body.classList.remove("con-splash");try{sessionStorage.setItem("dentro","1")}catch(e){}
   setTimeout(()=>{el.hidden=true},matchMedia("(prefers-reduced-motion: reduce)").matches?0:460)}
 $("#splash").hidden=false;document.body.classList.add("con-splash");actualizarSplash();
@@ -1031,21 +1105,27 @@ render();
 </script>
 
 <script type="module">
-// Conexión del panel con Firebase: datos de la clase (data/clase.json) + progreso personal de cada uno
+// Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
+// con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
 import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado } from "./shared/fb.js";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }
+// Los exámenes son por la mañana: a las 14:00 del día del examen pasa a "hecho".
+const caducado = e => { const d = parseF(e.fecha); if (!d) return false; d.setHours(14, 0, 0, 0); return Date.now() >= d.getTime(); };
+let firmaCad = "";
 function aplicar() {
   if (!datos) return;
   const pt = prog.temas || {}, pp = prog.practica || {}, oc = prog.ocultos || {};
   S.temas = datos.temas.map(t => ({ ...t, ...(pt[t.id] || {}) }));
-  S.examenes = datos.examenes.map(e => pp[e.id] ? { ...e, practica: pp[e.id] } : { ...e });
+  S.examenes = datos.examenes.map(e => { const x = pp[e.id] ? { ...e, practica: pp[e.id] } : { ...e }; if (caducado(x)) x.hecho = true; return x; });
+  firmaCad = S.examenes.filter(e => e.hecho).map(e => e.id).join();
   S.recursos = datos.recursos.filter(r => !oc[r.id]);
   S.ocultos = datos.recursos.filter(r => oc[r.id]);
   S.vocab = datos.vocab || []; S.practica = datos.practica || []; S.fallos = [];
   S.loaded = true; S.error = null; render();
 }
+setInterval(() => { if (!datos) return; const f = datos.examenes.filter(e => e.hecho || caducado(e)).map(e => e.id).join(); if (f !== firmaCad) aplicar(); }, 60000);
 // Mismo "db" que usaba el panel, pero cada uno guarda SU progreso en progreso/{uid}
 function adaptador(uid) {
   const ref = () => fs.doc(fdb, "progreso", uid);
@@ -1055,37 +1135,64 @@ function adaptador(uid) {
     if (c === "recursos") return fs.setDoc(ref(), { ocultos: { [id]: !!campos.oculto } }, { merge: true });
   } }) }) };
 }
-const spl = (msg, login) => {
-  const m = document.getElementById("splmsg"); if (m) m.textContent = msg;
-  document.getElementById("gbtn").hidden = !login;
-  document.getElementById("entrar").hidden = login;
-};
-document.getElementById("gbtn").onclick = () => gEntrar().catch(e => spl("No se pudo entrar (" + e.code + ").", true));
-window.salirPortal = async () => { try{sessionStorage.removeItem("dentro")}catch(e){} await gSalir(); location.hash = ""; location.reload(); };
-alCambiarSesion(user => {
+function listo() {
+  S.listo = true;
+  document.getElementById("entrar").hidden = false;
+  document.getElementById("gbtn").hidden = true;
+  const m = document.getElementById("splmsg"); if (m) m.textContent = "";
+  actualizarSplash();
+  let ya = false; try { ya = sessionStorage.getItem("dentro") === "1"; } catch (e) {}
+  if (ya) entrar(); else setTimeout(() => document.getElementById("entrar")?.focus(), 50);
+}
+function primerNombre() { const u = (S.amigos || {})[S.uid] || {}; return String(u.nombre || S.nombreCompleto || "").trim().split(/\s+/)[0] || ""; }
+window.entrarGoogle = () => gEntrar().catch(e => toast("No se pudo entrar (" + (e.code || "error") + ")."));
+window.salirPortal = async () => { try { sessionStorage.removeItem("dentro"); } catch (e) {} await gSalir(); location.hash = ""; location.reload(); };
+const ADMIN = "567368fac0b19f0df9590340c50247491ee14e5df1325c518877acbdeabcb98a";
+async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
+const RUTAS_VIVAS = ["amigos", "resumen", "perfil"];
+alCambiarSesion(async user => {
   quitar.forEach(f => f()); quitar = [];
   if (!user) {
-    S.uid = null; S.loaded = false; db = null;
-    const el = document.getElementById("splash");
-    if (el) { el.hidden = false; el.classList.remove("out"); document.body.classList.add("con-splash"); }
-    spl("Entra una vez con tu cuenta de Google y se queda guardado.", true); actualizarSplash(); render(); return;
+    S.uid = null; S.canWrite = false; S.nombre = ""; S.amigos = {}; S.rank = {}; S.chat = []; S.conectados = 0; S.sinLeer = 0; db = null;
+    prog = {}; aplicar(); listo(); return;
   }
   S.uid = user.uid; S.canWrite = true;
-  S.nombreCompleto = user.displayName || ""; S.nombre = (user.displayName || "").split(" ")[0]; S.foto = user.photoURL || "";
+  S.nombreCompleto = user.displayName || ""; S.nombre = primerNombre(); S.foto = user.photoURL || "";
+  try { S.esAdmin = (await sha(String(user.email || "").toLowerCase())) === ADMIN; } catch (e) { S.esAdmin = false; }
   db = adaptador(user.uid);
-  spl("o pulsa Espacio", false); actualizarSplash();
-  let ya=false;try{ya=sessionStorage.getItem("dentro")==="1"}catch(e){}
-  if (ya) entrar(); else setTimeout(() => document.getElementById("entrar")?.focus(), 50);
+  listo();
   quitar.push(fs.onSnapshot(fs.doc(fdb, "progreso", user.uid), snap => { prog = snap.data() || {}; aplicar(); }, () => aplicar()));
   quitar.push(alCambiarClase(us => {
     S.amigos = us; S.conectados = Object.values(us).filter(conectado).length;
-    if (["amigos","resumen","perfil"].includes(route())) render();
+    S.nombre = primerNombre(); actualizarSplash();
+    if (RUTAS_VIVAS.includes(route())) render(); else if (route() === "chat") pintarChat();
   }));
   quitar.push(fs.onSnapshot(fs.collection(fdb, "progreso"), snap => {
-    const r = {}; snap.docs.forEach(d => r[d.id] = d.data()); S.rank = r; if (["amigos","resumen","perfil"].includes(route())) render();
+    const r = {}; snap.docs.forEach(d => r[d.id] = d.data()); S.rank = r; if (RUTAS_VIVAS.includes(route())) render();
+  }, () => {}));
+  quitar.push(fs.onSnapshot(fs.query(fs.collection(fdb, "chat"), fs.orderBy("t"), fs.limitToLast(200)), snap => {
+    S.chat = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    let visto = 0; try { visto = +localStorage.getItem("chatVisto") || 0; } catch (e) {}
+    if (route() === "chat") pintarChat();
+    else { S.sinLeer = S.chat.filter(m => (m.t || 0) > visto && m.uid !== S.uid).length; if (route() === "resumen") render(); }
   }, () => {}));
 });
 setInterval(() => { if (route() === "amigos") render(); }, 60000);
+// ---------- chat ----------
+window.enviarMsg = async (tag, texto, form) => {
+  texto = String(texto || "").trim().slice(0, 800); if (!texto || !S.uid) return;
+  const b = form.querySelector("button[type=submit]"); b.disabled = true;
+  try { await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, tag: ETQ[tag] ? tag : "general", t: Date.now() }); form.querySelector("textarea").value = ""; }
+  catch (e) { toast("No se ha podido enviar. Revisa las reglas de Firebase."); }
+  b.disabled = false; form.querySelector("textarea").focus();
+};
+window.borrarMsg = async (id, btn) => {
+  if (!btn.dataset.c) { btn.dataset.c = 1; btn.textContent = "¿Seguro? Pulsa otra vez"; return; }
+  try { await fs.deleteDoc(fs.doc(fdb, "chat", id)); } catch (e) { toast("No se ha podido borrar."); }
+};
+document.addEventListener("submit", ev => { if (ev.target.id !== "chatform") return; ev.preventDefault();
+  window.enviarMsg(document.getElementById("chatTag").value, document.getElementById("chatTxt").value, ev.target); });
+document.addEventListener("keydown", ev => { if (ev.target.id === "chatTxt" && ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); ev.target.form.requestSubmit(); } });
 // ---------- perfil: foto de la galería (se reduce a 256 px y se guarda en el usuario) y nombre ----------
 function reducir(file) {
   return new Promise((ok, ko) => {
@@ -1116,6 +1223,5 @@ window.guardarNombre = async (n) => {
   try { await fs.setDoc(fs.doc(fdb, "usuarios", S.uid), { nombre: n }, { merge: true }); toast("Nombre guardado."); }
   catch (e) { toast("No se ha podido guardar."); }
 };
-
 </script>
 </body></html>
