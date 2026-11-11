@@ -570,6 +570,28 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .pide-c{width:min(420px,100%);background:var(--sheet,#fff);color:var(--ink);border-radius:18px;padding:26px 24px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .pide-i{font-size:38px}.pide-c h2{margin:0;font-size:22px}.pide-c p{margin:0;color:var(--ink-2)}
 .pide-b{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+
+.recos{display:flex;flex-direction:column;gap:10px}
+.recos-t{margin:0;font-family:var(--f-display);font-size:18px;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.recos-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px}
+.reco{background:var(--sheet);color:var(--ink);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);border-left:6px solid var(--accent)}
+.reco.urge{border-left-color:#e5231b}
+.reco-h{display:flex;gap:10px;align-items:center}.reco-i{font-size:24px}
+.reco-h div{display:flex;flex-direction:column}.reco-c{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2)}.reco.urge .reco-c{color:#d4231c}
+.reco-h b{font-family:var(--f-display);font-size:17px}
+.reco-t{margin:0;font-size:14px}
+.reco-l{display:flex;flex-direction:column;gap:6px}
+.reco-a{display:grid;grid-template-columns:minmax(0,1fr) 70px 3.2em 14px;gap:8px;align-items:center;text-decoration:none;color:var(--ink);border:1px solid var(--rule);border-radius:10px;padding:8px 10px;background:var(--paper)}
+.reco-a:hover{border-color:var(--accent)}
+.reco-n{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reco-p{height:7px;border-radius:4px;background:var(--st-sin);overflow:hidden}.reco-p i{display:block;height:100%;background:var(--accent)}
+.reco-v{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--ink-2)}.reco-a.sin{grid-template-columns:minmax(0,1fr) auto 14px}
+.reco-go{font-weight:800;color:var(--accent)}
+
+.lider{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:14px;padding:10px 14px;cursor:pointer;background:linear-gradient(90deg,#ffd75e,#ffb627);color:#2a1d00;font:inherit;font-size:15px;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.lider-i{font-size:24px}.lider-t{flex:1;min-width:0}.lider-go{font-weight:800}
+.lider .ava{border:2px solid #fff}
+.hoy-p{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--ok);text-align:right;font-family:var(--f-body)}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -864,18 +886,40 @@ function abrirFicha(id){const e=S.examenes.find(x=>x.id===id);if(!e)return;ficha
 function cerrarFicha(pop){if(pop!==true&&!$("#ficha").hidden&&history.state&&history.state.modal==="f"){history.back();return}$("#ficha").hidden=true;$("#ficha").innerHTML="";document.body.style.overflow="";fichaActual=null}
 let enfocar=null;
 
+
+function renderRecos(){if(!S.uid)return "";
+  const ex=S.examenes.filter(e=>!e.hecho&&e.fecha&&dias(e.fecha)>=0&&dias(e.fecha)<=7&&e.asig!=="global").sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(0,3);
+  if(!ex.length)return "";const mio=(S.rank||{})[S.uid]||{};
+  const tarjetas=ex.map(e=>{const d=dias(e.fecha),ts=temasDe(e).map(t=>t.id);
+    const rec=S.recursos.filter(r=>r.asig===e.asig&&r.url&&ts.includes(r.tema)).sort((a,b)=>(b.app?1:0)-(a.app?1:0));if(!rec.length)return "";
+    const apps=rec.filter(r=>r.app).map(r=>({r,p:Math.round(pctApp(mio,r.app)*100)}));
+    const peor=apps.slice().sort((a,b)=>a.p-b.p)[0];
+    const cuando=d===0?"Hoy":d===1?"Mañana":`En ${d} días`;
+    const consejo=peor?(peor.p>=90?"¡Lo llevas genial! Repasa un poco para no olvidarlo.":`Te recomendamos empezar por <b>${esc(peor.r.titulo.split(" · ")[0])}</b>: es donde menos llevas (${peor.p}%).`):"Repasa el material antes del examen.";
+    return `<article class="reco ${d<=1?"urge":""}"><div class="reco-h"><span class="reco-i" aria-hidden="true">📣</span><div><span class="reco-c">${cuando} · ${esc(NOM[e.asig]||e.asig)}</span><b>${esc(e.titulo)}</b></div></div>
+      <p class="reco-t">${consejo}</p>
+      <div class="reco-l">${rec.map(r=>{const a=r.app?Math.round(pctApp(mio,r.app)*100):null;
+        return `<a class="reco-a${a==null?" sin":""}" href="${esc(r.url)}"><span class="reco-n">${esc(r.titulo)}</span>${a!=null?`<span class="reco-p"><i style="width:${a}%"></i></span><span class="reco-v">${a}%</span>`:`<span class="reco-v">Abrir</span>`}<span class="reco-go" aria-hidden="true">→</span></a>`}).join("")}</div></article>`}).join("");
+  return tarjetas?`<section class="recos" aria-label="Recomendaciones"><h2 class="recos-t">Recomendaciones para ti</h2><div class="recos-g">${tarjetas}</div></section>`:""}
 function renderResumen(){
   const tiles=ASIG.map(a=>{const t=S.temas.filter(x=>x.asig===a.id),p=progreso(t.filter(x=>x.tri===triActual()));
     const pe=S.examenes.filter(e=>e.asig===a.id&&!e.hecho&&e.fecha&&dias(e.fecha)>=0).sort((x,y)=>x.fecha.localeCompare(y.fecha))[0];
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.sinLeer?`<span class="badge">${S.sinLeer>99?"99+":S.sinLeer}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.sinLeer?`<span class="badge">${S.sinLeer>99?"99+":S.sinLeer}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div>${renderLider()}${renderRecos()}<nav class="tiles" aria-label="Asignaturas">${tiles}</nav><div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
 const enLinea=u=>!!u&&Date.now()-(u.visto||0)<150000;
 function pctApp(p,k){const a=p&&p.apps&&p.apps[k];return a&&a.total?Math.min(1,a.ok/a.total):0}
+function hoyStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function puntosHoy(p){const h=hoyStr();return Math.max(0,Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||a.dia!==h||!a.total)return s;return s+Math.max(0,(a.ok-(a.ok0||0))/a.total)*100},0)))}
+function renderLider(){if(!S.uid)return "";const us=S.amigos||{},pr=S.rank||{};
+  const l=Object.keys(us).map(id=>({id,h:puntosHoy(pr[id])})).filter(x=>x.h>0).sort((a,b)=>b.h-a.h||nombreDe(a.id).localeCompare(nombreDe(b.id)));
+  if(!l.length)return `<button class="lider" data-go="amigos"><span class="lider-i" aria-hidden="true">🏆</span><span class="lider-t">En el ranking de hoy todavía no ha sumado nadie. <b>¡Sé el primero!</b></span></button>`;
+  const g=l[0],yo=l.findIndex(x=>x.id===S.uid);
+  return `<button class="lider" data-go="amigos"><span class="lider-i" aria-hidden="true">🏆</span>${avatar(g.id,30)}<span class="lider-t">En el ranking de hoy va ganando <b>${esc(g.id===S.uid?"tú":(nombreDe(g.id)||"alguien"))}</b> con <b>${g.h} pts</b>${g.id!==S.uid?(yo>=0?` · tú vas ${yo+1}.º con ${l[yo].h}`:" · tú aún no has sumado hoy"):""}</span><span class="lider-go" aria-hidden="true">→</span></button>`}
 function puntos(p){return Math.round(APPS.reduce((s,[k])=>s+pctApp(p,k)*100,0))}
 function nombreDe(id){const u=(S.amigos||{})[id]||{};return u.nombre||u.nombreGoogle||(id===S.uid?S.nombreCompleto:"")||""}
 function fotoDe(id){const u=(S.amigos||{})[id]||{};return u.fotoPropia||u.fotoGoogle||(id===S.uid?S.foto:"")||""}
@@ -917,7 +961,7 @@ function renderAmigos(){const lista=clasificacion();
     ${avatar(x.id,42)}
     <div class="rk-n"><b>${esc(nombreDe(x.id)||"Sin nombre")}${x.id===S.uid?" (tú)":""}</b><span class="${enLinea(x.u)?"on":""}">${enLinea(x.u)?"● conectado ahora":"última vez "+new Date(x.u.visto||0).toLocaleDateString("es-ES")}</span>
     ${barrasApps(x.p)}</div>
-    <span class="pts">${x.pts}<small>pts</small></span></div>`).join("");
+    <span class="pts">${x.pts}<small>pts</small>${puntosHoy(x.p)?`<em class="hoy-p">+${puntosHoy(x.p)} hoy</em>`:""}</span></div>`).join("");
   return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button>
    <section class="sheet"><header><h2>Amigos y ranking</h2><span class="note">${lista.length} en la clase · ${lista.filter(x=>enLinea(x.u)).length} conectados ahora</span></header>
    <p class="note" style="margin:0">Los puntos salen de lo que tienes dominado en cada app de Inglés: 100 por app, máximo 400. Iremos afinando el sistema.</p>

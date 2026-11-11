@@ -54,10 +54,17 @@ export function alCambiarClase(cb) {
 export const conectado = (u) => Date.now() - (u.visto || 0) < 150000;
 export const nombreDe = (u) => (u && (u.nombre || u.nombreGoogle)) || "Sin nombre";
 export const fotoDe = (u) => (u && (u.fotoPropia || u.fotoGoogle)) || "";
-// Guarda el resumen de una app en progreso/{uid}.apps[app] = {ok, total}
-export function guardarProgreso(app, ok, total) {
-  const u = auth.currentUser; if (!u) return Promise.resolve();
-  return fs.setDoc(fs.doc(db, "progreso", u.uid), { apps: { [app]: { ok, total, t: Date.now() } } }, { merge: true }).catch(() => {});
+// Guarda el resumen de una app en progreso/{uid}.apps[app] = {ok, total, dia, ok0}
+// ok0 = lo que llevabas al empezar el día (para el ranking de hoy)
+export const hoyISO = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+export async function guardarProgreso(app, ok, total) {
+  const u = auth.currentUser; if (!u) return;
+  const ref = fs.doc(db, "progreso", u.uid), hoy = hoyISO();
+  try {
+    const snap = await fs.getDoc(ref); const prev = ((snap.exists() && snap.data().apps) || {})[app];
+    const ok0 = prev && prev.dia === hoy ? (prev.ok0 ?? 0) : (prev ? prev.ok || 0 : 0);
+    await fs.setDoc(ref, { apps: { [app]: { ok, total, t: Date.now(), dia: hoy, ok0: Math.min(ok0, ok) } } }, { merge: true });
+  } catch (e) {}
 }
 // Páginas que solo se ven con cuenta: si no has entrado, te manda a la portada para entrar con Google
 // y, al entrar, te devuelve aquí.

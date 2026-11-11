@@ -94,7 +94,8 @@
    "destacado": true,
    "titulo": "Vocabulary 1st Term · app",
    "nota": "Definición ↔ palabra, español → inglés y añadir palabras",
-   "url": "vocabulary/"
+   "url": "vocabulary/",
+   "app": "vocab"
   },
   {
    "id": "p-vocablista",
@@ -119,7 +120,8 @@
    "claude": true,
    "titulo": "Verbomat · verbos irregulares",
    "nota": "Los 124 verbos por niveles",
-   "url": "verbos/"
+   "url": "verbos/",
+   "app": "verbos"
   },
   {
    "id": "p-afijos",
@@ -132,7 +134,8 @@
    "destacado": true,
    "titulo": "Afijomat · prefijos y sufijos",
    "nota": "Word formation por niveles",
-   "url": "afijos/"
+   "url": "afijos/",
+   "app": "afijos"
   },
   {
    "id": "p-wf",
@@ -145,7 +148,8 @@
    "destacado": true,
    "titulo": "Word Formation · frases de examen",
    "nota": "Bloques de 20 frases tipo examen",
-   "url": "wordformation/"
+   "url": "wordformation/",
+   "app": "wf"
   }
  ],
  "examenes": [
