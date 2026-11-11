@@ -142,9 +142,9 @@ function nueva(){stats();S.done=false;main.textContent="";
  // pista: primera letra
  const h=el("button","hint");h.append(el("span","dot"),document.createTextNode("Pista"));h.onclick=()=>{h.textContent="";h.append(document.createTextNode("Empieza por «"+String(w.en).replace(/^to /,"").charAt(0)+"» · "+(dw?"en español: "+w.es:String(w.en).replace(/^to /,"").length+" letras"))) };c.append(h);
  const fb=el("div");c.append(fb);inp.focus({preventScroll:true});
- const go=()=>{if(S.done)return nueva();S.done=true;const r=corrige(inp.value,w);inp.readOnly=true;inp.classList.add(r?"ok":"ko");apunta(w,r>0);
+ const go=()=>{if(S.done)return nueva();S.done=true;const alt=w.alt&&w.alt[norm(inp.value)];let r=corrige(inp.value,w);if(alt&&!dw&&!r)r=2;inp.readOnly=true;inp.classList.add(r?"ok":"ko");apunta(w,r>0);
   const f=el("div","fb "+(r===2?"ok":r===1?"warn":"ko"));f.append(el("div","h",r===2?"¡Correcto!":r===1?"Casi: revisa cómo se escribe":inp.value.trim()?"No es esa":"Solución"));
-  f.append(el("div","sol",w.en));if(S.cambio)f.append(el("div","sube-n",S.cambio==="dom"?"🏆 ¡Palabra dominada!":S.cambio==="ctrl"?"🟡 Ya la vas controlando":"Vuelve a «sin saber»"));f.append(el("div","es",(dw?w.es:w.def)+(w.plural?" · plural: "+w.plural:"")));fb.append(f);
+  f.append(el("div","sol",w.en));if(alt)f.append(el("div","es","💡 "+alt));if(S.cambio)f.append(el("div","sube-n",S.cambio==="dom"?"🏆 ¡Palabra dominada!":S.cambio==="ctrl"?"🟡 Ya la vas controlando":"Vuelve a «sin saber»"));f.append(el("div","es",(dw?w.es:w.def)+(w.plural?" · plural: "+w.plural:"")));fb.append(f);
   const n=el("div","nav"),nx=el("button","btn","Siguiente →");nx.onclick=nueva;n.append(nx);fb.append(n);b.textContent="Siguiente";nx.focus({preventScroll:true})};
  b.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go()}}}
 function tipoTest(c,w,p){c.append(el("p","ask","¿Qué definición corresponde a…?"));c.append(el("p","prompt big",w.en));
