@@ -1099,6 +1099,7 @@ function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id=
        <div class="pf-big"><span><b>${pts}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>de ${lista.length} en la clase</small></span></div></div></div>
      <div class="pf-acc"><button class="btn-p" data-foto style="--cf:var(--accent)">Subir foto de mi galería</button>${u.fotoPropia?'<button class="btn-sec" data-quitafoto>Volver a la foto de Google</button>':""}</div>
      <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.</p>
+     ${window.__esAdmin1b?`<button class="btn-p" data-admtoggle style="--cf:${S.admin?"#d4231c":"#141a2e"};align-self:flex-start">🛠 Modo administrador: ${S.admin?"ACTIVADO · pulsa para volver a jugador":"desactivado · pulsa para activarlo"}</button>`:""}
      <div class="pf-nom"><label for="nomIn">Nombre que ven los demás</label><div><input id="nomIn" maxlength="30" value="${esc(nombreDe(S.uid))}"><button class="btn-sec" data-guardanombre>Guardar</button></div></div>
    </section>
    <section class="sheet"><header><h2>Tus puntos por app</h2><span class="note">100 por app · máximo 400</span></header>
@@ -1256,6 +1257,7 @@ document.addEventListener("click",async ev=>{
   if(ev.target.closest("#lb")){if(history.state&&history.state.modal==="l")history.back();else $("#lb").hidden=true;return}
   if(ev.target.closest("[data-login]")){window.entrarGoogle&&window.entrarGoogle();return}
   {const d=ev.target.closest("[data-delmsg]");if(d){window.borrarMsg&&window.borrarMsg(d.dataset.delmsg,d);return}}
+  if(ev.target.closest("[data-admtoggle]")){document.querySelector(".adm-1b")?.click();return}
   if(ev.target.closest("[data-salir]")){window.salirPortal&&window.salirPortal();return}
   if(ev.target.closest("[data-foto]")){document.getElementById("fotoIn")?.click();return}
   if(ev.target.closest("[data-quitafoto]")){window.quitarFoto&&window.quitarFoto();return}

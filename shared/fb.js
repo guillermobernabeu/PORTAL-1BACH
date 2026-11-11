@@ -193,17 +193,35 @@ onAuthStateChanged(auth, (u) => {
   }, () => {}));
 });
 // ---------- modo administrador (solo la cuenta de Guillermo) ----------
+// SHA-256 en JavaScript por si el navegador no deja usar crypto.subtle (algunos navegadores dentro de apps)
+function sha256js(m) {
+  const K = [], H = [], p = (n) => { for (let f = 2; f * f <= n; f++) if (n % f === 0) return false; return true; };
+  for (let n = 2, i = 0; i < 64; n++) if (p(n)) { if (i < 8) H[i] = (Math.pow(n, 1 / 2) * 2 ** 32) | 0; K[i++] = (Math.pow(n, 1 / 3) * 2 ** 32) | 0; }
+  const b = [...new TextEncoder().encode(m)], l = b.length * 8; b.push(0x80); while (b.length % 64 !== 56) b.push(0);
+  for (let i = 7; i >= 0; i--) b.push(i > 3 ? 0 : (l >>> (i * 8)) & 255);
+  const r = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let o = 0; o < b.length; o += 64) {
+    const w = []; for (let i = 0; i < 16; i++) w[i] = (b[o + 4 * i] << 24) | (b[o + 4 * i + 1] << 16) | (b[o + 4 * i + 2] << 8) | b[o + 4 * i + 3];
+    for (let i = 16; i < 64; i++) { const s0 = r(w[i - 15], 7) ^ r(w[i - 15], 18) ^ (w[i - 15] >>> 3), s1 = r(w[i - 2], 17) ^ r(w[i - 2], 19) ^ (w[i - 2] >>> 10); w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0; }
+    let [a, bb, c, d, e, f, g, h] = H;
+    for (let i = 0; i < 64; i++) { const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0, t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & bb) ^ (a & c) ^ (bb & c))) | 0; h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0; }
+    H[0] = (H[0] + a) | 0; H[1] = (H[1] + bb) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0; H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+  }
+  return H.map(x => (x >>> 0).toString(16).padStart(8, "0")).join("");
+}
 const ADMIN_H = "567368fac0b19f0df9590340c50247491ee14e5df1325c518877acbdeabcb98a";
 let soyAdmin = false;
 export const esAdmin = () => soyAdmin;
 export const modoAdmin = () => { try { return soyAdmin && localStorage.getItem("modoAdmin") === "1"; } catch (e) { return false; } };
 function aplicarAdmin() {
-  const on = modoAdmin(); document.documentElement.classList.toggle("admin-1b", on);
+  const on = modoAdmin(); window.__esAdmin1b = soyAdmin; document.documentElement.classList.toggle("admin-1b", on);
   const b = document.querySelector(".adm-1b"); if (b) b.setAttribute("aria-pressed", String(on));
   document.dispatchEvent(new CustomEvent("admin1b", { detail: on }));
 }
 onAuthStateChanged(auth, async (u) => {
-  let h = ""; try { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String((u && u.email) || "").toLowerCase())); h = [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, "0")).join(""); } catch (e) {}
+  const correo = String((u && u.email) || "").trim().toLowerCase();
+  let h = ""; try { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(correo)); h = [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, "0")).join(""); } catch (e) { h = sha256js(correo); }
+  if (!h) h = sha256js(correo);
   soyAdmin = !!u && h === ADMIN_H;
   let b = document.querySelector(".adm-1b");
   if (soyAdmin && !b) {
