@@ -136,7 +136,18 @@ function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;
 function apunta(w,bien){const antes=nivel(w.id),t=ST[w.id]=ST[w.id]||{a:0,f:0,r:0};if(bien){t.a++;t.r++}else{t.f++;t.r=0}saveST();S.cambio=antes!==nivel(w.id)?nivel(w.id):null;if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats();window.trasApuntar&&window.trasApuntar(w,bien)}
 // ---------- vistas ----------
 const main=$("#main");
-function pick(p){let w=p[Math.floor(Math.random()*p.length)];if(S.q&&p.length>1&&w.id===S.q.id)w=p[(p.indexOf(w)+1)%p.length];return w}
+// Cuanto menos trabajada, más sale: peso según lo que llevas de cada palabra
+function peso(w){const t=ST[w.id];
+ if(!t||!(t.a+t.f))return 6;            // nunca vista
+ if(!t.a)return 9;                      // solo fallos
+ if(t.r===0)return 8;                   // la última vez la fallaste
+ if(t.r<DOM)return t.r===1?4:2.5;       // controlando
+ return t.r>=DOM+3?0.15:0.35}           // dominada: sale muy poco (y menos cuanto más racha)
+const RECIENTES=[];
+function pick(p){if(p.length===1)return p[0];
+ const ws=p.map(w=>{let k=peso(w);const i=RECIENTES.indexOf(w.id);if(i>=0)k*=0.02*(i+1);return k});
+ let x=Math.random()*ws.reduce((a,b)=>a+b,0),w=p[p.length-1];for(let i=0;i<p.length;i++){x-=ws[i];if(x<=0){w=p[i];break}}
+ RECIENTES.unshift(w.id);RECIENTES.length=Math.min(RECIENTES.length,Math.min(8,Math.floor(p.length/2)));return w}
 function nueva(){stats();S.done=false;main.textContent="";
  if(S.tab==="list")return lista();if(S.tab==="clase")return clase();if(S.tab==="add")return anadir();
  const p=pool();if(!p.length){const c=el("div","card");c.append(el("p","empty",S.words.length?(S.soloF?"No tienes fallos guardados en estos bloques.":"No hay palabras en los bloques elegidos."):"Todavía no hay palabras."));main.append(c);return}
