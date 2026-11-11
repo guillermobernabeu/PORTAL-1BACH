@@ -64,8 +64,10 @@ export async function guardarProgreso(app, ok, total) {
     const snap = await fs.getDoc(ref); const prev = ((snap.exists() && snap.data().apps) || {})[app];
     // en las apps que guardan el progreso en el navegador, los puntos no bajan (p. ej. al cambiar de dirección web)
     if (prev && ["verbos", "afijos", "wf"].includes(app) && (prev.ok || 0) > ok) ok = prev.ok;
-    const ok0 = prev && prev.dia === hoy ? (prev.ok0 ?? 0) : (prev ? prev.ok || 0 : 0);
-    await fs.setDoc(ref, { apps: { [app]: { ok, total, t: Date.now(), dia: hoy, ok0: Math.min(ok0, ok) } } }, { merge: true });
+    const ok0 = prev && prev.dia === hoy ? (prev.ok0 ?? 0) : (prev ? prev.ok || 0 : (["verbos", "afijos", "wf"].includes(app) ? ok : 0));
+    const nuevo = { ok, total, t: Date.now(), dia: hoy, ok0: Math.min(ok0, ok) }, datos = snap.exists() ? snap.data() : {};
+    const hoyPts = ptsHoyDe({ apps: { ...(datos.apps || {}), [app]: nuevo }, dias: datos.dias }, hoy);
+    await fs.setDoc(ref, { apps: { [app]: nuevo }, dias: { [hoy]: hoyPts } }, { merge: true });
   } catch (e) {}
 }
 // Páginas que solo se ven con cuenta: si no has entrado, te manda a la portada para entrar con Google
@@ -127,6 +129,13 @@ function avisar(html, ir, dura = 7000) {
   setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, dura);
 }
 const APPS_R = ["vocab", "plur", "verbos", "afijos", "wf"];
+// Puntos del día: lo que has avanzado hoy en cada app (vuelven a 0 cada día). Se guardan en progreso.dias[fecha] y nunca bajan.
+const ganadoHoy = (p, hoy) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || a.dia !== hoy || !a.total) return s; return s + Math.max(0, (a.ok - (a.ok0 || 0)) / a.total) * 100; }, 0));
+export const ptsHoyDe = (p, hoy = hoyISO()) => Math.max(ganadoHoy(p, hoy), Number(((p && p.dias) || {})[hoy]) || 0);
+const lunes = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+export const diasSemana = (atras = 0) => { const l = lunes(new Date()); l.setDate(l.getDate() - 7 * atras); return Array.from({ length: 7 }, (_, i) => { const d = new Date(l); d.setDate(l.getDate() + i); return iso(d); }); };
+export const ptsSemanaDe = (p, atras = 0) => { const hoy = hoyISO(); return diasSemana(atras).reduce((s, f) => s + (f === hoy ? ptsHoyDe(p, hoy) : (Number(((p && p.dias) || {})[f]) || 0)), 0); };
 export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;
@@ -147,25 +156,72 @@ async function avisoAdelanto(nuevos, posAntes, posAhora, alVolver) {
   avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom(n0).charAt(0).toUpperCase())}</span>`}<span>${alVolver ? "👋 Mientras no estabas: " : "⚠️ "}${quien} en el ranking. ${pos}${top} ¡A estudiar!</span>`, "amigos", alVolver ? 11000 : 7000);
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && pendiente) { const p = pendiente; pendiente = null; avisoAdelanto(p.nuevos, p.posAntes, p.posAhora, true); } });
+let quitarUsRank = null;
 onAuthStateChanged(auth, (u) => {
   if (quitarRank) { quitarRank(); quitarRank = null; }
+  if (quitarUsRank) { quitarUsRank(); quitarUsRank = null; }
   if (!u) return;
-  const clave = "rankDelante_" + u.uid, ref = fs.doc(db, "progreso", u.uid);
-  let antes = null, primera = true, guardado = "";
-  const leerLocal = () => { try { return JSON.parse(localStorage.getItem(clave) || "null"); } catch (e) { return null; } };
-  quitarRank = fs.onSnapshot(fs.collection(db, "progreso"), async (snap) => {
-    const pts = {}; let mio = {}; snap.docs.forEach(d => { pts[d.id] = ptsDe(d.data()); if (d.id === u.uid) mio = d.data(); });
+  const ref = fs.doc(db, "progreso", u.uid);
+  // Solo cuenta lo mismo que la gráfica del ranking: personas con perfil, no expulsadas, y datos del servidor (no de la caché)
+  let usuarios = null, progreso = null, mio = {}, antes = undefined, guardado = "", espera = null;
+  const tabla = () => { const pts = {}; for (const id in usuarios) if (!usuarios[id].baneado) pts[id] = progreso[id] || 0; pts[u.uid] = progreso[u.uid] || 0; return pts; };
+  const situacion = (pts) => { const yo = pts[u.uid] || 0, delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > yo); return { yo, delante, pos: delante.length + 1, pts }; };
+  function comprobar() {
+    if (!usuarios || !progreso) return;
+    const ahora = situacion(tabla());
+    const hoy = hoyISO();
+    if (antes === undefined) { const r = mio.rankVisto; antes = r && r.pts && typeof r.pts === "object" ? r : null; }
+    // el ranking es del día: al cambiar de día todos empiezan en 0
+    if (antes && antes.dia !== hoy) antes = { delante: [], pos: null, yo: 0, pts: {}, dia: hoy };
+    // alguien te ha adelantado de verdad: antes tenía tus puntos o menos, ahora tiene más, y ha sido porque ha subido él
+    const adelantos = (prev) => !prev || !prev.pts ? [] : ahora.delante.filter(id => { const ant = prev.pts[id] || 0; return ant <= (prev.yo || 0) && ahora.pts[id] > ant; });
+    const nuevos = adelantos(antes);
+    if (nuevos.length) {
+      if (espera) return; // ya hay una comprobación en marcha
+      const prev = antes;
+      // se vuelve a comprobar unos segundos después con los datos frescos, para que el aviso coincida con la gráfica
+      espera = setTimeout(() => { const ok = situacion(tabla()), siguen = nuevos.filter(id => ok.delante.includes(id) && ok.pts[id] > ((prev.pts || {})[id] || 0));
+        espera = null; if (siguen.length) avisoAdelanto(siguen, prev.pos || null, ok.pos, primeraVez).catch(() => {}); primeraVez = false; guardar(ok); }, 4000);
+      return;
+    }
+    primeraVez = false; guardar(ahora);
+  }
+  let primeraVez = true;
+  function guardar(sit) {
+    const dia = hoyISO();
+    antes = { delante: sit.delante, pos: sit.pos, yo: sit.yo, pts: sit.pts, dia };
+    const firma = JSON.stringify([dia, sit.yo, sit.pos, sit.pts]);
+    if (firma !== guardado) { guardado = firma; fs.setDoc(ref, { rankVisto: { delante: sit.delante, pos: sit.pos, yo: sit.yo, pts: sit.pts, dia, t: Date.now() } }, { merge: true }).catch(() => {}); }
+  }
+  quitarUsRank = fs.onSnapshot(fs.collection(db, "usuarios"), (snap) => {
+    if (snap.metadata && snap.metadata.fromCache) return;
+    usuarios = {}; snap.docs.forEach(d => { usuarios[d.id] = d.data(); }); comprobar();
+  }, () => {});
+  quitarRank = fs.onSnapshot(fs.collection(db, "progreso"), (snap) => {
+    const pts = {}; snap.docs.forEach(d => { pts[d.id] = ptsHoyDe(d.data()); if (d.id === u.uid) mio = d.data(); });
     window.__rank1b = pts; document.dispatchEvent(new CustomEvent("rank1b", { detail: pts }));
-    const mios = pts[u.uid] || 0;
-    const delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > mios), posAhora = delante.length + 1;
-    if (primera) { primera = false; const r = mio.rankVisto, l = leerLocal();
-      antes = r && Array.isArray(r.delante) ? r : (Array.isArray(l) ? { delante: l } : null);
-      if (antes) { const nuevos = delante.filter(id => !antes.delante.includes(id)); if (nuevos.length) avisoAdelanto(nuevos, antes.pos || null, posAhora, true); } }
-    else if (antes) { const nuevos = delante.filter(id => !antes.delante.includes(id)); if (nuevos.length) avisoAdelanto(nuevos, antes.pos || null, posAhora, false); }
-    antes = { delante, pos: posAhora };
-    try { localStorage.setItem(clave, JSON.stringify(delante)); } catch (e) {}
-    const firma = delante.slice().sort().join(",") + "|" + posAhora;
-    if (firma !== guardado) { guardado = firma; fs.setDoc(ref, { rankVisto: { delante, pos: posAhora, t: Date.now() } }, { merge: true }).catch(() => {}); }
+    if (snap.metadata && (snap.metadata.fromCache || snap.metadata.hasPendingWrites)) return;
+    progreso = pts; comprobar();
+  }, () => {});
+});
+// ---------- expulsión: mensaje en el centro de la pantalla ----------
+let quitarBan = null;
+onAuthStateChanged(auth, (u) => {
+  if (quitarBan) { quitarBan(); quitarBan = null; }
+  document.getElementById("ban1b")?.remove();
+  if (!u) return;
+  quitarBan = fs.onSnapshot(fs.doc(db, "baneos", u.uid), (s) => {
+    document.getElementById("ban1b")?.remove();
+    if (!s.exists()) return;
+    const m = (s.data() || {}).motivo || "Has sido expulsado de 1 BACH.";
+    const d = document.createElement("div"); d.id = "ban1b";
+    d.innerHTML = `<style>#ban1b{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:20px;background:rgba(10,14,30,.94);backdrop-filter:blur(6px);font-family:system-ui,sans-serif}
+#ban1b .c{max-width:460px;width:100%;background:#fff;color:#14182b;border-radius:18px;padding:30px 26px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#ban1b .i{font-size:44px;line-height:1}#ban1b h2{margin:10px 0 8px;font-size:22px}#ban1b p{margin:0 0 20px;font-size:17px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+#ban1b button{font:700 15px system-ui,sans-serif;border:0;border-radius:999px;padding:10px 20px;background:#14182b;color:#fff;cursor:pointer}</style>
+<div class="c" role="alertdialog" aria-modal="true"><div class="i">🚫</div><h2>No puedes entrar en 1 BACH</h2><p>${escH(m)}</p><button type="button">Cerrar sesión</button></div>`;
+    d.querySelector("button").onclick = () => signOut(auth).catch(() => {});
+    document.body.append(d);
   }, () => {});
 });
 // ---------- modo concentración y avisos del chat ----------
@@ -174,12 +230,12 @@ export function ponerConcentracion(v) { try { localStorage.setItem("concentracio
 document.documentElement.classList.toggle("concentracion-1b", concentracion());
 const enPortal1b = location.pathname === RAIZ.pathname || location.pathname === RAIZ.pathname + "index.html";
 async function quienEs(id) { try { const s = await fs.getDoc(fs.doc(db, "usuarios", id)); return s.exists() ? s.data() : {}; } catch (e) { return {}; } }
-async function avisoMensaje(uid, texto, ir, priv) {
+async function avisoMensaje(uid, texto, ir, priv, mencion) {
   if (concentracion()) return;
   const h = location.hash.slice(1);
   if (enPortal1b && (h === ir || (ir === "chat" && h === "chat"))) return;
   const u = await quienEs(uid), nom = u.nombre || u.nombreGoogle || "Alguien", foto = u.fotoPropia || u.fotoGoogle || "";
-  avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom.charAt(0).toUpperCase())}</span>`}<span>${priv ? "🔒" : "💬"} <b>${escH(nom)}</b>${priv ? " te ha escrito" : " en el chat"}: ${escH(String(texto || "📷 Foto").slice(0, 90))}</span>`, ir);
+  avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom.charAt(0).toUpperCase())}</span>`}<span>${mencion ? "📣" : priv ? "🔒" : "💬"} <b>${escH(nom)}</b>${mencion ? " te ha mencionado en el chat" : priv ? " te ha escrito" : " en el chat"}: ${escH(String(texto || "📷 Foto").slice(0, 90))}</span>`, ir, mencion ? 10000 : 7000);
 }
 let quitarAvisos = [];
 onAuthStateChanged(auth, (u) => {
@@ -187,7 +243,7 @@ onAuthStateChanged(auth, (u) => {
   if (!u) return;
   const inicio = Date.now(); let ultChat = inicio; const ultPriv = {};
   quitarAvisos.push(fs.onSnapshot(fs.query(fs.collection(db, "chat"), fs.orderBy("t"), fs.limitToLast(1)), snap => {
-    snap.docs.forEach(d => { const m = d.data(); if ((m.t || 0) > ultChat && m.uid !== u.uid) { ultChat = m.t; avisoMensaje(m.uid, m.texto, "chat", false); } });
+    snap.docs.forEach(d => { const m = d.data(); if ((m.t || 0) > ultChat && m.uid !== u.uid) { ultChat = m.t; avisoMensaje(m.uid, m.texto, "chat", false, (m.menc || []).includes(u.uid)); } });
   }, () => {}));
   quitarAvisos.push(fs.onSnapshot(fs.query(fs.collection(db, "privados"), fs.where("miembros", "array-contains", u.uid)), snap => {
     snap.docs.forEach(d => { const c = d.data(), m = c.ultimo || {}; if (!m.t || m.uid === u.uid || m.t <= inicio || m.t <= (ultPriv[d.id] || 0)) return;

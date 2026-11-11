@@ -49,7 +49,7 @@ export async function iniciarLateral({ recurso, stats }) {
   const st = document.createElement("style"); st.textContent = CSS; document.head.append(st);
   document.documentElement.classList.add("con-lateral");
   const d = document.createElement("aside"); d.className = "lat-d"; d.setAttribute("aria-label", "Tu progreso");
-  d.innerHTML = `<section class="lat-c lat-reloj" id="latReloj" hidden></section><section class="lat-c lat-dom" id="latDom"></section><section class="lat-c lat-rk" id="latRk"><h3>🏆 Ranking</h3><ol id="latRkL"><li class="dots">cargando</li></ol><a href="${RAIZ}#amigos">Ver el ranking completo →</a></section>`;
+  d.innerHTML = `<section class="lat-c lat-reloj" id="latReloj" hidden></section><section class="lat-c lat-dom" id="latDom"></section><section class="lat-c lat-rk" id="latRk"><h3>🏆 Ranking de hoy</h3><ol id="latRkL"><li class="dots">cargando</li></ol><a href="${RAIZ}#amigos">Ver el ranking completo →</a></section>`;
   const i = document.createElement("aside"); i.className = "lat-i";
   i.innerHTML = `<button class="lat-conc" type="button" aria-pressed="${concentracion()}" title="Quita todo lo de los lados y los avisos para concentrarte"><span class="sw" aria-hidden="true"></span>🎯 Concentración</button>`;
   document.body.append(d, i);
@@ -101,7 +101,7 @@ export async function iniciarLateral({ recurso, stats }) {
   let us = {}, pts = window.__rank1b || {};
   function rk() {
     const yo = auth.currentUser && auth.currentUser.uid; if (!yo) return;
-    const ids = new Set([...Object.keys(us), ...Object.keys(pts)]); ids.add(yo);
+    const ids = new Set(Object.keys(us).filter(id => !(us[id] || {}).baneado)); ids.add(yo);
     const lista = [...ids].map(id => ({ id, p: pts[id] || 0 })).sort((a, b) => b.p - a.p || nombreDe(us[a.id]).localeCompare(nombreDe(us[b.id])));
     const pos = lista.findIndex(x => x.id === yo);
     const fila = (x, n) => { const u = us[x.id] || {}, f = fotoDe(u), nom = x.id === yo ? "Tú" : nombreDe(u);

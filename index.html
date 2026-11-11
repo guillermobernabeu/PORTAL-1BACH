@@ -474,7 +474,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 /* teléfono */
 @media (max-width:600px){
   .rk{grid-template-columns:26px 36px minmax(0,1fr);grid-template-areas:"p a n" "x x x"}
-  .rk .pts{grid-column:1/-1;text-align:left;font-size:20px}
+  .rk .pts{grid-column:1/-1;text-align:left;font-size:20px}.rk .pts .hoy-p{display:inline;margin-left:10px;text-align:left}
   .rk-apps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pf-app{grid-template-columns:minmax(0,1fr) 4em}.pf-app .barra{grid-column:1/-1;grid-row:2}
   .yo span{max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -632,6 +632,32 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .adm-b{display:flex;gap:10px;flex-wrap:wrap}
 .adm-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.adm-l li{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--rule);border-radius:10px;padding:8px 10px}
 .adm-l button{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer}
+
+.menc{font-weight:700;color:var(--accent);cursor:pointer}.menc.yo{background:#ffd75e;color:#2a1d00;border-radius:6px;padding:0 4px}
+.menc-box{display:flex;flex-direction:column;gap:2px;border:1px solid var(--rule);border-radius:12px;background:var(--paper);padding:4px;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.menc-box button{display:flex;align-items:center;gap:8px;border:0;background:none;color:var(--ink);font:inherit;font-size:14px;padding:6px 8px;border-radius:8px;cursor:pointer;text-align:left}
+.menc-box button.sel,.menc-box button:hover{background:color-mix(in oklab,var(--accent) 14%,transparent)}
+.badge-m{position:absolute;top:-7px;left:-7px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#ffd75e;color:#2a1d00;font-size:13px;font-weight:900;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.msg.mencionado .bur{box-shadow:0 0 0 2px #ffd75e}
+.mrep{border:0;background:none;color:var(--ink-2);font-size:11.5px;padding:2px 0 0 8px;cursor:pointer;text-decoration:underline}
+
+.admx-t{margin-left:auto}.tema{position:relative}
+
+.rep-l{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.rep-l textarea{font:inherit;font-size:15px;font-weight:400;padding:9px 11px;border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:var(--ink)}
+#repForm,#banForm{display:flex;flex-direction:column;gap:10px}
+.rep-msg{font-style:italic;border-left:3px solid var(--rule);padding-left:10px}
+.rep-lista li{flex-direction:column;align-items:stretch}.rep-lista p{margin:4px 0 0}
+.rep-lista .adm-b button{border:1px solid var(--rule);background:var(--paper);border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer}
+
+.semana{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.sem-c{display:flex;gap:12px;align-items:center;border:1px solid var(--rule);border-radius:14px;padding:12px 14px;background:var(--paper)}
+.sem-c.pasada{border-color:#e9c53f;background:linear-gradient(135deg,rgba(255,215,94,.22),transparent 70%)}
+.sem-c>div{display:flex;flex-direction:column;gap:2px;min-width:0}.sem-c .eyebrow{font-size:11px}.sem-c b{font-size:17px}.sem-c span{font-size:13px;color:var(--ink-2)}.sem-c span b{font-size:inherit;color:var(--ink)}
+.rk-modos{display:flex;gap:6px;flex-wrap:wrap}
+.rk-modos button{border:1px solid var(--rule);background:var(--paper);color:var(--ink-2);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.rk-modos button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+button.pts{background:none;border:0;cursor:pointer;padding:4px 6px;border-radius:10px}button.pts:hover{background:rgba(0,0,0,.05)}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -704,7 +730,7 @@ const NOM={...AN,global:"Globales"};
 const EST=[["sin","Sin ver"],["visto","Visto"],["repasado","Repasado"],["dominado","Dominado"]];
 const ESTN=Object.fromEntries(EST), PESO={sin:0,visto:.34,repasado:.67,dominado:1};
 const TIPO={chat:"Chat",app:"App",doc:"Doc",archivo:"Archivo",web:"Web"};
-const S={ocultos:[],temas:[],recursos:[],examenes:[],fallos:[],vocab:[],practica:[],loaded:false,error:null,canWrite:true};
+const S={rkModo:(()=>{try{return localStorage.getItem("rkModo")||"hoy"}catch(e){return "hoy"}})(),ocultos:[],temas:[],recursos:[],examenes:[],fallos:[],vocab:[],practica:[],loaded:false,error:null,canWrite:true};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let tri={}; try{tri=JSON.parse(localStorage.getItem("tri")||"{}")}catch(e){}
@@ -949,26 +975,31 @@ function renderResumen(){
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}${renderLider()}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav>${renderRecos()}<div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}${renderLider()}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.mencNuevas?`<span class="badge-m" title="Te han mencionado">@</span>`:""}${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntosHoy((S.rank||{})[S.uid])} pts hoy</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav>${renderRecos()}<div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["plur","Plurales"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
 const enLinea=u=>!!u&&Date.now()-(u.visto||0)<150000;
 function pctApp(p,k){const a=p&&p.apps&&p.apps[k];return a&&a.total?Math.min(1,a.ok/a.total):0}
 function hoyStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function puntosHoy(p){const h=hoyStr();return Math.max(0,Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||a.dia!==h||!a.total)return s;return s+Math.max(0,(a.ok-(a.ok0||0))/a.total)*100},0)))}
+function ganadoHoy(p,h){return Math.max(0,Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||a.dia!==h||!a.total)return s;return s+Math.max(0,(a.ok-(a.ok0||0))/a.total)*100},0)))}
+function puntosHoy(p,h=hoyStr()){return Math.max(ganadoHoy(p,h),Number(((p&&p.dias)||{})[h])||0)}
+function isoD(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function diasSemana(atras=0){const n=new Date(),l=new Date(n.getFullYear(),n.getMonth(),n.getDate());l.setDate(l.getDate()-((l.getDay()+6)%7)-7*atras);return Array.from({length:7},(_,i)=>{const d=new Date(l);d.setDate(l.getDate()+i);return isoD(d)})}
+function puntosSemana(p,atras=0){const h=hoyStr();return diasSemana(atras).reduce((s,f)=>s+(f===h?puntosHoy(p,h):(Number(((p&&p.dias)||{})[f])||0)),0)}
+function ganadorSemana(atras){const us=S.amigos||{},pr=S.rank||{};const L=Object.keys(us).filter(id=>!us[id].baneado).map(id=>({id,v:puntosSemana(pr[id],atras)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);return L[0]||null}
+function fechaCorta(f){const [y,m,d]=f.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-ES",{day:"numeric",month:"short"})}
 function renderLider(){if(!S.uid)return "";const us=S.amigos||{},pr=S.rank||{};
   const hoy=Object.keys(us).map(id=>({id,v:puntosHoy(pr[id])})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
-  const tot=Object.keys(us).map(id=>({id,v:puntos(pr[id])})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
-  const g=(hoy[0]||tot[0]);if(!g)return "";
-  return `<span class="lider" title="${hoy.length?"Va primero en el ranking de hoy":"Va primero en el ranking"}">🏆 ${esc(g.id===S.uid?"Tú":(nombreDe(g.id)||"Alguien"))} en cabeza${hoy.length?" hoy":""}</span>`}
+  const sem=ganadorSemana(0),g=hoy[0]||sem;if(!g)return "";
+  return `<span class="lider" title="${hoy.length?"Va primero en el ranking de hoy":"Va primero esta semana"}">🏆 ${esc(g.id===S.uid?"Tú":(nombreDe(g.id)||"Alguien"))} en cabeza${hoy.length?" hoy":" esta semana"}</span>`}
 function puntos(p){return Math.round(APPS.reduce((s,[k])=>s+pctApp(p,k)*100,0))}
 function nombreDe(id){const u=(S.amigos||{})[id]||{};return u.nombre||u.nombreGoogle||(id===S.uid?S.nombreCompleto:"")||""}
 function fotoDe(id){const u=(S.amigos||{})[id]||{};return u.fotoPropia||u.fotoGoogle||(id===S.uid?S.foto:"")||""}
 function avatar(id,px){const f=fotoDe(id),n=nombreDe(id)||"?";
   return f?`<img class="ava" src="${esc(f)}" alt="" referrerpolicy="no-referrer" style="width:${px}px;height:${px}px">`:`<span class="ava av0" style="width:${px}px;height:${px}px;font-size:${Math.round(px*.42)}px">${esc(n[0].toUpperCase())}</span>`}
-function clasificacion(){const us=S.amigos||{},pr=S.rank||{};
-  return Object.keys(us).map(id=>({id,u:us[id],p:pr[id]||{},pts:puntos(pr[id]||{})})).sort((a,b)=>b.pts-a.pts||nombreDe(a.id).localeCompare(nombreDe(b.id)))}
+function clasificacion(modo=S.rkModo||"hoy"){const us=S.amigos||{},pr=S.rank||{},f=modo==="semana"?p=>puntosSemana(p):modo==="dominio"?puntos:p=>puntosHoy(p);
+  return Object.keys(us).filter(id=>!us[id].baneado).map(id=>({id,u:us[id],p:pr[id]||{},pts:f(pr[id]||{})})).sort((a,b)=>b.pts-a.pts||nombreDe(a.id).localeCompare(nombreDe(b.id)))}
 function barrasApps(p){return `<div class="rk-apps">${APPS.map(([k,t])=>{const v=Math.round(pctApp(p,k)*100),a=p&&p.apps&&p.apps[k];
   return `<span title="${t}: ${a?a.ok+" de "+a.total:"sin empezar"}"><i style="width:${v}%"></i><em>${t} ${v}%</em></span>`}).join("")}</div>`}
 
@@ -980,7 +1011,7 @@ const MAXF=3;window.ADJ=window.ADJ||[];
 function pintarAdj(){const a=document.getElementById("chatAdj");if(!a)return;a.innerHTML=window.ADJ.map((u,i)=>`<span class="adj"><img src="${u}" alt=""><button type="button" data-quitaadj="${i}" aria-label="Quitar foto">×</button></span>`).join("")}
 const ETQ={general:"💬 General",mal:"❌ Pregunta o respuesta mal",fecha:"📅 Fecha mal",noentra:"📚 Qué entra",idea:"💡 Idea"};
 function tabsChat(){const p=S.sinLeerPriv||0,g=route()==="chat"?0:(S.sinLeer||0),r=route();
-  return `<div class="ctabs2" id="ctabs2" role="tablist"><button data-go="chat" aria-pressed="${r==="chat"}">👥 Clase${g?`<span class="badge">${g}</span>`:""}</button><button data-go="privados" aria-pressed="${r!=="chat"}">🔒 Privados${p?`<span class="badge">${p}</span>`:""}</button></div>`}
+  return `<div class="ctabs2" id="ctabs2" role="tablist"><button data-go="chat" aria-pressed="${r==="chat"}">👥 Clase${S.mencNuevas&&r!=="chat"?`<span class="badge-m">@</span>`:""}${g?`<span class="badge">${g}</span>`:""}</button><button data-go="privados" aria-pressed="${r!=="chat"}">🔒 Privados${p?`<span class="badge">${p}</span>`:""}</button></div>`}
 function pintarTabsChat(){const t=document.getElementById("ctabs2");if(t)t.outerHTML=tabsChat()}
 function renderChat(){
   return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}
@@ -989,7 +1020,7 @@ function renderChat(){
    <div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
    <form class="chatform" id="chatform" data-ruta="chat"><select id="chatTag" aria-label="Tipo de mensaje">${Object.entries(ETQ).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
      <div class="chatadj" id="chatAdj"></div>
-     <div class="chatin"><button class="clip" type="button" data-adjuntar title="Adjuntar fotos (hasta ${MAXF})" aria-label="Adjuntar fotos">📷</button><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe un mensaje para la clase…"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div>
+     <div class="menc-box" id="menc" hidden></div><div class="chatin"><button class="clip" type="button" data-adjuntar title="Adjuntar fotos (hasta ${MAXF})" aria-label="Adjuntar fotos">📷</button><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe un mensaje para la clase… (usa @ para mencionar a alguien)"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div>
      <p class="note" style="margin:0">Puedes adjuntar hasta ${MAXF} fotos por mensaje; se reducen solas para que no pesen.</p></form>
    </section></div>`}
 function horaChat(t){const d=new Date(t),h=new Date();const mismo=d.toDateString()===h.toDateString();
@@ -999,9 +1030,9 @@ function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)ret
   if(priv&&S.privError){L.innerHTML=`<div class="empty">${esc(S.privError)}</div>`;return}
   if(!priv&&S.chatError){L.innerHTML=`<div class="empty">${esc(S.chatError)}</div>`;return}
   L.innerHTML=ms.length?ms.map(m=>{const yo=m.uid===S.uid;
-    return `<div class="msg ${yo?"mio":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}"><button class="ava-b" data-perfil="${esc(m.uid)}" aria-label="Ver perfil">${avatar(m.uid,32)}</button><div class="bur"><div class="mh"><b class="nombre-b" data-perfil="${esc(m.uid)}">${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div>${m.texto?`<p>${esc(m.texto)}</p>`:""}${Array.isArray(m.fotos)&&m.fotos.length?`<div class="mfotos">${m.fotos.filter(u=>/^data:image\/(jpeg|png|webp);base64,/.test(u)).map(u=>`<img src="${u}" alt="Foto" loading="lazy" data-verfoto>`).join("")}</div>`:""}${yo||(S.esAdmin&&!priv)?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
+    return `<div class="msg ${yo?"mio":""} ${(m.menc||[]).includes(S.uid)?"mencionado":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}"><button class="ava-b" data-perfil="${esc(m.uid)}" aria-label="Ver perfil">${avatar(m.uid,32)}</button><div class="bur"><div class="mh"><b class="nombre-b" data-perfil="${esc(m.uid)}">${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div>${m.texto?`<p>${conMenciones(m.texto,m.menc)}</p>`:""}${Array.isArray(m.fotos)&&m.fotos.length?`<div class="mfotos">${m.fotos.filter(u=>/^data:image\/(jpeg|png|webp);base64,/.test(u)).map(u=>`<img src="${u}" alt="Foto" loading="lazy" data-verfoto>`).join("")}</div>`:""}${yo||(S.esAdmin&&!priv)?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}${!yo&&!priv?`<button class="mrep" data-reportar="${esc(m.uid)}" data-msgtxt="${esc((m.texto||"").slice(0,200))}">🚩 Reportar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
   if(pegado)L.scrollTop=L.scrollHeight;
-  if(ms.length&&!priv){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0}
+  if(ms.length&&!priv){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0;S.mencNuevas=0}
   if(ms.length&&priv&&window.marcarLeido)window.marcarLeido()}
 
 const convId=(a,b)=>[a,b].sort().join("_");
@@ -1009,7 +1040,7 @@ const otroDe=c=>(c.miembros||[]).find(x=>x!==S.uid)||"";
 function noLeido(c){const u=c.ultimo||{};return !!u.t&&u.uid!==S.uid&&u.t>((c.leido||{})[S.uid]||0)}
 function renderPrivados(){const cs=(S.privs||[]).filter(c=>c.ultimo&&c.ultimo.t).sort((a,b)=>(b.ultimo.t||0)-(a.ultimo.t||0));
   const ya=new Set(cs.map(otroDe));
-  const otros=Object.keys(S.amigos||{}).filter(id=>id!==S.uid).sort((a,b)=>nombreDe(a).localeCompare(nombreDe(b)));
+  const otros=Object.keys(S.amigos||{}).filter(id=>id!==S.uid&&!(S.amigos[id]||{}).baneado).sort((a,b)=>nombreDe(a).localeCompare(nombreDe(b)));
   return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}
    <section class="sheet"><header><h2>Chats privados</h2><span class="note">Solo los ves tú y la otra persona</span></header>
    <div class="convs">${cs.length?cs.map(c=>{const o=otroDe(c),u=c.ultimo||{},nl=noLeido(c);
@@ -1025,29 +1056,36 @@ function renderPrivado(o){const n=nombreDe(o)||"Alguien",u=(S.amigos||{})[o];
      <div class="chatin"><button class="clip" type="button" data-adjuntar title="Adjuntar fotos (hasta ${MAXF})" aria-label="Adjuntar fotos">📷</button><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe a ${esc(n.split(" ")[0])}…"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div></form>
    </section></div>`}
 // tarjeta de perfil de cualquiera (foto grande, puntos y mensaje privado)
-function abrirPerfil(id){if(!id)return;const lista=clasificacion(),pos=lista.findIndex(x=>x.id===id),p=(S.rank||{})[id]||{},u=(S.amigos||{})[id]||{},f=fotoDe(id),n=nombreDe(id)||"Alguien";
+function abrirPerfil(id){if(!id)return;const lista=clasificacion("hoy"),pos=lista.findIndex(x=>x.id===id),p=(S.rank||{})[id]||{},u=(S.amigos||{})[id]||{},f=fotoDe(id),n=nombreDe(id)||"Alguien";
   $("#pfm").innerHTML=`<div class="pfm-c" role="dialog" aria-modal="true" aria-label="Perfil de ${esc(n)}"><button class="pfm-x" data-pfmcerrar aria-label="Cerrar">← Volver</button>
     ${f?`<img class="pfm-f" src="${esc(f)}" alt="" referrerpolicy="no-referrer" data-verfoto>`:`<span class="pfm-f av0">${esc(n[0].toUpperCase())}</span>`}
     <h2>${esc(n)}${id===S.uid?" (tú)":""}</h2><span class="pfm-on ${enLinea(u)?"on":""}">${enLinea(u)?"● conectado ahora":"última vez "+new Date(u.visto||0).toLocaleDateString("es-ES")}</span>
-    <div class="pfm-n"><span><b>${puntos(p)}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>en la clase</small></span><span><b>+${puntosHoy(p)}</b><small>hoy</small></span></div>
+    <div class="pfm-n"><span><b>${puntosHoy(p)}</b><small>puntos hoy</small></span><span><b>${puntosSemana(p)}</b><small>esta semana</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>hoy en la clase</small></span></div>
     ${barrasApps(p)}
-    ${id===S.uid?`<button class="btn-sec" data-go="perfil" data-pfmcerrar>Ir a mi perfil</button>`:`<button class="btn-p" style="--cf:var(--accent)" data-privado="${esc(id)}">💬 Enviar mensaje privado</button>`}</div>`;
+    ${id===S.uid?`<button class="btn-sec" data-go="perfil" data-pfmcerrar>Ir a mi perfil</button>`:`<button class="btn-p" style="--cf:var(--accent)" data-privado="${esc(id)}">💬 Enviar mensaje privado</button><button class="btn-sec" data-reportar="${esc(id)}">🚩 Reportar</button>`}
+    ${S.esAdmin&&id!==S.uid?(u.baneado?`<button class="btn-sec" data-readmitir="${esc(id)}">✅ Readmitir</button>`:`<button class="btn-p" style="--cf:#d4231c" data-expulsar="${esc(id)}">🚫 Expulsar</button>`):""}</div>`;
   $("#pfm").hidden=false;history.pushState({modal:"p"},"")}
 function cerrarPerfil(pop){if($("#pfm").hidden)return;if(pop!==true&&history.state&&history.state.modal==="p"){history.back();return}$("#pfm").hidden=true;$("#pfm").innerHTML=""}
 
 // ---------- modo administrador: editar, borrar y añadir exámenes y materiales ----------
-const ADM_CAMPOS={examenes:[["asig","Asignatura","asig"],["titulo","Título","text"],["fecha","Fecha","date"],["alcance","Qué entra","area"],["horas","Horas de estudio (aprox.)","num"],["hecho","Ya hecho","check"]],
+const ADM_CAMPOS={temas:[["asig","Asignatura","asig"],["tri","Trimestre","tri"],["titulo","Título del tema","text"],["nota","Nota (qué entra, páginas…)","area"]],examenes:[["asig","Asignatura","asig"],["titulo","Título","text"],["fecha","Fecha","date"],["alcance","Qué entra","area"],["horas","Horas de estudio (aprox.)","num"],["hecho","Ya hecho","check"]],
   recursos:[["asig","Asignatura","asig"],["tri","Trimestre","tri"],["tema","Tema","tema"],["titulo","Título","text"],["nota","Descripción corta","text"],["url","Enlace (https://… o carpeta del portal, p. ej. verbos/)","text"]]};
 function admDecorar(){document.querySelectorAll(".admx,.adm-bar").forEach(x=>x.remove());if(!S.admin)return;
   const pon=(sel,tipo,attr)=>document.querySelectorAll(sel).forEach(el=>{const id=el.getAttribute(attr);const b=document.createElement("span");b.className="admx";
-    b.innerHTML=`<button type="button" data-admedit="${tipo}:${esc(id)}" title="Editar">✏️</button><button type="button" data-admdel="${tipo}:${esc(id)}" title="Borrar para todos">🗑</button>`;el.append(b)});
-  pon("[data-exid]","examenes","data-exid");pon("[data-rid]","recursos","data-rid");
+    b.innerHTML=`${tipo!=="examenes"?`<button type="button" data-admmove="${tipo}:${esc(id)}:-1" title="Subir">↑</button><button type="button" data-admmove="${tipo}:${esc(id)}:1" title="Bajar">↓</button>`:""}<button type="button" data-admedit="${tipo}:${esc(id)}" title="Editar">✏️</button><button type="button" data-admdel="${tipo}:${esc(id)}" title="Borrar para todos">🗑</button>`;el.append(b)});
+  pon("[data-exid]","examenes","data-exid");pon("[data-rid]","recursos","data-rid");document.querySelectorAll("[data-tid] > .body > b").forEach(b=>{const t=b.closest("[data-tid]");if(t.querySelector(":scope > .admx"))return;const x=document.createElement("span");x.className="admx admx-t";const id=t.dataset.tid;x.innerHTML=`<button type="button" data-admmove="temas:${esc(id)}:-1" title="Subir tema">↑</button><button type="button" data-admmove="temas:${esc(id)}:1" title="Bajar tema">↓</button><button type="button" data-admedit="temas:${esc(id)}">✏️</button><button type="button" data-admdel="temas:${esc(id)}">🗑</button>`;t.append(x)});
   const f=document.querySelector("#ficha .ficha");if(f&&fichaActual){const b=document.createElement("div");b.className="admx admx-f";b.innerHTML=`<button type="button" data-admedit="examenes:${esc(fichaActual.id)}">✏️ Editar examen</button><button type="button" data-admdel="examenes:${esc(fichaActual.id)}">🗑 Borrar examen</button>`;f.insertBefore(b,f.children[1]||null)}
-  const v=$("#view");if(v&&!v.querySelector(".adm-bar")){const nb=(S.borradosEx||[]).length+(S.borradosRec||[]).length;const bar=document.createElement("div");bar.className="adm-bar";
-    bar.innerHTML=`<b>🛠 Modo administrador</b><span>Los cambios los ven todos al momento.</span><button type="button" data-admnew="examenes">+ Añadir examen</button><button type="button" data-admnew="recursos">+ Añadir material</button>${nb?`<button type="button" data-admpapelera>🗑 Borrados (${nb})</button>`:""}`;v.prepend(bar)}}
+  const v=$("#view");if(v&&!v.querySelector(".adm-bar")){const nb=(S.borradosEx||[]).length+(S.borradosRec||[]).length+(S.borradosTem||[]).length;const bar=document.createElement("div");bar.className="adm-bar";
+    bar.innerHTML=`<b>🛠 Modo administrador</b><span>Los cambios los ven todos al momento.</span><button type="button" data-admnew="examenes">+ Añadir examen</button><button type="button" data-admnew="recursos">+ Añadir material</button><button type="button" data-admnew="temas">+ Añadir tema</button><button type="button" data-admreportes>🚩 Reportes${(S.reportes||[]).length?` (${S.reportes.length})`:""}</button><button type="button" data-admexpulsados>🚫 Expulsados</button>${nb?`<button type="button" data-admpapelera>🗑 Borrados (${nb})</button>`:""}`;v.prepend(bar)}}
+function admMover(tipo,id,dir){const L=admLista(tipo),o=L.find(x=>x.id===id);if(!o)return;
+  const her=L.filter(x=>x.asig===o.asig&&x.tri===o.tri&&(tipo==="temas"||(x.tema||"")===(o.tema||""))).sort((a,b)=>(a.orden??999)-(b.orden??999)||0);
+  const i=her.indexOf(o),j=i+Number(dir);if(j<0||j>=her.length){toast(dir<0?"Ya está el primero.":"Ya está el último.");return}
+  [her[i],her[j]]=[her[j],her[i]];const mapa={};her.forEach((x,k)=>mapa[x.id]={orden:k});
+  window.guardarCambios(tipo,mapa).then(()=>toast("Movido.")).catch(e=>toast("No se ha podido mover ("+(e.code||"error")+")."))}
 function admModal(html){$("#adm").innerHTML=`<div class="adm-c" role="dialog" aria-modal="true">${html}</div>`;$("#adm").hidden=false;$("#adm").querySelector("input,select,textarea,button")?.focus()}
 function admCerrar(){$("#adm").hidden=true;$("#adm").innerHTML=""}
-function admForm(tipo,id){const nuevo=!id,o=nuevo?{asig:route()!=="resumen"&&AN[route()]?route():"ingles",tri:triActual(),hecho:false}:(tipo==="examenes"?S.examenes:S.recursos).find(x=>x.id===id)||{};
+const admLista=t=>t==="examenes"?S.examenes:t==="temas"?S.temas:S.recursos;
+function admForm(tipo,id){const nuevo=!id,o=nuevo?{asig:route()!=="resumen"&&AN[route()]?route():"ingles",tri:triActual(),hecho:false}:admLista(tipo).find(x=>x.id===id)||{};
   const temasDe2=a=>S.temas.filter(t=>t.asig===a);
   const campo=([k,l,t])=>{const v=o[k]??"";
     if(t==="asig")return `<label>${l}<select name="${k}">${[...ASIG.map(a=>[a.id,a.n]),...(tipo==="examenes"?[["global","Globales"]]:[])].map(([i,n])=>`<option value="${i}" ${i===v?"selected":""}>${esc(n)}</option>`).join("")}</select></label>`;
@@ -1056,7 +1094,7 @@ function admForm(tipo,id){const nuevo=!id,o=nuevo?{asig:route()!=="resumen"&&AN[
     if(t==="area")return `<label>${l}<textarea name="${k}" rows="3">${esc(v)}</textarea></label>`;
     if(t==="check")return `<label class="chk"><input type="checkbox" name="${k}" ${v?"checked":""}> ${l}</label>`;
     return `<label>${l}<input name="${k}" type="${t==="num"?"number":t==="date"?"date":"text"}" ${t==="num"?'step="0.5" min="0"':""} value="${esc(v)}"></label>`};
-  admModal(`<h2>${nuevo?"Añadir":"Editar"} ${tipo==="examenes"?"examen":"material"}</h2><form id="admForm" data-tipo="${tipo}" data-id="${esc(id||"")}">${ADM_CAMPOS[tipo].map(campo).join("")}
+  admModal(`<h2>${nuevo?"Añadir":"Editar"} ${tipo==="examenes"?"examen":tipo==="temas"?"tema":"material"}</h2><form id="admForm" data-tipo="${tipo}" data-id="${esc(id||"")}">${ADM_CAMPOS[tipo].map(campo).join("")}
     <div class="adm-b"><button type="submit" class="btn-p" style="--cf:var(--accent)">Guardar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`)}
 async function admGuardar(form){const tipo=form.dataset.tipo,id=form.dataset.id||("n"+Date.now().toString(36)),c={};
   for(const [k,,t] of ADM_CAMPOS[tipo]){const el=form.elements[k];if(!el)continue;c[k]=t==="check"?el.checked:t==="num"?(el.value===""?null:Number(el.value)):t==="tri"?Number(el.value):el.value.trim()}
@@ -1065,38 +1103,80 @@ async function admGuardar(form){const tipo=form.dataset.tipo,id=form.dataset.id|
   if(!form.dataset.id)c.nuevo=true;c.borrado=false;
   try{await window.guardarCambio(tipo,id,c);admCerrar();toast("Guardado. Ya lo ven todos.")}catch(e){toast("No se ha podido guardar ("+(e.code||"error")+").")}}
 document.addEventListener("click",ev=>{if(!ev.target.closest)return;
+  const mv=ev.target.closest("[data-admmove]");if(mv){ev.preventDefault();ev.stopImmediatePropagation();admMover(...mv.dataset.admmove.split(":"));return}
   const ed=ev.target.closest("[data-admedit]"),dl=ev.target.closest("[data-admdel]"),nw=ev.target.closest("[data-admnew]"),pp=ev.target.closest("[data-admpapelera]"),rs=ev.target.closest("[data-admrest]");
   if(ev.target.closest("[data-admcerrar]")||ev.target.id==="adm"){ev.preventDefault();admCerrar();return}
   if(!ed&&!dl&&!nw&&!pp&&!rs)return;ev.preventDefault();ev.stopImmediatePropagation();
   if(ed){const [t,id]=ed.dataset.admedit.split(":");admForm(t,id);return}
   if(nw){admForm(nw.dataset.admnew,null);return}
-  if(dl){const [t,id]=dl.dataset.admdel.split(":");const o=(t==="examenes"?S.examenes:S.recursos).find(x=>x.id===id)||{};
-    admModal(`<h2>¿Borrar ${t==="examenes"?"el examen":"el material"}?</h2><p>«${esc(o.titulo||id)}» desaparecerá para todos. Lo puedes recuperar luego en «Borrados».</p><div class="adm-b"><button type="button" class="btn-p" style="--cf:#d4231c" data-admok="${t}:${esc(id)}">Sí, borrar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div>`);return}
-  if(pp){const fila=(t,x)=>`<li><span>${t==="examenes"?"📅":"📎"} ${esc(x.titulo||x.id)}</span><button type="button" data-admrest="${t}:${esc(x.id)}">Recuperar</button></li>`;
-    admModal(`<h2>Borrados</h2><ul class="adm-l">${(S.borradosEx||[]).map(x=>fila("examenes",x)).join("")}${(S.borradosRec||[]).map(x=>fila("recursos",x)).join("")}</ul><div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
+  if(dl){const [t,id]=dl.dataset.admdel.split(":");const o=admLista(t).find(x=>x.id===id)||{};
+    admModal(`<h2>¿Borrar ${t==="examenes"?"el examen":t==="temas"?"el tema":"el material"}?</h2><p>«${esc(o.titulo||id)}» desaparecerá para todos. Lo puedes recuperar luego en «Borrados».</p><div class="adm-b"><button type="button" class="btn-p" style="--cf:#d4231c" data-admok="${t}:${esc(id)}">Sí, borrar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div>`);return}
+  if(pp){const fila=(t,x)=>`<li><span>${t==="examenes"?"📅":t==="temas"?"📚":"📎"} ${esc(x.titulo||x.id)}</span><button type="button" data-admrest="${t}:${esc(x.id)}">Recuperar</button></li>`;
+    admModal(`<h2>Borrados</h2><ul class="adm-l">${(S.borradosEx||[]).map(x=>fila("examenes",x)).join("")}${(S.borradosRec||[]).map(x=>fila("recursos",x)).join("")}${(S.borradosTem||[]).map(x=>fila("temas",x)).join("")}</ul><div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
   if(rs){const [t,id]=rs.dataset.admrest.split(":");window.guardarCambio(t,id,{borrado:false}).then(()=>{rs.closest("li").remove();toast("Recuperado.")}).catch(()=>toast("No se ha podido."));return}
 },true);
 document.addEventListener("click",ev=>{const ok=ev.target.closest&&ev.target.closest("[data-admok]");if(!ok)return;ev.stopImmediatePropagation();const [t,id]=ok.dataset.admok.split(":");
   window.guardarCambio(t,id,{borrado:true}).then(()=>{admCerrar();if(fichaActual&&fichaActual.id===id)cerrarFicha();toast("Borrado.")}).catch(e=>toast("No se ha podido borrar ("+(e.code||"error")+")."))},true);
 document.addEventListener("submit",ev=>{if(ev.target.id!=="admForm")return;ev.preventDefault();admGuardar(ev.target)});
 document.addEventListener("change",ev=>{if(ev.target.form&&ev.target.form.id==="admForm"&&ev.target.name==="asig"){const sel=ev.target.form.elements.tema;if(sel)sel.innerHTML=`<option value="">(sin tema)</option>`+S.temas.filter(t=>t.asig===ev.target.value).map(x=>`<option value="${esc(x.id)}">${esc(x.titulo)}</option>`).join("")}});
-function renderAmigos(){const lista=clasificacion();
-  const filas=lista.map((x,i)=>`<div class="rk ${x.id===S.uid?"yo-fila":""}" data-perfil="${esc(x.id)}" role="button" tabindex="0" title="Ver perfil"><span class="pos">${i<3?["🥇","🥈","🥉"][i]:i+1}</span>
+
+// ---------- menciones con @ ----------
+function miembros(){return Object.keys(S.amigos||{}).filter(id=>!(S.amigos[id]||{}).baneado).map(id=>({id,n:nombreDe(id)||""})).filter(x=>x.n)}
+function conMenciones(t,menc){let h=esc(t);if(!menc||!menc.length)return h;
+  const ns=menc.map(id=>({id,n:nombreDe(id)})).filter(x=>x.n).sort((a,b)=>b.n.length-a.n.length);
+  for(const x of ns){const k="@"+esc(x.n);h=h.split(k).join(`<span class="menc ${x.id===S.uid?"yo":""}" data-perfil="${esc(x.id)}">${k}</span>`)}return h}
+function sacarMenciones(t){const out=[];let low=t.toLowerCase();const re=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  for(const x of miembros().sort((a,b)=>b.n.length-a.n.length)){const r=new RegExp("@"+re(x.n.toLowerCase())+"(?=$|[\\s.,;:!?¡¿)])","g");if(r.test(low)){if(!out.includes(x.id))out.push(x.id);low=low.replace(r,m=>" ".repeat(m.length))}}return out.slice(0,20)}
+function sugerir(ta){const box=document.getElementById("menc");if(!box)return;const pos=ta.selectionStart,antes=ta.value.slice(0,pos),m=antes.match(/@([^\s@]{0,20})$/);
+  if(!m){box.hidden=true;return}const q=m[1].toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const L=miembros().filter(x=>x.id!==S.uid&&x.n.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").split(/\s+/).some(w=>w.startsWith(q))).slice(0,6);
+  if(!L.length){box.hidden=true;return}
+  box.innerHTML=L.map((x,i)=>`<button type="button" class="${i===0?"sel":""}" data-mencid="${esc(x.id)}">${avatar(x.id,24)}<span>${esc(x.n)}</span></button>`).join("");box.hidden=false}
+function ponerMencion(id){const ta=document.getElementById("chatTxt");if(!ta)return;const pos=ta.selectionStart,antes=ta.value.slice(0,pos).replace(/@([^\s@]{0,20})$/,"@"+nombreDe(id)+" "),despues=ta.value.slice(pos);
+  ta.value=antes+despues;ta.focus();ta.setSelectionRange(antes.length,antes.length);document.getElementById("menc").hidden=true}
+
+// ---------- reportar y expulsar ----------
+function cerrarPfm(){if(!$("#pfm").hidden){$("#pfm").hidden=true;$("#pfm").innerHTML=""}}
+document.addEventListener("click",ev=>{if(!ev.target.closest)return;
+  const rp=ev.target.closest("[data-reportar]"),ex=ev.target.closest("[data-expulsar]"),ra=ev.target.closest("[data-readmitir]"),lr=ev.target.closest("[data-admreportes]"),le=ev.target.closest("[data-admexpulsados]"),dr=ev.target.closest("[data-descartar]");
+  if(!rp&&!ex&&!ra&&!lr&&!le&&!dr)return;ev.preventDefault();ev.stopImmediatePropagation();
+  if(rp){const id=rp.dataset.reportar,txt=rp.dataset.msgtxt||"";cerrarPfm();
+    admModal(`<h2>🚩 Reportar a ${esc(nombreDe(id)||"esta persona")}</h2><p>Solo lo verá el administrador.</p>${txt?`<p class="rep-msg">«${esc(txt)}»</p>`:""}<form id="repForm" data-a="${esc(id)}" data-msg="${esc(txt)}"><label class="rep-l">¿Qué ha pasado?<textarea name="motivo" rows="3" maxlength="400" required></textarea></label><div class="adm-b"><button type="submit" class="btn-p" style="--cf:#d4231c">Enviar reporte</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`);return}
+  if(ex){const id=ex.dataset.expulsar;cerrarPfm();
+    admModal(`<h2>🚫 Expulsar a ${esc(nombreDe(id)||"esta persona")}</h2><p>No podrá entrar en 1 BACH. Verá este mensaje en el centro de la pantalla:</p><form id="banForm" data-u="${esc(id)}"><label class="rep-l">Mensaje<textarea name="motivo" rows="3" maxlength="300">Has sido expulsado de 1 BACH.</textarea></label><div class="adm-b"><button type="submit" class="btn-p" style="--cf:#d4231c">Expulsar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`);return}
+  if(ra){const id=ra.dataset.readmitir;window.readmitir(id).then(()=>{cerrarPfm();admCerrar();toast("Readmitido.")}).catch(e=>toast("No se ha podido ("+(e.code||"error")+")."));return}
+  if(lr){const L=S.reportes||[];admModal(`<h2>🚩 Reportes</h2>${L.length?`<ul class="adm-l rep-lista">${L.map(r=>`<li><div><b>${esc(nombreDe(r.de)||"Alguien")}</b> reportó a <b>${esc(nombreDe(r.a)||"alguien")}</b> · ${horaChat(r.t||0)}<p>${esc(r.motivo||"")}</p>${r.msg?`<p class="rep-msg">«${esc(r.msg)}»</p>`:""}</div><div class="adm-b"><button type="button" data-perfil="${esc(r.a)}">Ver perfil</button><button type="button" data-expulsar="${esc(r.a)}">🚫 Expulsar</button><button type="button" data-descartar="${esc(r.id)}">Descartar</button></div></li>`).join("")}</ul>`:'<p>No hay reportes.</p>'}<div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
+  if(dr){window.descartarReporte(dr.dataset.descartar).then(()=>dr.closest("li").remove()).catch(()=>toast("No se ha podido."));return}
+  if(le){const L=Object.keys(S.amigos||{}).filter(id=>(S.amigos[id]||{}).baneado);admModal(`<h2>🚫 Expulsados</h2>${L.length?`<ul class="adm-l">${L.map(id=>`<li><span>${esc(nombreDe(id)||id)}</span><button type="button" data-readmitir="${esc(id)}">Readmitir</button></li>`).join("")}</ul>`:'<p>No has expulsado a nadie.</p>'}<div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
+},true);
+document.addEventListener("submit",ev=>{const f=ev.target;
+  if(f.id==="repForm"){ev.preventDefault();const m=f.elements.motivo.value.trim();if(!m){toast("Escribe qué ha pasado.");return}
+    window.reportar(f.dataset.a,m,f.dataset.msg||"").then(()=>{admCerrar();toast("Reporte enviado al administrador.")}).catch(e=>toast("No se ha podido enviar ("+(e.code||"error")+")."))}
+  if(f.id==="banForm"){ev.preventDefault();window.expulsar(f.dataset.u,f.elements.motivo.value.trim()||"Has sido expulsado de 1 BACH.").then(()=>{admCerrar();toast("Expulsado.")}).catch(e=>toast("No se ha podido expulsar ("+(e.code||"error")+")."))}});
+function renderAmigos(){const modo=S.rkModo||"hoy",lista=clasificacion(modo);
+  const filas=lista.map((x,i)=>{const otro=modo==="semana"?puntosHoy(x.p):puntosSemana(x.p);
+    return `<div class="rk ${x.id===S.uid?"yo-fila":""}" data-perfil="${esc(x.id)}" role="button" tabindex="0" title="Ver perfil"><span class="pos">${x.pts>0&&i<3?["🥇","🥈","🥉"][i]:i+1}</span>
     ${avatar(x.id,42)}
     <div class="rk-n"><b>${esc(nombreDe(x.id)||"Sin nombre")}${x.id===S.uid?" (tú)":""}</b><span class="${enLinea(x.u)?"on":""}">${enLinea(x.u)?"● conectado ahora":"última vez "+new Date(x.u.visto||0).toLocaleDateString("es-ES")}</span>
     ${barrasApps(x.p)}</div>
-    <span class="pts">${x.pts}<small>pts</small>${puntosHoy(x.p)?`<em class="hoy-p">+${puntosHoy(x.p)} hoy</em>`:""}</span></div>`).join("");
+    <button type="button" class="pts" data-rkmodo="${modo==="hoy"?"semana":"hoy"}" title="${modo==="hoy"?"Ver los puntos de la semana":"Ver los puntos de hoy"}">${x.pts}<small>${modo==="semana"?"pts semana":modo==="dominio"?"pts":"pts hoy"}</small>${modo!=="dominio"?`<em class="hoy-p">${modo==="semana"?`${otro} hoy`:`${otro} esta semana`}</em>`:""}</button></div>`}).join("");
+  const sp=ganadorSemana(1),sa=ganadorSemana(0),d1=diasSemana(1),d0=diasSemana(0);
+  const gan=`<div class="semana">
+     <div class="sem-c pasada">${sp?`${avatar(sp.id,46)}<div><span class="eyebrow">Ganador de la semana pasada · ${fechaCorta(d1[0])}–${fechaCorta(d1[6])}</span><b>🏆 ${esc(sp.id===S.uid?"¡Tú!":nombreDe(sp.id)||"Alguien")}</b><span>con <b>${sp.v}</b> puntos</span></div>`:`<div><span class="eyebrow">Ganador de la semana pasada</span><b>Nadie todavía</b><span>El primer recuento sale el lunes</span></div>`}</div>
+     <div class="sem-c">${sa?`${avatar(sa.id,46)}<div><span class="eyebrow">Esta semana · hasta el domingo ${fechaCorta(d0[6])}</span><b>${esc(sa.id===S.uid?"Vas tú":"Va ganando "+(nombreDe(sa.id)||"alguien"))}</b><span>con <b>${sa.v}</b> puntos</span></div>`:`<div><span class="eyebrow">Esta semana</span><b>Aún nadie ha sumado</b><span>¡Empieza tú!</span></div>`}</div></div>`;
   return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button>
    <section class="sheet"><header><h2>Amigos y ranking</h2><span class="note">${lista.length} en la clase · ${lista.filter(x=>enLinea(x.u)).length} conectados ahora</span></header>
-   <p class="note" style="margin:0">Los puntos salen de lo que tienes dominado en cada app de Inglés: 100 por app, máximo 500. Iremos afinando el sistema.</p>
+   ${gan}
+   <div class="rk-modos" role="tablist"><button type="button" data-rkmodo="hoy" aria-pressed="${modo==="hoy"}">Hoy</button><button type="button" data-rkmodo="semana" aria-pressed="${modo==="semana"}">Esta semana</button><button type="button" data-rkmodo="dominio" aria-pressed="${modo==="dominio"}">Dominio total</button></div>
+   <p class="note" style="margin:0">${modo==="hoy"?"Los puntos de hoy vuelven a 0 cada noche a las 00:00. Toca los puntos de alguien para ver los de la semana.":modo==="semana"?"Suma de los puntos de cada día, de lunes a domingo. El lunes se anuncia el ganador.":"Lo que tiene dominado cada uno en las apps de Inglés: 100 por app, máximo 500."}</p>
    <div class="ranking">${filas||'<div class="empty">Todavía no ha entrado nadie.</div>'}</div></section></div>`}
-function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id===S.uid),p=(S.rank||{})[S.uid]||{},pts=puntos(p);
+function renderPerfil(){const lista=clasificacion("hoy"),pos=lista.findIndex(x=>x.id===S.uid),p=(S.rank||{})[S.uid]||{},pts=puntos(p);
   const u=(S.amigos||{})[S.uid]||{};
   return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button>
    <section class="sheet perfil"><div class="pf-top">
      <div class="pf-foto">${avatar(S.uid,120)}<button class="pf-cam" data-foto title="Cambiar foto">📷</button></div>
      <div class="pf-datos"><div class="eyebrow">Tu perfil</div><h2>${esc(nombreDe(S.uid)||"Sin nombre")}</h2>
-       <div class="pf-big"><span><b>${pts}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>de ${lista.length} en la clase</small></span></div></div></div>
+       <div class="pf-big"><span><b>${puntosHoy(p)}</b><small>puntos hoy</small></span><span><b>${puntosSemana(p)}</b><small>esta semana</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>hoy, de ${lista.length}</small></span></div></div></div>
      <div class="pf-acc"><button class="btn-p" data-foto style="--cf:var(--accent)">Subir foto de mi galería</button>${u.fotoPropia?'<button class="btn-sec" data-quitafoto>Volver a la foto de Google</button>':""}</div>
      <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.${S.email&&/guille|bernab/i.test(S.email)?` · Administrador: <b>${window.__esAdmin1b?"sí ✅":"no ❌"}</b>`:""}</p>
      ${window.__esAdmin1b?`<button class="btn-p" data-admtoggle style="--cf:${S.admin?"#d4231c":"#141a2e"};align-self:flex-start">🛠 Modo administrador: ${S.admin?"ACTIVADO · pulsa para volver a jugador":"desactivado · pulsa para activarlo"}</button>`:""}
@@ -1131,15 +1211,15 @@ function renderAsig(id){
   const temasAll=S.temas.filter(t=>t.asig===id);
   const temas=temasAll.filter(t=>t.tri===tr).sort((a,b)=>(a.orden??0)-(b.orden??0));
   const rec=S.recursos.filter(r=>r.asig===id&&r.tri===tr);
-  const sueltos=rec.filter(r=>!r.tema||!temas.some(t=>t.id===r.tema)).sort((a,b)=>(b.destacado?1:0)-(a.destacado?1:0));
+  const sueltos=rec.filter(r=>!r.tema||!temas.some(t=>t.id===r.tema)).sort((a,b)=>(a.orden??999)-(b.orden??999)||(b.destacado?1:0)-(a.destacado?1:0));
   const ex=S.examenes.filter(e=>e.asig===id||e.asig==="global").sort((a,b)=>(a.fecha||"9999").localeCompare(b.fecha||"9999"));
   const fal=S.fallos.filter(f=>f.asig===id);
   const curso=S.recursos.filter(r=>r.asig===id&&r.tri===0);
   const prox=ex.filter(e=>!e.hecho),hech=ex.filter(e=>e.hecho).sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
   const p=progreso(temas);
   const seg=[1,2,3].map(n=>triAbierto(n)?`<button data-tri="${n}" aria-pressed="${n===tr}">${n}.º trimestre</button>`:`<button class="tri-cerrado" data-tricerrado="${n}" aria-disabled="true" title="Se abre hacia el ${ABRE_TRI[n].toLocaleDateString("es-ES",{day:"numeric",month:"long"})}">${n}.º trimestre <span class="candado" aria-hidden="true">🔒</span></button>`).join("");
-  const lista=temas.length?`<div class="temas">${temas.map(t=>{const rs=rec.filter(r=>r.tema===t.id);
-     return `<div class="tema"><button class="st" data-s="${esc(t.estado||"sin")}" data-tema="${esc(t.id)}" ${S.canWrite?"":"disabled"} title="Toca para cambiar el estado">${esc(ESTN[t.estado]||"Sin ver")}</button>
+  const lista=temas.length?`<div class="temas">${temas.map(t=>{const rs=rec.filter(r=>r.tema===t.id).sort((a,b)=>(a.orden??999)-(b.orden??999));
+     return `<div class="tema" data-tid="${esc(t.id)}"><button class="st" data-s="${esc(t.estado||"sin")}" data-tema="${esc(t.id)}" ${S.canWrite?"":"disabled"} title="Toca para cambiar el estado">${esc(ESTN[t.estado]||"Sin ver")}</button>
       <div class="body"><b>${esc(t.titulo)}</b>${t.nota?`<p>${esc(t.nota)}</p>`:""}${rs.length?`<div class="res">${rs.map(link).join("")}</div>`:""}</div></div>`}).join("")}</div>`
     :`<div class="empty">De momento no hay nada de ${esc(AN[id])} en el ${tr}.º trimestre. Irá apareciendo aquí.</div>`;
   const main=prox.find(e=>e.fecha&&dias(e.fecha)>=0&&e.asig===id)||prox.find(e=>e.fecha&&dias(e.fecha)>=0),otros=prox.filter(e=>e!==main);
@@ -1169,6 +1249,12 @@ async function marcarOculto(id,v){const lista=v?S.recursos:S.ocultos,r=lista.fin
   if(v){S.recursos=S.recursos.filter(x=>x!==r);r.oculto=true;S.ocultos.push(r)}else{S.ocultos=S.ocultos.filter(x=>x!==r);r.oculto=false;S.recursos.push(r)}
   render();toast(v?"Quitado. Lo puedes restaurar abajo del todo, en «Documentos eliminados».":"Restaurado en su sitio.");
   try{await db.collection("recursos").doc(id).update({oculto:v})}catch(e){toast("No se ha guardado el cambio. Inténtalo otra vez.")}}
+document.addEventListener("input",ev=>{if(ev.target.id==="chatTxt"&&route()==="chat")sugerir(ev.target)});
+document.addEventListener("keydown",ev=>{if(ev.target.id!=="chatTxt")return;const box=document.getElementById("menc");if(!box||box.hidden)return;
+  const bs=[...box.querySelectorAll("button")],i=bs.findIndex(b=>b.classList.contains("sel"));
+  if(ev.key==="ArrowDown"||ev.key==="ArrowUp"){ev.preventDefault();const j=(i+(ev.key==="ArrowDown"?1:-1)+bs.length)%bs.length;bs.forEach((b,k)=>b.classList.toggle("sel",k===j))}
+  else if(ev.key==="Enter"||ev.key==="Tab"){ev.preventDefault();ev.stopImmediatePropagation();ponerMencion(bs[Math.max(0,i)].dataset.mencid)}
+  else if(ev.key==="Escape")box.hidden=true},true);
 // Sin cuenta: se ve la pantalla principal, pero cualquier contenido pide entrar con Google
 window.pideCuenta=()=>{$("#pide").hidden=false;$("#pide [data-login]").focus()};
 document.addEventListener("click",ev=>{if(S.uid||!ev.target.closest)return;
@@ -1250,7 +1336,9 @@ addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#ficha").hidden){cerra
 document.addEventListener("click",async ev=>{
   if(ev.target.closest("[data-pfmcerrar]")||ev.target.id==="pfm"){const g=ev.target.closest("[data-go]");cerrarPerfil(!!g);if(g){$("#pfm").hidden=true;location.hash=g.dataset.go}return}
   {const pv=ev.target.closest("[data-privado]");if(pv){$("#pfm").hidden=true;$("#pfm").innerHTML="";location.replace("#privado-"+pv.dataset.privado);return}}
+  {const rm=ev.target.closest("[data-rkmodo]");if(rm){ev.preventDefault();S.rkModo=rm.dataset.rkmodo;try{localStorage.setItem("rkModo",S.rkModo)}catch(e){}render();return}}
   {const pf=ev.target.closest("[data-perfil]");if(pf&&!ev.target.closest("#pfm")){abrirPerfil(pf.dataset.perfil);return}}
+  {const mc=ev.target.closest("[data-mencid]");if(mc){ponerMencion(mc.dataset.mencid);return}}
   if(ev.target.closest("[data-adjuntar]")){if(window.ADJ.length>=MAXF){toast(`Máximo ${MAXF} fotos por mensaje.`);return}document.getElementById("chatFotoIn").click();return}
   {const q=ev.target.closest("[data-quitaadj]");if(q){window.ADJ.splice(+q.dataset.quitaadj,1);pintarAdj();return}}
   {const f=ev.target.closest("[data-verfoto]");if(f){$("#lbImg").src=f.src;history.pushState({modal:"l"},"");$("#lb").hidden=false;return}}
@@ -1339,15 +1427,24 @@ function mezclar(base, cb) {
   return [out, borr];
 }
 fs.onSnapshot(fs.doc(fdb, "clase", "cambios"), snap => { cambios = (snap.exists() && snap.data()) || {}; aplicar(); }, () => {});
+window.reportar = (a, motivo, msg) => fs.addDoc(fs.collection(fdb, "reportes"), { de: S.uid, a, motivo, msg, t: Date.now() });
+window.descartarReporte = (id) => fs.deleteDoc(fs.doc(fdb, "reportes", id));
+window.expulsar = async (uid, motivo) => { await fs.setDoc(fs.doc(fdb, "baneos", uid), { motivo, t: Date.now() }); await fs.setDoc(fs.doc(fdb, "usuarios", uid), { baneado: true }, { merge: true }); };
+window.readmitir = async (uid) => { await fs.deleteDoc(fs.doc(fdb, "baneos", uid)); await fs.setDoc(fs.doc(fdb, "usuarios", uid), { baneado: false }, { merge: true }); };
+let quitarRep = null;
+function verReportes() { if (quitarRep) { quitarRep(); quitarRep = null; } if (!S.esAdmin) { S.reportes = []; return; }
+  quitarRep = fs.onSnapshot(fs.collection(fdb, "reportes"), snap => { S.reportes = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.t || 0) - (a.t || 0)); if (S.admin) { document.querySelector(".adm-bar")?.remove(); admDecorar(); } }, () => { S.reportes = []; }); }
+window.guardarCambios = (tipo, mapa) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: mapa }, { merge: true });
 window.guardarCambio = (tipo, id, campos) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: { [id]: campos } }, { merge: true });
 S.admin = modoAdmin();
-document.addEventListener("admin1b", e => { S.admin = !!e.detail; S.esAdmin = !!window.__esAdmin1b; render(); if (!$("#ficha").hidden) admDecorar(); });
+document.addEventListener("admin1b", e => { S.admin = !!e.detail; const era = S.esAdmin; S.esAdmin = !!window.__esAdmin1b; if (era !== S.esAdmin || (S.esAdmin && !quitarRep)) verReportes(); render(); if (!$("#ficha").hidden) admDecorar(); });
 function aplicar() {
   if (!datos) return;
   const pt = prog.temas || {}, pp = prog.practica || {}, oc = prog.ocultos || {};
   const [exs, exB] = mezclar(datos.examenes, cambios.examenes || {}), [recs, recB] = mezclar(datos.recursos, cambios.recursos || {});
   S.borradosEx = exB; S.borradosRec = recB;
-  S.temas = datos.temas.map(t => ({ ...t, ...((cambios.temas || {})[t.id] || {}), ...(pt[t.id] || {}) }));
+  const [tms, tmB] = mezclar(datos.temas, cambios.temas || {}); S.borradosTem = tmB;
+  S.temas = tms.map(t => ({ ...t, ...(pt[t.id] || {}) }));
   S.examenes = exs.map(e => { const x = pp[e.id] ? { ...e, practica: pp[e.id] } : { ...e }; if (caducado(x)) x.hecho = true; return x; });
   firmaCad = S.examenes.filter(e => e.hecho).map(e => e.id).join();
   S.recursos = recs.filter(r => !oc[r.id]);
@@ -1413,7 +1510,7 @@ alCambiarSesion(async user => {
     S.chatError = null; S.chat = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     let visto = 0; try { visto = +localStorage.getItem("chatVisto") || 0; } catch (e) {}
     if (route() === "chat") pintarChat();
-    else { S.sinLeer = S.chat.filter(m => (m.t || 0) > visto && m.uid !== S.uid).length; if (route() === "resumen") render(); }
+    else { S.sinLeer = S.chat.filter(m => (m.t || 0) > visto && m.uid !== S.uid).length; S.mencNuevas = S.chat.filter(m => (m.t || 0) > visto && m.uid !== S.uid && (m.menc || []).includes(S.uid)).length; if (route() === "resumen") render(); else if (route().startsWith("privado")) pintarTabsChat(); }
   }, (err) => { S.chatError0 = 1; S.chatError = err && err.code === "permission-denied" ? "El chat todavía no tiene permiso en Firebase: hay que pegar las reglas nuevas (Firestore → Reglas)." : "No se puede cargar el chat ahora mismo."; if (route() === "chat") pintarChat(); }));
 });
 // ---------- chats privados: privados/{uidA_uidB} con mensajes dentro ----------
@@ -1454,7 +1551,7 @@ window.enviarMsg = async (tag, texto, form) => {
       await fs.addDoc(fs.collection(fdb, "privados", c, "mensajes"), { uid: S.uid, texto, fotos, t });
       await fs.setDoc(fs.doc(fdb, "privados", c), { miembros: c.split("_"), ultimo: { texto: texto ? texto.slice(0, 120) : "📷 Foto", t, uid: S.uid }, leido: { [S.uid]: t } }, { merge: true });
     } else
-    await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, fotos, tag: ETQ[tag] ? tag : "general", t: Date.now() }); form.querySelector("textarea").value = ""; window.ADJ = []; pintarAdj(); }
+    await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, fotos, menc: sacarMenciones(texto), tag: ETQ[tag] ? tag : "general", t: Date.now() }); form.querySelector("textarea").value = ""; window.ADJ = []; pintarAdj(); }
   catch (e) { toast(e && e.code === "permission-denied" ? "Firebase no deja escribir: faltan las reglas nuevas del chat." : e && /size|exceeds|too large/i.test(e.message || "") ? "El mensaje pesa demasiado: quita alguna foto." : "No se ha podido enviar (" + (e.code || "error") + ")."); }
   b.disabled = false; form.querySelector("textarea").focus();
 };
