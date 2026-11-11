@@ -118,39 +118,54 @@ const RAIZ = new URL("../", import.meta.url);
   document.body.append(a);
 })();
 // ---------- aviso cuando alguien te adelanta en el ranking ----------
-function avisar(html, ir) {
+function avisar(html, ir, dura = 7000) {
   const d = document.createElement("div"); d.className = "aviso-1b"; d.setAttribute("role", "status"); d.innerHTML = html;
   d.onclick = () => { location.href = RAIZ.href + "#" + ir; d.remove(); };
   document.body.append(d); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("ver")));
-  setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, 7000);
+  setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, dura);
 }
 const APPS_R = ["vocab", "verbos", "afijos", "wf"];
 export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;
+// Guarda quién iba por delante (en tu cuenta, para que funcione en cualquier dispositivo) y te avisa
+// de quién te ha adelantado: en directo, o al volver si estabas desconectado o con la pestaña en segundo plano.
+const TOP = 5;
+let pendiente = null;
+async function avisoAdelanto(nuevos, posAntes, posAhora, alVolver) {
+  if (concentracion()) return;
+  if (document.hidden) { pendiente = { nuevos, posAntes: pendiente ? pendiente.posAntes : posAntes, posAhora, alVolver: true }; return; }
+  const datos = await Promise.all(nuevos.slice(0, 3).map(id => fs.getDoc(fs.doc(db, "usuarios", id)).then(s => s.exists() ? s.data() : {}).catch(() => ({}))));
+  const nom = d => d.nombre || d.nombreGoogle || "Alguien";
+  const n0 = datos[0] || {}, foto = n0.fotoPropia || n0.fotoGoogle || "";
+  let quien = datos.map(nom).map(x => `<b>${escH(x)}</b>`);
+  quien = nuevos.length === 1 ? quien[0] + " te ha adelantado" : (nuevos.length <= 3 ? quien.slice(0, -1).join(", ") + " y " + quien.slice(-1) : quien.join(", ") + ` y ${nuevos.length - 3} más`) + " te han adelantado";
+  const top = posAhora <= TOP ? (posAntes && posAntes <= TOP ? ` Sigues en los ${TOP} primeros.` : "") : (posAntes && posAntes <= TOP ? ` Ya no estás en los ${TOP} primeros.` : "");
+  const pos = posAntes && posAntes !== posAhora ? `Bajas del <b>${posAntes}.º</b> al <b>${posAhora}.º</b>.` : `Ahora vas <b>${posAhora}.º</b>.`;
+  avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom(n0).charAt(0).toUpperCase())}</span>`}<span>${alVolver ? "👋 Mientras no estabas: " : "⚠️ "}${quien} en el ranking. ${pos}${top} ¡A estudiar!</span>`, "amigos", alVolver ? 11000 : 7000);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && pendiente) { const p = pendiente; pendiente = null; avisoAdelanto(p.nuevos, p.posAntes, p.posAhora, true); } });
 onAuthStateChanged(auth, (u) => {
   if (quitarRank) { quitarRank(); quitarRank = null; }
   if (!u) return;
-  const clave = "rankDelante_" + u.uid;
+  const clave = "rankDelante_" + u.uid, ref = fs.doc(db, "progreso", u.uid);
+  let antes = null, primera = true, guardado = "";
+  const leerLocal = () => { try { return JSON.parse(localStorage.getItem(clave) || "null"); } catch (e) { return null; } };
   quitarRank = fs.onSnapshot(fs.collection(db, "progreso"), async (snap) => {
-    const pts = {}; snap.docs.forEach(d => pts[d.id] = ptsDe(d.data()));
+    const pts = {}; let mio = {}; snap.docs.forEach(d => { pts[d.id] = ptsDe(d.data()); if (d.id === u.uid) mio = d.data(); });
     window.__rank1b = pts; document.dispatchEvent(new CustomEvent("rank1b", { detail: pts }));
     const mios = pts[u.uid] || 0;
-    const delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > mios);
-    let antes = null; try { antes = JSON.parse(localStorage.getItem(clave) || "null"); } catch (e) {}
+    const delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > mios), posAhora = delante.length + 1;
+    if (primera) { primera = false; const r = mio.rankVisto, l = leerLocal();
+      antes = r && Array.isArray(r.delante) ? r : (Array.isArray(l) ? { delante: l } : null);
+      if (antes) { const nuevos = delante.filter(id => !antes.delante.includes(id)); if (nuevos.length) avisoAdelanto(nuevos, antes.pos || null, posAhora, true); } }
+    else if (antes) { const nuevos = delante.filter(id => !antes.delante.includes(id)); if (nuevos.length) avisoAdelanto(nuevos, antes.pos || null, posAhora, false); }
+    antes = { delante, pos: posAhora };
     try { localStorage.setItem(clave, JSON.stringify(delante)); } catch (e) {}
-    if (!Array.isArray(antes)) return;
-    const nuevos = delante.filter(id => !antes.includes(id));
-    if (!nuevos.length) return;
-    const yo = delante.length + 1;
-    const datos = await Promise.all(nuevos.slice(0, 3).map(id => fs.getDoc(fs.doc(db, "usuarios", id)).then(s => s.exists() ? s.data() : {}).catch(() => ({}))));
-    const n0 = datos[0] || {}, nom = n0.nombre || n0.nombreGoogle || "Alguien", foto = n0.fotoPropia || n0.fotoGoogle || "";
-    const quien = nuevos.length === 1 ? `<b>${escH(nom)}</b> te ha adelantado` : `<b>${escH(nom)}</b> y ${nuevos.length - 1} más te han adelantado`;
-    if (concentracion()) return;
-    avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom.charAt(0).toUpperCase())}</span>`}<span>⚠️ ${quien} en el ranking. Ahora vas <b>${yo}.º</b> — ¡a estudiar!</span>`, "amigos");
+    const firma = delante.slice().sort().join(",") + "|" + posAhora;
+    if (firma !== guardado) { guardado = firma; fs.setDoc(ref, { rankVisto: { delante, pos: posAhora, t: Date.now() } }, { merge: true }).catch(() => {}); }
   }, () => {});
 });
-
 // ---------- modo concentración y avisos del chat ----------
 export const concentracion = () => { try { return localStorage.getItem("concentracion") === "1"; } catch (e) { return false; } };
 export function ponerConcentracion(v) { try { localStorage.setItem("concentracion", v ? "1" : "0"); } catch (e) {} document.documentElement.classList.toggle("concentracion-1b", !!v); document.dispatchEvent(new CustomEvent("concentracion1b", { detail: !!v })); }
