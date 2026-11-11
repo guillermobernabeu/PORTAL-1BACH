@@ -62,6 +62,8 @@ export async function guardarProgreso(app, ok, total) {
   const ref = fs.doc(db, "progreso", u.uid), hoy = hoyISO();
   try {
     const snap = await fs.getDoc(ref); const prev = ((snap.exists() && snap.data().apps) || {})[app];
+    // en las apps que guardan el progreso en el navegador, los puntos no bajan (p. ej. al cambiar de dirección web)
+    if (prev && ["verbos", "afijos", "wf"].includes(app) && (prev.ok || 0) > ok) ok = prev.ok;
     const ok0 = prev && prev.dia === hoy ? (prev.ok0 ?? 0) : (prev ? prev.ok || 0 : 0);
     await fs.setDoc(ref, { apps: { [app]: { ok, total, t: Date.now(), dia: hoy, ok0: Math.min(ok0, ok) } } }, { merge: true });
   } catch (e) {}
@@ -249,3 +251,22 @@ onAuthStateChanged(auth, async (u) => {
   if (!soyAdmin && b) b.remove();
   aplicarAdmin();
 });
+
+// ---------- copia en la nube del progreso que las apps guardan en el navegador ----------
+// claves(): lista de claves de localStorage de la app. Si en este navegador no hay nada y en tu cuenta sí, se restaura.
+export function copiaEnLaNube(app, claves) {
+  let ult = "", t = null;
+  const leer = () => { const o = {}; for (const k of claves()) { const v = localStorage.getItem(k); if (v != null) o[k] = v; } return o; };
+  const subir = () => { const u = auth.currentUser; if (!u) return; let o; try { o = leer(); } catch (e) { return; } const j = JSON.stringify(o); if (j === ult || j === "{}") return; ult = j;
+    fs.setDoc(fs.doc(db, "progreso", u.uid), { copia: { [app]: j } }, { merge: true }).catch(() => {}); };
+  onAuthStateChanged(auth, async (u) => {
+    clearInterval(t); if (!u) return;
+    let local = {}; try { local = leer(); } catch (e) {}
+    if (!Object.keys(local).length) {
+      try { const s = await fs.getDoc(fs.doc(db, "progreso", u.uid)); const c = s.exists() && s.data().copia && s.data().copia[app];
+        if (c) { const o = JSON.parse(c); if (Object.keys(o).length && !sessionStorage.getItem("restaurado_" + app)) { for (const k in o) localStorage.setItem(k, o[k]); sessionStorage.setItem("restaurado_" + app, "1"); location.reload(); return; } } } catch (e) {}
+    }
+    subir(); t = setInterval(subir, 15000);
+  });
+  addEventListener("pagehide", subir); document.addEventListener("visibilitychange", () => { if (document.hidden) subir(); });
+}
