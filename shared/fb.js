@@ -35,7 +35,7 @@ export function alCambiarSesion(cb) {
     clearInterval(latido);
     if (user) {
       const yo = fs.doc(db, "usuarios", user.uid);
-      const datos = { nombre: user.displayName || "Sin nombre", foto: user.photoURL || "", visto: Date.now() };
+      const datos = { nombreGoogle: user.displayName || "Sin nombre", fotoGoogle: user.photoURL || "", visto: Date.now() };
       try {
         await fs.setDoc(yo, datos, { merge: true });
         await fs.setDoc(fs.doc(db, "privado", user.uid), { email: user.email || "" }, { merge: true });
@@ -52,3 +52,10 @@ export function alCambiarClase(cb) {
   }, (e) => console.warn(e));
 }
 export const conectado = (u) => Date.now() - (u.visto || 0) < 150000;
+export const nombreDe = (u) => (u && (u.nombre || u.nombreGoogle)) || "Sin nombre";
+export const fotoDe = (u) => (u && (u.fotoPropia || u.fotoGoogle)) || "";
+// Guarda el resumen de una app en progreso/{uid}.apps[app] = {ok, total}
+export function guardarProgreso(app, ok, total) {
+  const u = auth.currentUser; if (!u) return Promise.resolve();
+  return fs.setDoc(fs.doc(db, "progreso", u.uid), { apps: { [app]: { ok, total, t: Date.now() } } }, { merge: true }).catch(() => {});
+}

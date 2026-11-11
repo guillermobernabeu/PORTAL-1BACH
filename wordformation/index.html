@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style></head><body>
+<title>English Exam Drill</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+/* Layout: one narrow exam-sheet column; the sentence is the hero, everything else whispers. */
+:root{
+  --bg:#f6f7f9; --paper:#ffffff; --ink:#15171c; --muted:#686d7a; --line:#e0e3ea;
+  --accent:#2a47d1; --accent-soft:#e7ebfc; --ok:#17815a; --ok-soft:#e3f3ec; --bad:#bf3b26; --bad-soft:#fbe9e5;
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-body:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111318; --paper:#181b22; --ink:#e7e9ee; --muted:#9298a6; --line:#2a2e38;
+  --accent:#8fa3ff; --accent-soft:#232a4a; --ok:#5ccf9b; --ok-soft:#16302a; --bad:#ff8a73; --bad-soft:#3a1f1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111318; --paper:#181b22; --ink:#e7e9ee; --muted:#9298a6; --line:#2a2e38;
+  --accent:#8fa3ff; --accent-soft:#232a4a; --ok:#5ccf9b; --ok-soft:#16302a; --bad:#ff8a73; --bad-soft:#3a1f1a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,6vw,36px);line-height:1.1;margin:0;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--accent)}
+.sub{color:var(--muted);font-size:13px;margin:0}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+nav a{color:var(--muted);text-decoration:none;padding:8px 2px;margin-right:18px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:6px;align-items:center}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--ink)}
+nav a:focus-visible,button:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.count{font-family:var(--f-mono);font-size:11px;background:var(--line);color:var(--ink);border-radius:99px;padding:1px 7px}
+.count.hot{background:var(--bad-soft);color:var(--bad)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:99px;padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip small{font-family:var(--f-mono);font-size:11px;opacity:.7;margin-left:4px}
+
+.meta{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);font-family:var(--f-mono);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px 24px 22px;display:flex;flex-direction:column;gap:22px}
+.tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sentence{font-family:var(--f-display);font-size:clamp(21px,4.6vw,26px);line-height:1.55;margin:0;text-wrap:pretty}
+.gap{font-family:var(--f-body);font-size:.78em;font-weight:500;color:var(--accent);background:transparent;border:0;border-bottom:2px solid var(--ink);
+  width:9.5em;max-width:100%;padding:0 2px 1px;margin:0 2px;outline:none;border-radius:0;vertical-align:baseline;text-align:center}
+.gap:focus{border-color:var(--accent);background:var(--accent-soft)}
+.gap.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-soft)}
+.gap.bad{color:var(--bad);border-color:var(--bad);background:var(--bad-soft);text-decoration:line-through}
+.base{font-family:var(--f-mono);font-size:.62em;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:500;font-size:14px;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.ghost{border-color:transparent;color:var(--muted);padding-inline:8px}
+.btn.ghost:hover{color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.kbd{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-left:auto}
+.hint{font-size:14px;color:var(--ink);background:var(--accent-soft);border-radius:8px;padding:10px 12px;margin:0}
+.result{border-top:1px solid var(--line);padding-top:18px;display:flex;flex-direction:column;gap:8px}
+.verdict{font-weight:600;font-size:14px;margin:0}
+.verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+.word{font-family:var(--f-display);font-size:30px;line-height:1.2;margin:0}
+.word mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:0 2px}
+.why{margin:0;color:var(--muted);font-size:14px}
+.why b{color:var(--ink);font-weight:600}
+.empty{color:var(--muted);text-align:left;padding:8px 0}
+
+/* fallos */
+.list{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:1fr auto;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--line);align-items:center}
+.row p{margin:0;min-width:0}
+.row .s{font-family:var(--f-display);font-size:17px}
+.row .a{font-size:13px;color:var(--muted)}
+.row .a b{color:var(--ok);font-weight:600}
+.x{font:inherit;font-size:12px;color:var(--muted);background:none;border:0;cursor:pointer;padding:4px}
+.x:hover{color:var(--bad)}
+
+/* trucos */
+.tricks{display:flex;flex-direction:column;gap:30px}
+.trick h2{font-family:var(--f-display);font-weight:500;font-size:22px;margin:0 0 4px;text-wrap:balance}
+.trick .step{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.trick p{margin:6px 0;max-width:62ch}
+.tablewrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td i{font-family:var(--f-display);font-size:16px}
+td .pill{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pairs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 18px;margin-top:10px;font-family:var(--f-display);font-size:16px}
+.pairs span{color:var(--muted);font-family:var(--f-body);font-size:13px}
+.trap{text-decoration:line-through;color:var(--bad)}
+footer{color:var(--muted);font-size:12px}
+@media (prefers-reduced-motion:no-preference){.result{animation:in .18s ease-out}@keyframes in{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}}
+@media (max-width:480px){.card{padding:22px 16px 18px}.kbd{display:none}}
+/* home */
+.home{display:flex;flex-direction:column;gap:20px}
+.start{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px 22px;display:flex;flex-direction:column;gap:12px}
+.start h2{font-family:var(--f-display);font-weight:500;font-size:26px;margin:0}
+.start p{margin:0;color:var(--muted);font-size:14px}
+.how{margin:4px 0 6px;padding-left:20px;display:flex;flex-direction:column;gap:3px;font-size:14px}
+.btn.big{padding:14px 20px;font-size:16px;border-radius:12px}
+.home .actions .btn.big{flex:1 1 180px}
+body.locked{overflow:hidden}
+
+/* drill: full screen, sized to the visible area above the keyboard */
+.drill{position:fixed;left:0;right:0;top:0;height:100%;z-index:50;background:var(--bg);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.dinner{max-width:640px;height:100%;margin:0 auto;display:flex;flex-direction:column}
+.dtop{display:flex;align-items:center;gap:14px;padding-top:calc(env(safe-area-inset-top,0px) + 10px);padding-bottom:6px}
+.quit{font:inherit;font-size:18px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;margin-left:-8px}
+.quit:hover{color:var(--ink)}
+.bar{flex:1;height:5px;background:var(--line);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:5px;transition:width .3s ease}
+.dcount{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:3.2em;text-align:right}
+.dmain{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;gap:14px;padding-block:12px}
+.dmain.end{justify-content:flex-start}
+.dsent{font-family:var(--f-display);font-size:clamp(22px,5.6vw,30px);line-height:1.45;margin:0;text-wrap:pretty}
+.slot{display:inline-block;min-width:4.5em;padding:0 4px;border-bottom:2px solid var(--ink);color:var(--accent);font-family:var(--f-body);font-weight:500;font-size:.82em;line-height:1.3;text-align:center}
+.slot.filled{min-width:0}
+.slot.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-soft);border-radius:4px 4px 0 0}
+.slot.bad{border-color:var(--bad);background:var(--bad-soft);border-radius:4px 4px 0 0;color:var(--ink)}
+.slot.bad s{color:var(--bad);font-weight:400}
+.slot.bad b{color:var(--ok);font-weight:600}
+.dbase{margin:0;font-family:var(--f-mono);font-size:15px;letter-spacing:.08em;display:flex;align-items:baseline;gap:10px}
+.dbase span{font-family:var(--f-body);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hintline{margin:0;font-size:14px;background:var(--accent-soft);border-radius:8px;padding:8px 12px}
+.feed{border-left:3px solid var(--bad);padding:2px 0 2px 14px;display:flex;flex-direction:column;gap:4px}
+.feed p{margin:0;font-size:14px;color:var(--muted)}
+.feed.ok{border-left-color:var(--ok)}
+.feed s{color:var(--bad)}
+.feed .link{align-self:flex-start;padding-left:0;text-decoration:underline}
+.feed .fw{font-family:var(--f-display);font-size:24px;color:var(--ink)}
+mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding:0 2px}
+
+.dock{display:flex;flex-direction:column;gap:6px;padding-top:8px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}
+.dsub{display:flex;justify-content:space-between}
+.link{font:inherit;font-size:14px;background:none;border:0;color:var(--muted);padding:6px 2px;cursor:pointer}
+.link:hover{color:var(--ink)} .link:disabled{opacity:.4}
+.inrow{display:flex;gap:8px}
+#ans{flex:1;min-width:0;font:inherit;font-size:18px;height:54px;padding:0 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);outline:none}
+#ans:focus{border-color:var(--accent)}
+#ans.bad{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.go{font:inherit;font-weight:600;font-size:15px;height:54px;padding:0 18px;border-radius:14px;border:0;background:var(--ink);color:var(--bg);cursor:pointer;flex:none;min-width:112px}
+.go.ok{background:var(--ok);color:var(--paper)}
+.endActions{display:flex;flex-direction:column;gap:8px;padding-top:10px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 14px)}
+
+/* summary */
+.sum{display:flex;flex-direction:column;gap:6px;padding-top:8px}
+.snum{font-family:var(--f-display);font-size:64px;line-height:1;margin:0}
+.snum span{font-size:28px;color:var(--muted)}
+.smsg{margin:0 0 14px;color:var(--muted)}
+.shead{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.slist{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.sitem{padding:14px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:5px}
+.sitem p{margin:0}
+.ss{font-family:var(--f-display);font-size:18px;line-height:1.4}
+.ss b{color:var(--ok);font-weight:500}
+.sy{font-size:14px}
+.sy s{color:var(--bad)}
+.sw{font-size:14px;color:var(--muted)}
+.dg{color:var(--ink)}
+@media (pointer:fine){.dmain{justify-content:center}.dmain.end{justify-content:flex-start}}
+/* mode switch */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--line);border-radius:12px}
+.mode{font:inherit;font-weight:600;font-size:14px;border:0;border-radius:9px;padding:10px 8px;background:transparent;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.mode small{font-weight:400;font-size:11px;opacity:.8}
+.mode[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.mode:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.des{margin:0;font-size:16px;line-height:1.45;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.des span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.row .es{font-size:13px;color:var(--muted)}
+.struct{display:grid;gap:10px;margin-top:10px}
+.struct div{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.struct b.f{font-family:var(--f-mono);font-size:14px;color:var(--accent);font-weight:500}
+.struct p{margin:4px 0 0}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="modes" role="group" aria-label="Apartado">
+      <button class="mode" id="mode-wf" data-mode="wf">Word Formation<small>prefijos y sufijos</small></button>
+      <button class="mode" id="mode-ut" data-mode="ut">Used to<small>solía · acostumbrarse</small></button>
+    </div>
+    <div class="brand">
+      <h1 id="h1">Word <em>Formation</em></h1>
+      <p class="sub" id="sub">Frases tipo examen · escribe la palabra transformada</p>
+    </div>
+    <nav>
+      <a href="#practicar" data-view="practicar">Practicar</a>
+      <a href="#fallos" data-view="fallos">Mis fallos <span class="count" id="failCount">0</span></a>
+      <a href="#trucos" data-view="trucos">Trucos</a>
+    </nav>
+  </header>
+
+  <main id="view-practicar">
+    <div class="home">
+      <div class="chips" id="chips" role="group" aria-label="Qué practicar"></div>
+      <section class="start">
+        <h2>Bloque de 20 frases</h2>
+        <p id="homeSeen"></p>
+        <ol class="how">
+          <li id="how1">Escribe la palabra y pulsa Enter.</li>
+          <li>Si aciertas, pasa sola a la siguiente.</li>
+          <li>Si fallas, te dice la correcta y por qué.</li>
+          <li>Al final ves todos tus fallos explicados.</li>
+        </ol>
+        <div class="actions">
+          <button class="btn primary big" id="startBtn">Empezar</button>
+          <button class="btn big" id="homeFails" hidden></button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main id="view-fallos" hidden>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <p class="sub" style="font-size:14px">Cada frase que falles se guarda aquí. Repásalas hasta que salgan bien: al acertar una en el repaso, desaparece de la lista.</p>
+      <div class="actions"><button class="btn primary" id="reviewBtn">Repasar mis fallos</button></div>
+      <div class="list" id="failList"></div>
+    </div>
+  </main>
+
+  <main id="view-trucos" hidden>
+    <div class="tricks" id="tricks-ut" hidden>
+      <section class="trick">
+        <h2>Las 3 estructuras</h2>
+        <p>Primero decide cuál de las tres es. El español te lo dice.</p>
+        <div class="struct">
+          <div><b class="f">used to + infinitivo</b><p><b>Solía</b>: algo del pasado que ya no pasa.</p><p><i>I used to play football.</i></p></div>
+          <div><b class="f">be used to + -ing</b><p><b>Estar acostumbrado</b>: un estado. Cambia de tiempo el verbo be.</p><p><i>They are used to working under pressure.</i></p></div>
+          <div><b class="f">get used to + -ing</b><p><b>Acostumbrarse</b>: un proceso. Cambia de tiempo el verbo get.</p><p><i>I'm getting used to the cold weather.</i></p></div>
+        </div>
+      </section>
+      <section class="trick">
+        <h2>Truco: me, te, se, nos, os = get</h2>
+        <p>Si en español el verbo lleva <b>me / te / se / nos / os</b> (me acostumbro, se está acostumbrando), es <b>get used to</b>. Si dice <b>estoy / está acostumbrado</b>, es <b>be used to</b>.</p>
+      </section>
+      <section class="trick">
+        <h2>Used o use: la -d</h2>
+        <div class="tablewrap"><table>
+          <tbody>
+            <tr><td>Afirmativa</td><td><i>I <b>used</b> to play.</i></td></tr>
+            <tr><td>Negativa con didn't</td><td><i>I didn't <b>use</b> to play.</i></td></tr>
+            <tr><td>Pregunta con did</td><td><i>Did you <b>use</b> to play?</i></td></tr>
+            <tr><td>be / get used to</td><td><i>I'm <b>used</b> to it · get <b>used</b> to it</i> (siempre con -d)</td></tr>
+          </tbody>
+        </table></div>
+        <p>Igual que <i>did you play</i>, no <i>did you played</i>.</p>
+      </section>
+      <section class="trick">
+        <h2>Los tiempos de get</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Español</th><th>Inglés</th></tr></thead>
+          <tbody>
+            <tr><td>me acostumbro</td><td><i>I get used to</i></td></tr>
+            <tr><td>se acostumbra</td><td><i>he gets used to</i></td></tr>
+            <tr><td>me estoy acostumbrando</td><td><i>I'm getting used to</i></td></tr>
+            <tr><td>me acostumbré</td><td><i>I got used to</i></td></tr>
+            <tr><td>me he acostumbrado</td><td><i>I've got used to</i></td></tr>
+            <tr><td>me acostumbraré</td><td><i>I'll get used to</i></td></tr>
+            <tr><td>no me acostumbro</td><td><i>I can't get used to</i></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+      <section class="trick">
+        <h2>Después de be / get used to: -ing</h2>
+        <p>Ahí <i>to</i> es una preposición, así que detrás va <b>-ing</b> o un sustantivo, nunca el infinitivo.</p>
+        <div class="pairs">
+          <div><span class="trap">used to drive</span> → used to driving</div>
+          <div><span class="trap">used to study</span> → used to studying</div>
+          <div>used to <b>the cold</b> (sustantivo)</div>
+        </div>
+      </section>
+      <section class="trick">
+        <h2>Tus fallos de los apuntes</h2>
+        <div class="pairs">
+          <div><span class="trap">get use to</span> → get used to</div>
+          <div><span class="trap">Did you used to</span> → Did you use to</div>
+          <div><span class="trap">Juan get used to</span> → Juan is getting used to</div>
+          <div><span class="trap">before live</span> → before moving</div>
+          <div><span class="trap">every sundays</span> → every Sunday</div>
+          <div><span class="trap">take dinner</span> → have dinner</div>
+          <div><span class="trap">writting</span> → writing</div>
+        </div>
+      </section>
+    </div>
+    <div class="tricks" id="tricks-wf">
+      <section class="trick">
+        <div class="step">Paso 1</div>
+        <h2>Antes de pensar en el sufijo, mira qué pide el hueco</h2>
+        <p>Lee las palabras que rodean el hueco. Te dicen el tipo de palabra, y el tipo de palabra te dice qué familia de sufijos usar.</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Si el hueco va…</th><th>Pide</th><th>Ejemplo</th></tr></thead>
+          <tbody>
+            <tr><td>después de <b>the, a, an, his, their, my</b>… o de <b>of</b></td><td><span class="pill">Sustantivo</span></td><td><i>the development</i></td></tr>
+            <tr><td>después de <b>very, so, too, be, look, feel, seem</b></td><td><span class="pill">Adjetivo</span></td><td><i>very irritating</i></td></tr>
+            <tr><td>delante de un sustantivo</td><td><span class="pill">Adjetivo</span></td><td><i>a faulty switch</i></td></tr>
+            <tr><td>diciendo <b>cómo</b> se hace un verbo</td><td><span class="pill">Adverbio -ly</span></td><td><i>worked efficiently</i></td></tr>
+            <tr><td>después de <b>to</b> o de <b>can, must, should, will</b></td><td><span class="pill">Verbo</span></td><td><i>to modify</i></td></tr>
+            <tr><td>al principio de la frase y con coma</td><td><span class="pill">Adverbio</span></td><td><i>Unfortunately, …</i></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="trick">
+        <div class="step">Paso 2</div>
+        <h2>Luego mira el sentido: ¿es negativo?</h2>
+        <p>Un prefijo cambia el <b>significado</b>, pero no el tipo de palabra: <i>happy</i> y <i>unhappy</i> son los dos adjetivos. Si la frase habla de algo malo, contrario o que falta, prueba con un prefijo negativo.</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Prefijo</th><th>Cuándo</th><th>Ejemplo</th></tr></thead>
+          <tbody>
+            <tr><td><b>il-</b></td><td>delante de <b>l</b></td><td><i>illegal</i></td></tr>
+            <tr><td><b>im-</b></td><td>delante de <b>m</b> o <b>p</b></td><td><i>immature, impossible</i></td></tr>
+            <tr><td><b>ir-</b></td><td>delante de <b>r</b></td><td><i>irregular</i></td></tr>
+            <tr><td><b>un-</b></td><td>el más común con adjetivos; también “deshacer”</td><td><i>unfair, undo</i></td></tr>
+            <tr><td><b>dis-</b></td><td>sobre todo con verbos</td><td><i>disagree</i></td></tr>
+            <tr><td><b>mis-</b></td><td>hacer algo mal</td><td><i>misunderstand</i></td></tr>
+            <tr><td><b>over- / under-</b></td><td>demasiado / demasiado poco</td><td><i>overcook, undercooked</i></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="trick">
+        <div class="step">Paso 3</div>
+        <h2>Cuidado: a veces hay dos o tres cambios a la vez</h2>
+        <p>Un prefijo y un sufijo juntos son muy típicos de examen. Comprueba siempre las dos cosas: el tipo de palabra y el sentido.</p>
+        <div class="pairs">
+          <div>bear → <b>un</b>bear<b>able</b></div>
+          <div>fortune → <b>un</b>fortun<b>ately</b></div>
+          <div>employ → <b>un</b>employ<b>ment</b></div>
+          <div>care → care<b>ful</b><b>ly</b></div>
+        </div>
+      </section>
+
+      <section class="trick">
+        <h2>-ed o -ing</h2>
+        <p><b>-ed</b> es cómo <b>se siente</b> una persona: <i>I was bored.</i> <b>-ing</b> es lo que <b>provoca</b> ese sentimiento: <i>The film was boring.</i></p>
+        <p>Pista rápida: si es una cosa (una película, una historia, un partido), casi siempre va con -ing. Las historias no sienten, provocan.</p>
+      </section>
+
+      <section class="trick">
+        <h2>Cambios de ortografía</h2>
+        <div class="tablewrap"><table>
+          <tbody>
+            <tr><td>La <b>-e</b> final se pierde ante vocal</td><td><i>arrive → arrival, fame → famous</i></td></tr>
+            <tr><td>La <b>-e</b> se queda ante consonante</td><td><i>use → useful, hope → hopeless</i></td></tr>
+            <tr><td><b>-y</b> pasa a <b>-i</b></td><td><i>happy → happiness, easy → easily</i></td></tr>
+            <tr><td>Consonante doble</td><td><i>rob → robbery, red → reddish</i></td></tr>
+            <tr><td><b>-le</b> pasa a <b>-ly</b></td><td><i>terrible → terribly</i></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="trick">
+        <h2>Sustantivos irregulares</h2>
+        <p>No llevan los sufijos de siempre. Apréndelos de memoria:</p>
+        <div class="pairs">
+          <div>wide → width</div><div>deep → depth</div><div>long → length</div>
+          <div>strong → strength</div><div>high → height</div><div>true → truth</div>
+          <div>young → youth</div><div>warm → warmth</div><div>poor → poverty</div>
+        </div>
+      </section>
+
+      <section class="trick">
+        <h2>No calques del español</h2>
+        <p>Estas palabras no existen en inglés, aunque suenen bien:</p>
+        <div class="pairs">
+          <div><span class="trap">modificate</span> → modify</div>
+          <div><span class="trap">desinstall</span> → uninstall</div>
+          <div><span class="trap">ilegal</span> → illegal</div>
+          <div><span class="trap">desagree</span> → disagree</div>
+        </div>
+      </section>
+
+      <section class="trick">
+        <h2>Sufijos que más caen</h2>
+        <div class="tablewrap"><table>
+          <tbody>
+            <tr><td><span class="pill">Sustantivo</span></td><td>-tion / -sion, -ment, -ness, -ity, -ance / -ence, -ship, -hood, -dom, -age, -al</td></tr>
+            <tr><td><span class="pill">Persona</span></td><td>-er / -or (el que hace), -ee (el que recibe), -ist, -ant / -ent</td></tr>
+            <tr><td><span class="pill">Adjetivo</span></td><td>-ful (con) / -less (sin), -able / -ible, -ous, -ive, -al, -ic, -y, -ish, -en</td></tr>
+            <tr><td><span class="pill">Verbo</span></td><td>-ify, -ise / -ize, -en, -ate</td></tr>
+            <tr><td><span class="pill">Adverbio</span></td><td>-ly, -ward(s), -wise</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+    </div>
+  </main>
+
+  <footer id="foot"></footer>
+</div>
+
+<div class="drill" id="drill" hidden role="dialog" aria-label="Bloque de práctica">
+  <div class="dinner">
+    <div class="dtop">
+      <button class="quit" id="quitBtn" aria-label="Salir del bloque">✕</button>
+      <div class="bar"><i id="barFill"></i></div>
+      <span class="dcount" id="dcount">1/20</span>
+    </div>
+    <div class="dmain" id="dmain" aria-live="polite"></div>
+    <form class="dock" id="dock" autocomplete="off">
+      <div class="dsub">
+        <button type="button" class="link" id="hintBtn">Pista</button>
+        <button type="button" class="link" id="skipBtn">No lo sé</button>
+      </div>
+      <div class="inrow">
+        <input id="ans" type="text" inputmode="text" enterkeyhint="go" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Escribe la palabra" aria-label="Tu respuesta">
+        <button type="submit" class="go" id="goBtn">Comprobar</button>
+      </div>
+    </form>
+    <div class="endActions" id="endActions" hidden>
+      <button class="btn primary big" id="moreBtn">Otro bloque de 20</button>
+      <button class="btn big" id="retryBtn">Repetir mis fallos</button>
+      <button class="btn ghost" id="exitBtn">Salir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* sentence | BASE | answers (/) | class N A V D | affix | note */
+var RAW = [
+/* ---------- PREFIJOS ---------- */
+"I'm very ___ with my results; I expected a better mark.|HAPPY|unhappy|A|un-|",
+"It's ___ that he got a prize and I didn't.|FAIR|unfair|A|un-|",
+"She was ___ to come to the party because she was ill.|ABLE|unable|A|un-|",
+"The old bridge is ___, so nobody is allowed to cross it.|SAFE|unsafe|A|un-|",
+"He was ___ to his sister and made her cry.|KIND|unkind|A|un-|",
+"It's ___ that it will rain tomorrow; the forecast says sun.|LIKELY|unlikely|A|un-|",
+"The room was ___ after the party, with clothes everywhere.|TIDY|untidy|A|un-|",
+"When we got to the hotel, we started to ___ our suitcases.|PACK|unpack|V|un-|Aquí un- significa deshacer.",
+"I can't ___ this knot. Can you help me?|TIE|untie|V|un-|un- = deshacer.",
+"Press Ctrl+Z to ___ the last change.|DO|undo|V|un-|",
+"You should ___ the apps you never use.|INSTALL|uninstall|V|un-|Ojo: desinstall no existe en inglés.",
+"It's ___ to finish all this in five minutes.|POSSIBLE|impossible|A|im-|Delante de p → im-.",
+"Don't be so ___! The bus will be here soon.|PATIENT|impatient|A|im-|Delante de p → im-.",
+"He behaves like a little kid; he's very ___ for his age.|MATURE|immature|A|im-|Delante de m → im- (dos m).",
+"It's ___ to say that to a teacher; it's very rude.|POLITE|impolite|A|im-|",
+"That plan is totally ___; it's far too expensive.|PRACTICAL|impractical|A|im-|",
+"It's ___ to drive without a licence.|LEGAL|illegal|A|il-|Delante de l → il- (dos l).",
+"His argument was completely ___; it made no sense.|LOGICAL|illogical|A|il-|",
+"My handwriting is so bad that my notes are ___.|LEGIBLE|illegible|A|il-|",
+"Go is an ___ verb: go, went, gone.|REGULAR|irregular|A|ir-|Delante de r → ir- (dos r).",
+"Leaving a baby alone at home is completely ___.|RESPONSIBLE|irresponsible|A|ir-|",
+"Some changes are ___; you can't go back.|REVERSIBLE|irreversible|A|ir-|",
+"Sorry, that answer is ___. Try again.|CORRECT|incorrect|A|in-|",
+"She feels ___ about her appearance and hates photos.|SECURE|insecure|A|in-|",
+"The instructions were ___, so we couldn't build the shelf.|COMPLETE|incomplete|A|in-|",
+"The village is ___ by car in winter because of the snow.|ACCESSIBLE|inaccessible|A|in-|",
+"I ___ with you; I think the film was terrible.|AGREE|disagree|V|dis-|",
+"I really ___ getting up early on Saturdays.|LIKE|dislike|V|dis-|",
+"She is very ___; she never tells the truth.|HONEST|dishonest|A|dis-|",
+"The magician made the coin ___.|APPEAR|disappear|V|dis-|",
+"To his ___, the shop was already closed.|PLEASURE|displeasure|N|dis-|Va después de his → sustantivo.",
+"Students who ___ the rules will be punished.|OBEY|disobey|V|dis-|",
+"The referee ___ the runner for cheating.|QUALIFY|disqualified|V|dis-|Prefijo dis- y además en pasado: -y → -ied.",
+"This is a ___ area, so please put out your cigarette.|SMOKING|non-smoking|A|non-|non- suele llevar guion.",
+"They cut off the electricity for ___ of the bills.|PAYMENT|non-payment|N|non-|",
+"I prefer ___ to novels; I like real stories.|FICTION|non-fiction/nonfiction|N|non-|",
+"After the oil spill, workers had to ___ the beach.|CONTAMINATE|decontaminate|V|de-|",
+"Getting bad marks all the time can ___ students.|MOTIVATE|demotivate|V|de-|",
+"The government decided to ___ the secret files.|CLASSIFY|declassify/de-classify|V|de-|",
+"Take the chicken out of the freezer to ___ it.|FROST|defrost|V|de-|",
+"Don't ___ the pasta or it will be too soft.|COOK|overcook|V|over-|over- = demasiado.",
+"I ___ and missed the bus this morning.|SLEEP|overslept|V|over-|over- y pasado irregular: sleep → slept.",
+"The trains are always ___ during rush hour.|CROWDED|overcrowded|A|over-|",
+"Never ___ your opponent; he's better than he looks.|ESTIMATE|underestimate|V|under-|under- = demasiado poco.",
+"Nurses are ___; they deserve a higher salary.|PAID|underpaid|A|under-|",
+"I'm sorry, I ___ you. I thought you said Tuesday.|UNDERSTAND|misunderstood|V|mis-|mis- = mal, y en pasado: understood.",
+"Be careful not to ___ his surname; it's very long.|SPELL|misspell|V|mis-|mis + spell = dos s.",
+"The boys ___ in class and were sent to the head teacher.|BEHAVE|misbehaved|V|mis-|En pasado.",
+"There was a ___ and they sent me the wrong order.|UNDERSTANDING|misunderstanding|N|mis-|",
+"Usain Bolt could ___ anyone in the world.|RUN|outrun|V|out-|out- = superar a alguien.",
+"Our team ___ all the others and won the cup.|PERFORM|outperformed|V|out-|En pasado.",
+"In this school girls ___ boys: there are 300 girls and 200 boys.|NUMBER|outnumber|V|out-|",
+"I made a lot of mistakes, so I have to ___ the essay.|WRITE|rewrite|V|re-|re- = otra vez.",
+"If you fail, you can ___ the exam in June.|TAKE|retake|V|re-|",
+"My phone is dead; I need to ___ it.|CHARGE|recharge|V|re-|",
+"They want to ___ the old castle that fell down.|BUILD|rebuild|V|re-|",
+"The page isn't loading. Try to ___ it.|LOAD|reload|V|re-|",
+"Plastic bottles can be ___ and used again.|CYCLE|recycled|V|re-|Pasiva: can be + participio.",
+"Kids get ___ when they eat too much sugar.|ACTIVE|hyperactive|A|hyper-|hyper- = extremo, demasiado.",
+"Sunscreen protects your skin from ___ rays.|VIOLET|ultraviolet|A|ultra-|",
+"We sat in a ___ around the teacher.|CIRCLE|semicircle/semi-circle|N|semi-|semi- = medio.",
+"We reached the ___ of the tournament but lost.|FINAL|semi-final/semifinal|N|semi-|",
+"The ___ is open 24 hours; you can buy almost anything there.|MARKET|supermarket|N|super-|",
+"He's a ___; he has sold millions of albums.|STAR|superstar/megastar|N|super- / mega-|",
+"You need to ___ your phone to the latest software.|GRADE|upgrade|V|up-|up- = subir de nivel.",
+"The company ___ him from manager to assistant.|GRADE|downgraded|V|down-|down- = bajar. En pasado.",
+"I'm going to ___ the new album tonight.|LOAD|download|V|down-|",
+"In the ___ years, before the war, life was very different.|WAR|pre-war/prewar|A|pre-|pre- = antes.",
+"Click here to ___ the document before printing it.|VIEW|preview|V|pre-|",
+"You should ___ your tickets online to save time.|BOOK|pre-book/prebook|V|pre-|",
+"After his degree, he did a ___ course at Oxford.|GRADUATE|postgraduate/post-graduate|A|post-|post- = después.",
+"I woke up at ___ because of a strange noise.|NIGHT|midnight|N|mid-|mid- = a mitad.",
+"We have a short ___ break at eleven o'clock.|MORNING|mid-morning/midmorning|N|mid-|",
+"The film was in French, but it had English ___.|TITLES|subtitles|N|sub-|sub- = debajo.",
+"In New York we took the ___ every day.|WAY|subway|N|sub-|",
+"Messi is an ___ star; people know him all over the world.|NATIONAL|international|A|inter-|inter- = entre.",
+"Electric cars are the future of ___.|PORT|transport|N|trans-|trans- = a través.",
+"Do you believe in aliens and ___ life?|TERRESTRIAL|extraterrestrial|A|extra-|extra- = más allá.",
+"What a voice! She is absolutely ___.|ORDINARY|extraordinary|A|extra-|",
+"Astronomers use a ___ to look at the stars.|SCOPE|telescope|N|tele-|tele- = a distancia.",
+"Before mobiles, everybody had a ___ at home.|PHONE|telephone|N|tele-|",
+"Thousands of people joined the ___ march.|WAR|anti-war/antiwar|A|anti-|anti- = en contra.",
+"Turn the screw ___ to open it.|CLOCKWISE|anti-clockwise/anticlockwise/counterclockwise|D|anti-|",
+"There was a big ___ protest outside parliament.|GOVERNMENT|anti-government/antigovernment|A|anti-|",
+"The club started an ___ campaign to fight racism.|RACIST|anti-racist/antiracist|A|anti-|",
+"He's writing his ___, the story of his own life.|BIOGRAPHY|autobiography|N|auto-|auto- = uno mismo.",
+"She asked the singer for his ___ after the concert.|GRAPH|autograph|N|auto-|",
+"You need to ___ the photo before you print it; it's too small.|LARGE|enlarge|V|en-|en- convierte en verbo: hacer más grande.",
+
+/* ---------- SUSTANTIVOS ---------- */
+"They celebrated fifty years of ___.|MARRY|marriage|N|-age|Después de of → sustantivo. La -y pasa a -i.",
+"The postman left a ___ at the door.|PACK|package|N|-age|Después de a → sustantivo.",
+"There's a ___ of water because it hasn't rained for months.|SHORT|shortage|N|-age|",
+"We keep the old furniture in the ___ room.|STORE|storage|N|-age|Se pierde la -e: stor(e) + age.",
+"Mobile phone ___ among teenagers has grown a lot.|USE|usage|N|-age|",
+"The ___ of the train was delayed by twenty minutes.|ARRIVE|arrival|N|-al|Después de The → sustantivo. Se pierde la -e.",
+"Water is essential for ___ in the desert.|SURVIVE|survival|N|-al|Después de for → sustantivo.",
+"His ___ to help us was a big surprise.|REFUSE|refusal|N|-al|Después de his → sustantivo.",
+"You need your parents' ___ to go on the trip.|APPROVE|approval|N|-al|",
+"Nobody believed the minister's ___ of the scandal.|DENY|denial|N|-al|-y → -i.",
+"Thank you for your ___. I couldn't have done it alone.|ASSIST|assistance|N|-ance|Después de your → sustantivo.",
+"Her ___ in the final was amazing.|PERFORM|performance|N|-ance|",
+"Don't judge people by their ___.|APPEAR|appearance|N|-ance|",
+"Class ___ is compulsory; you can't miss more than three days.|ATTEND|attendance|N|-ance|",
+"What's the ___ between these two words?|DIFFER|difference|N|-ence|Después de the → sustantivo.",
+"Do you have a ___: tea or coffee?|PREFER|preference|N|-ence|",
+"She speaks in public with great ___.|CONFIDENT|confidence|N|-ence|-ent → -ence.",
+"There is no ___ that he took the money.|EVIDENT|evidence|N|-ence|-ent → -ence.",
+"I nearly died of ___ during the two-hour lecture.|BORE|boredom|N|-dom|Después de of → sustantivo.",
+"The prisoners dreamed of ___.|FREE|freedom|N|-dom|",
+"England, Scotland, Wales and Northern Ireland form the United ___.|KING|Kingdom|N|-dom|",
+"My grandfather is a man of great ___.|WISE|wisdom|N|-dom|Cambia: wise → wis + dom.",
+"Her first film made her famous and brought her ___.|STAR|stardom|N|-dom|",
+"The company has more than two hundred ___.|EMPLOY|employees|N|-ee|-ee = el que recibe la acción (trabajador). En plural.",
+"The ___ was very nervous during the job interview.|INTERVIEW|interviewee|N|-ee|El entrevistado recibe la acción → -ee.",
+"Every ___ at the conference got a free bag.|ATTEND|attendee|N|-ee|",
+"She's a ___ at a law firm; she's still learning the job.|TRAIN|trainee|N|-ee|",
+"My boss is a good ___; he pays us well.|EMPLOY|employer|N|-er|-er = el que hace la acción (el jefe).",
+"The bus ___ stopped suddenly.|DRIVE|driver|N|-er|",
+"Thomas Edison was a famous ___.|INVENT|inventor|N|-or|",
+"Brad Pitt is a well-known American ___.|ACT|actor|N|-or|",
+"Picasso was a Spanish ___.|ART|artist|N|-ist|",
+"Marie Curie was a brilliant ___.|SCIENCE|scientist|N|-ist|",
+"In summer Barcelona is full of ___.|TOUR|tourists|N|-ist|Plural: varios turistas.",
+"She practises every day because she wants to be a professional ___.|PIANO|pianist|N|-ist|",
+"The shop ___ helped me find a bigger size.|ASSIST|assistant|N|-ant|",
+"The ___ said he was innocent, but the judge didn't believe him.|DEFEND|defendant|N|-ant|El acusado en un juicio.",
+"An ___ looks after the company's money.|ACCOUNT|accountant|N|-ant|",
+"There are thirty ___ in my class.|STUDY|students|N|-ent|Cambia: study → stud + ent. Plural.",
+"All the ___ of the building had to leave because of the fire.|RESIDE|residents|N|-ent|",
+"The ___ of the club gave a short speech.|PRESIDE|president|N|-ent|",
+"___ is very important for the Spanish economy.|TOUR|Tourism|N|-ism|",
+"His ___ kept the whole team positive.|OPTIMIST|optimism|N|-ism|",
+"Karl Marx wrote a lot about ___.|CAPITAL|capitalism|N|-ism|",
+"The police are fighting against ___.|TERROR|terrorism|N|-ism|",
+"I had a very happy ___ in a small village.|CHILD|childhood|N|-hood|",
+"We live in a quiet ___ near the park.|NEIGHBOUR|neighbourhood/neighborhood|N|-hood|",
+"At eighteen you officially enter ___.|ADULT|adulthood|N|-hood|",
+"She says ___ changed her life completely.|MOTHER|motherhood|N|-hood|",
+"Women have fought for ___ with men for centuries.|EQUAL|equality|N|-ity|",
+"___ to animals should be punished.|CRUEL|Cruelty|N|-ty|",
+"Airport ___ is very strict these days.|SECURE|security|N|-ity|Se pierde la -e.",
+"She has the ___ to speak five languages.|ABLE|ability|N|-ity|Cambia: able → abil + ity.",
+"Dogs are famous for their ___ to their owners.|LOYAL|loyalty|N|-ty|",
+"There's a strong ___ that it will snow tonight.|POSSIBLE|possibility|N|-ity|Cambia: possible → possibil + ity.",
+"Her ___ grew after she won the singing contest.|POPULAR|popularity|N|-ity|",
+"Everyone admired her ___; she gave half her salary to charity.|GENEROUS|generosity|N|-ity|Cambia: generous → generos + ity.",
+"Lifeguards are there for the ___ of the swimmers.|SAFE|safety|N|-ty|",
+"The ___ of the new app took two years.|DEVELOP|development|N|-ment|Va después de The → sustantivo.",
+"To my ___, I won the first prize.|AMAZE|amazement|N|-ment|To my + sustantivo.",
+"The film was a big ___; it was awful.|DISAPPOINT|disappointment|N|-ment|",
+"There has been a big ___ in your English this term.|IMPROVE|improvement|N|-ment|",
+"After hours of talks, they finally reached an ___.|AGREE|agreement|N|-ment|",
+"Don't make a ___ until you know all the facts.|JUDGE|judgement/judgment|N|-ment|",
+"Thank you for all your help and ___.|ENCOURAGE|encouragement|N|-ment|",
+"Money can't buy ___.|HAPPY|happiness|N|-ness|-y → -i.",
+"Thank you for your ___; you've been very helpful.|KIND|kindness|N|-ness|",
+"The campaign wants to raise ___ of climate change.|AWARE|awareness|N|-ness|",
+"He missed a month of school because of a serious ___.|ILL|illness|N|-ness|",
+"My biggest ___ is chocolate.|WEAK|weakness|N|-ness|",
+"The ___ of the room made it hard to see anything.|DARK|darkness|N|-ness|",
+"___ is one of the main symptoms of the flu.|TIRED|Tiredness|N|-ness|",
+"There was a ___ at the bank yesterday.|ROB|robbery|N|-ery|Se duplica la b.",
+"The ___ of penicillin saved millions of lives.|DISCOVER|discovery|N|-y|",
+"The firefighter got a medal for his ___.|BRAVE|bravery|N|-ry|",
+"I buy bread at the ___ on the corner.|BAKE|bakery|N|-ry|",
+"___ to the museum is free for children under twelve.|ENTER|Entry/Entrance|N|-ry|Cambia: enter → entr + y.",
+"Our ___ started in primary school.|FRIEND|friendship|N|-ship|",
+"I paid for a year's gym ___.|MEMBER|membership|N|-ship|",
+"Spain won the European ___ in 2008.|CHAMPION|Championship|N|-ship|",
+"Their ___ ended after three years together.|RELATION|relationship|N|-ship|",
+"She showed great ___ as team captain.|LEADER|leadership|N|-ship|",
+"___ is the key to a better future.|EDUCATE|Education|N|-tion|Se pierde la -e: educat(e) + ion.",
+"The police made a serious ___ against him.|ACCUSE|accusation|N|-tion|",
+"It was a difficult ___, but I chose the red car.|DECIDE|decision|N|-sion|-de → -sion.",
+"The ___ destroyed three buildings.|EXPLODE|explosion|N|-sion|-de → -sion.",
+"She works for a charity ___.|ORGANISE|organisation/organization|N|-tion|",
+"The ___ of China is over a billion people.|POPULATE|population|N|-tion|",
+"Can you give me some ___ about the course?|INFORM|information|N|-tion|",
+"I'd like to make a ___ for two at nine.|RESERVE|reservation|N|-tion|",
+"Thank you for the ___ to your party.|INVITE|invitation|N|-tion|",
+"The ___ of the internet changed the world.|INVENT|invention|N|-tion|",
+"We had an interesting ___ about the news in class.|DISCUSS|discussion|N|-sion|",
+"You need your teacher's ___ to leave early.|PERMIT|permission|N|-sion|-t → -ssion.",
+"He has a very good ___ of history.|KNOW|knowledge|N|-ledge|Solo know → knowledge. No inventes más con -ledge.",
+"Their ___ was so bad that the teacher sent them out.|BEHAVE|behaviour/behavior|N|-iour|",
+"The ___ of the river is about fifty metres.|WIDE|width|N|-th|Irregular: wide → width.",
+"What's the ___ of the pool? About two metres.|DEEP|depth|N|-th|Irregular: deep → depth.",
+"Tell me the ___. Did you break the window?|TRUE|truth|N|-th|Irregular: true → truth.",
+"In my ___ I played football every single day.|YOUNG|youth|N|-th|Irregular: young → youth.",
+"Many families in the world live in ___.|POOR|poverty|N|-ty|Irregular: poor → poverty.",
+"I love the ___ of the sun on my face.|WARM|warmth|N|-th|",
+"The ___ of the table is two metres.|LONG|length|N|-th|Irregular: long → length.",
+"Lifting weights increases your ___.|STRONG|strength|N|-th|Irregular: strong → strength.",
+"The ___ of the building is three hundred metres.|HIGH|height|N|-t|Irregular: high → height.",
+
+/* ---------- ADJETIVOS ---------- */
+"She's very ___; she always forgets my birthday.|FORGET|forgetful|A|-ful|Después de very → adjetivo.",
+"Thanks, the map was really ___.|USE|useful|A|-ful|La -e se queda: use + ful.",
+"This old phone is ___; it doesn't even turn on.|USE|useless|A|-less|-less = sin.",
+"The waiter was very ___ and friendly.|HELP|helpful|A|-ful|",
+"The charity helps ___ people living on the street.|HOME|homeless|A|-less|Delante de un sustantivo → adjetivo.",
+"The situation looked ___; nobody believed we could win.|HOPE|hopeless|A|-less|",
+"Be ___ with that knife; it's very sharp.|CARE|careful|A|-ful|",
+"You made a lot of ___ mistakes in this test.|CARE|careless|A|-less|Errores por descuido = sin cuidado.",
+"Water is a ___ liquid.|COLOUR|colourless/colorless|A|-less|Lee el contexto: el agua no tiene color.",
+"The garden was full of ___ flowers: red, yellow and purple.|COLOUR|colourful/colorful|A|-ful|",
+"Don't worry, the dog is ___; it won't bite.|HARM|harmless|A|-less|",
+"Smoking is ___ to your health.|HARM|harmful|A|-ful|",
+"We had a ___ holiday in Italy.|WONDER|wonderful|A|-ful|",
+"It was a ___ day, so we went to the beach.|BEAUTY|beautiful|A|-ful|-y → -i.",
+"I broke my arm and it was very ___.|PAIN|painful|A|-ful|",
+"I'm very ___ to you for all your help.|THANK|thankful|A|-ful|",
+"It was very ___ of you to bring me flowers.|THOUGHT|thoughtful|A|-ful|",
+"The film was so ___ that I fell asleep.|BORE|boring|A|-ing|La película provoca el aburrimiento → -ing.",
+"I was so ___ that I fell asleep in the middle of the film.|BORE|bored|A|-ed|Yo siento el aburrimiento → -ed.",
+"His stories are always very ___; we laugh a lot.|AMUSE|amusing|A|-ing|Las historias no sienten, provocan → -ing.",
+"We were all really ___ about the trip to London.|EXCITE|excited|A|-ed|Las personas sienten → -ed.",
+"It was an ___ match; the score changed every minute.|EXCITE|exciting|A|-ing|",
+"I felt really ___ when I fell over in front of everyone.|EMBARRASS|embarrassed|A|-ed|",
+"Falling over in front of the whole class is so ___.|EMBARRASS|embarrassing|A|-ing|",
+"The noise of the drill was very ___.|IRRITATE|irritating|A|-ing|",
+"I'm ___ because you're always late.|ANNOY|annoyed|A|-ed|",
+"The ending was ___; I didn't expect it at all.|SURPRISE|surprising|A|-ing|",
+"I'm really ___ in history; I read about it every day.|INTEREST|interested|A|-ed|",
+"The museum was really ___; we stayed all day.|INTEREST|interesting|A|-ing|",
+"We were ___ to hear the terrible news.|SHOCK|shocked|A|-ed|",
+"She was very ___ when she didn't get the job.|DISAPPOINT|disappointed|A|-ed|",
+"The results were ___; we expected much more.|DISAPPOINT|disappointing|A|-ing|",
+"After running ten kilometres I was completely ___.|EXHAUST|exhausted|A|-ed|",
+"My little brother is ___ of spiders.|FRIGHTEN|frightened|A|-ed|",
+"Is this water ___? I'm really thirsty.|DRINK|drinkable|A|-able|",
+"Yoga makes your body more ___.|FLEX|flexible|A|-ible|",
+"These shoes are very ___; I can walk all day in them.|COMFORT|comfortable|A|-able|",
+"He's a very ___ person; you can always count on him.|RELY|reliable|A|-able|-y → -i.",
+"The prices in this shop are very ___.|AFFORD|affordable|A|-able|",
+"We had a very ___ evening at the theatre.|ENJOY|enjoyable|A|-able|",
+"Be ___ when you cross the road.|CAUTION|cautious|A|-ous|",
+"Shakira is a ___ Colombian singer.|FAME|famous|A|-ous|Se pierde la -e.",
+"Skydiving is a ___ sport.|DANGER|dangerous|A|-ous|",
+"She was very ___ before the exam.|NERVE|nervous|A|-ous|",
+"The hotel was ___; it had a pool, a spa and a golf course.|LUXURY|luxurious|A|-ous|-y → -i.",
+"My grandmother is still very ___ at eighty-five.|ACT|active|A|-ive|",
+"We had a very ___ meeting and decided everything.|PRODUCE|productive|A|-ive|",
+"He's very ___; he just watches and never takes part.|PASS|passive|A|-ive|",
+"She's very ___; she always has new ideas.|CREATE|creative|A|-ive|",
+"That car is far too ___ for me.|EXPENSE|expensive|A|-ive|",
+"The advert was bright and very ___.|ATTRACT|attractive|A|-ive|",
+"It was a ___ attack; the victim was badly hurt.|BRUTE|brutal|A|-al|Se pierde la -e.",
+"You must wear ___ clothes to the wedding.|FORM|formal|A|-al|Delante de un sustantivo → adjetivo.",
+"Mozart was a ___ genius.|MUSIC|musical|A|-al|",
+"Climate change is a ___ problem.|GLOBE|global|A|-al|",
+"Grease is a ___ film; everybody has seen it.|CLASS|classic|A|-ic|",
+"He writes in a very ___ style.|POET|poetic|A|-ic|",
+"It's very ___ today, so take an umbrella.|RAIN|rainy|A|-y|",
+"Hold on to your hat; it's very ___.|WIND|windy|A|-y|",
+"The sky is grey and ___.|CLOUD|cloudy|A|-y|",
+"That horror film was really ___.|SCARE|scary|A|-y|Se pierde la -e.",
+"A ___ switch caused the fire.|FAULT|faulty|A|-y|Delante de un sustantivo → adjetivo.",
+"Stop being so ___! You're sixteen, not six.|CHILD|childish|A|-ish|",
+"The sky turned ___ at sunset.|RED|reddish|A|-ish|Se duplica la d.",
+"They live in a small ___ house in the mountains.|WOOD|wooden|A|-en|",
+"She has long ___ hair.|GOLD|golden|A|-en|",
+"My phone is ___; the screen doesn't work.|BREAK|broken|A|-en|Irregular: break → broken.",
+"I read the ___ newspaper every morning.|DAY|daily|A|-ly|Con palabras de tiempo, -ly da la frecuencia.",
+"We pay a ___ fee for the gym.|MONTH|monthly|A|-ly|",
+"Sushi is a typical ___ dish.|JAPAN|Japanese|A|-ese|",
+"My friend Li is ___; she was born in Beijing.|CHINA|Chinese|A|-ese|Se pierde la -a.",
+"Paella is a typical ___ dish.|SPAIN|Spanish|A|-ish|Cambia: Spain → Span + ish.",
+"The ___ Prime Minister lives in Downing Street.|BRITAIN|British|A|-ish|Cambia: Britain → Brit + ish.",
+"Toronto is a big ___ city.|CANADA|Canadian|A|-ian|",
+"Lima is the ___ capital.|PERU|Peruvian|A|-ian|",
+"My neighbour is ___; she was born in Karachi.|PAKISTAN|Pakistani|A|-i|",
+"Baghdad is the ___ capital.|IRAQ|Iraqi|A|-i|",
+"The Alhambra is a famous example of ___ art.|ISLAM|Islamic|A|-ic|",
+
+/* ---------- VERBOS ---------- */
+"We need to ___ the road because it's too narrow.|WIDE|widen|V|-en|Después de to → verbo.",
+"This dress is too long. Can you ___ it?|SHORT|shorten|V|-en|Después de can → verbo.",
+"Leave the butter out of the fridge to ___ it.|SOFT|soften|V|-en|",
+"Put the clay in the oven to ___ it.|HARD|harden|V|-en|",
+"You should ___ your password; it's too easy.|STRONG|strengthen|V|-en|",
+"These new lamps will ___ the kitchen.|BRIGHT|brighten|V|-en|",
+"Global warming will ___ the problem.|WORSE|worsen|V|-en|",
+"The police couldn't ___ the thief.|IDENTITY|identify|V|-ify|",
+"Can you ___ what you mean? I don't understand.|CLEAR|clarify|V|-ify|",
+"They planted flowers to ___ the town.|BEAUTY|beautify|V|-ify|",
+"Can you ___ the explanation? It's too difficult.|SIMPLE|simplify|V|-ify|",
+"We need to ___ the design before we print it.|MODIFICATION|modify|V|-ify|Ojo: modificate no existe.",
+"I didn't ___ it was so late.|REAL|realise/realize|V|-ise|-ise británico, -ize americano.",
+"We must ___ and spend less money.|ECONOMY|economise/economize|V|-ise|",
+"The new boss wants to ___ the office.|MODERN|modernise/modernize|V|-ise|",
+"Spain began to ___ in the nineteenth century.|INDUSTRY|industrialise/industrialize|V|-ise|",
+"Companies use social media to ___ their products.|ADVERTISEMENT|advertise|V|-ise|",
+"Please don't ___ things; keep it simple.|COMPLICATED|complicate|V|-ate|",
+"A good teacher knows how to ___ students.|MOTIVE|motivate|V|-ate|",
+"Big teams tend to ___ the league.|DOMINANT|dominate|V|-ate|",
+
+/* ---------- ADVERBIOS ---------- */
+"He answered all the questions ___.|CORRECT|correctly|D|-ly|Dice cómo respondió → adverbio.",
+"This medicine is used ___ in hospitals.|EXTENSIVE|extensively|D|-ly|Modifica al verbo used → adverbio.",
+"They worked ___ and finished early.|EFFICIENT|efficiently|D|-ly|",
+"___, nobody was hurt in the accident.|LUCK|Luckily|D|-ly|Al principio con coma → adverbio. -y → -i.",
+"Speak ___, please; the baby is sleeping.|QUIET|quietly|D|-ly|",
+"She ___ passed all her exams.|EASY|easily|D|-ly|-y → -i.",
+"He spoke ___ even though he was angry.|CALM|calmly|D|-ly|",
+"Please walk ___; don't run in the corridors.|SLOW|slowly|D|-ly|",
+"She smiled ___ at the baby.|HAPPY|happily|D|-ly|-y → -i.",
+"The team played ___ and lost five-nil.|TERRIBLE|terribly|D|-ly|-le → -ly.",
+"___, I have no idea where your keys are.|HONEST|Honestly|D|-ly|",
+"She talked ___ about her problems.|OPEN|openly|D|-ly|",
+"The balloon floated ___ into the sky.|UP|upwards/upward|D|-wards|-wards = hacia.",
+"After the holidays we drove ___.|HOME|homewards/homeward|D|-wards|",
+"Take one step ___, away from the edge.|BACK|backwards/backward|D|-wards|",
+"The ball rolled ___ down the hill.|DOWN|downwards/downward|D|-wards|",
+"Turn the key ___ to lock the door.|CLOCK|clockwise|D|-wise|-wise = en el sentido de.",
+
+/* ---------- DOBLES ---------- */
+"This pain is ___; I need to see a doctor.|BEAR|unbearable|A|un- -able|Dos cambios: un- (negativo) + -able (adjetivo).",
+"___, it started to rain just as we left.|FORTUNE|Unfortunately|D|un- -ately|Tres cambios: un- + -ate + -ly.",
+"The ending was completely ___; nobody saw it coming.|EXPECT|unexpected|A|un- -ed|",
+"The steak was raw inside. It was ___.|COOK|undercooked|A|under- -ed|",
+"The ___ rate in Spain is still very high.|EMPLOY|unemployment|N|un- -ment|Después de The → sustantivo, y negativo → un-.",
+"Most teenagers want more ___ from their parents.|DEPEND|independence|N|in- -ence|",
+"The advert was ___; the product looked nothing like the photo.|LEAD|misleading|A|mis- -ing|",
+"Drive ___; the roads are icy.|CARE|carefully|D|-ful -ly|Dos sufijos: -ful + -ly.",
+"The bed was so ___ that I couldn't sleep.|COMFORT|uncomfortable|A|un- -able|",
+"He kept looking at his watch ___.|PATIENT|impatiently|D|im- -ly|",
+"It has been ___ hot for October.|USUAL|unusually|D|un- -ly|",
+"He was arrested for driving ___.|DANGER|dangerously|D|-ous -ly|",
+"Many workers are ___ with their salaries.|SATISFY|dissatisfied|A|dis- -ied|dis + satisfied (dos s).",
+"___ is a big problem in many big cities.|HOME|Homelessness|N|-less -ness|Dos sufijos: -less + -ness.",
+"He answered ___ and got zero.|CORRECT|incorrectly|D|in- -ly|",
+"I'm sorry, the manager is ___ at the moment.|AVAIL|unavailable|A|un- -able|",
+"The players' ___ with the referee was obvious.|SATISFY|dissatisfaction|N|dis- -faction|",
+"He has been ___ for six months and is looking for a job.|EMPLOY|unemployed|A|un- -ed|",
+"She is a very ___ person; she cries when she reads the news.|EMOTION|emotional|A|-al|",
+"The meal was ___; I'd never eat there again.|TASTE|tasteless|A|-less|",
+"You can never trust him; he's totally ___.|RELY|unreliable|A|un- -able|-y → -i.",
+"___, the shop is closed on Sundays.|LUCK|Unluckily/Unfortunately|D|un- -ly|",
+];
+
+/* es | traducciones válidas (/) | estructura clave (/ = o, & = y) | tipo S B G | nota */
+var UTRAW = [
+/* ---------- SOLÍA: used to + infinitivo ---------- */
+"Cuando era niño, solía jugar al fútbol con mis amigos en el parque.|When I was a child, I used to play football with my friends in the park./When I was a kid, I used to play football with my friends in the park./When I was a child, I used to play soccer with my friends in the park./When I was little, I used to play football with my friends in the park.|used to play|S|",
+"¿Ella solía vivir en Madrid antes de mudarse a Londres?|Did she use to live in Madrid before moving to London?/Did she use to live in Madrid before she moved to London?/Did she use to live in Madrid before moving to London|did she use to live|S|Detrás de before va -ing: before moving, no before live.",
+"Nosotros solíamos cenar juntos todos los domingos.|We used to have dinner together every Sunday./We used to eat dinner together every Sunday./We used to have dinner together on Sundays./We used to dine together every Sunday.|used to have/used to eat/used to dine|S|Cenar = have dinner (no take dinner). Every va con singular: every Sunday.",
+"Antes no solía comer verduras, pero ahora me encantan.|I didn't use to eat vegetables, but now I love them./Before, I didn't use to eat vegetables, but now I love them./I never used to eat vegetables, but now I love them./Before, I never used to eat vegetables, but now I love them.|did not use to eat/never used to eat|S|Me encantan (las verduras) = I love them, en plural.",
+"¿Tus abuelos solían viajar mucho cuando eran jóvenes?|Did your grandparents use to travel a lot when they were young?/Did your grandparents use to travel much when they were young?/Did your grandparents use to travel a lot when they were younger?|did your grandparents use to travel|S|",
+"¿Solías beber café por las noches?|Did you use to drink coffee at night?/Did you use to drink coffee in the evenings?/Did you use to drink coffee at nights?|did you use to drink|S|Por las noches = at night.",
+"Solíamos coser nuestra propia ropa.|We used to sew our own clothes.|used to sew|S|",
+"Yo solía tocar el piano cuando tenía cinco años.|I used to play the piano when I was five./I used to play piano when I was five./I used to play the piano when I was five years old./I used to play piano when I was five years old.|used to play|S|",
+"¿Solía yo tocar el piano cuando tenía cinco años?|Did I use to play the piano when I was five?/Did I use to play piano when I was five?/Did I use to play the piano when I was five years old?|did i use to play|S|",
+"Yo no solía tocar el piano cuando tenía cinco años.|I didn't use to play the piano when I was five./I didn't use to play piano when I was five./I didn't use to play the piano when I was five years old.|did not use to play|S|",
+"Nosotros no solíamos salir por la noche.|We didn't use to go out at night./We never used to go out at night.|did not use to go out/never used to go out|S|",
+"Mi padre solía fumar, pero lo dejó hace años.|My father used to smoke, but he stopped years ago./My dad used to smoke, but he stopped years ago./My father used to smoke, but he quit years ago./My dad used to smoke, but he quit years ago./My father used to smoke, but he gave up years ago./My dad used to smoke, but he gave up years ago.|used to smoke|S|",
+"¿Dónde solías vivir antes?|Where did you use to live before?|did you use to live|S|",
+"Él solía tener el pelo largo.|He used to have long hair.|used to have|S|",
+"Mi hermana no solía estudiar mucho.|My sister didn't use to study much./My sister didn't use to study a lot./My sister didn't use to study very much./My sister never used to study much.|did not use to study/never used to study|S|",
+"Solía haber un cine en esta calle.|There used to be a cinema in this street./There used to be a cinema on this street.|there used to be|S|Solía haber = there used to be.",
+
+/* ---------- ESTAR ACOSTUMBRADO: be used to + -ing ---------- */
+"Ellos están acostumbrados a trabajar bajo presión.|They are used to working under pressure.|are used to working|B|",
+"Estoy acostumbrado a jugar al tenis.|I am used to playing tennis.|am used to playing|B|",
+"Ella está acostumbrada a soñar.|She is used to dreaming.|is used to dreaming|B|",
+"He estado acostumbrado a verte.|I have been used to seeing you.|have been used to seeing|B|He estado = have been. Después, -ing: seeing.",
+"¿Estás acostumbrado a vivir solo?|Are you used to living alone?/Are you used to living on your own?/Are you used to living by yourself?|are you used to living|B|",
+"No estoy acostumbrado a levantarme tan temprano.|I am not used to getting up so early./I am not used to waking up so early./I am not used to getting up this early./I am not used to waking up this early.|am not used to getting/am not used to waking|B|",
+"Mi abuela no está acostumbrada al frío.|My grandmother isn't used to the cold./My grandma isn't used to the cold./My granny isn't used to the cold./My grandmother isn't used to cold weather.|is not used to|B|Detrás de used to también puede ir un sustantivo: the cold.",
+"Él está acostumbrado a conducir por la izquierda.|He is used to driving on the left.|is used to driving|B|Por la izquierda = on the left.",
+"No estaba acostumbrado a tanto ruido.|I wasn't used to so much noise./I wasn't used to that much noise./I was not used to so much noise.|was not used to|B|Estaba: be en pasado → was.",
+"Estamos acostumbrados a hablar inglés en clase.|We are used to speaking English in class.|are used to speaking|B|",
+
+/* ---------- ACOSTUMBRARSE: get used to + -ing ---------- */
+"No me he acostumbrado a levantarme tan temprano.|I haven't got used to getting up so early./I haven't got used to waking up so early./I haven't got used to getting up this early./I haven't got used to waking up this early.|have not got used to getting/have not got used to waking|G|No me he acostumbrado: present perfect → haven't got used to.",
+"Poco a poco, me estoy acostumbrando al clima frío.|Little by little, I am getting used to the cold weather./Little by little, I am getting used to the cold climate./Bit by bit, I am getting used to the cold weather./Gradually, I am getting used to the cold weather.|am getting used to|G|Poco a poco = little by little. Weather se escribe w-e-a-t-h-e-r.",
+"¿Tú te acostumbras a conducir por la izquierda?|Do you get used to driving on the left?/Are you getting used to driving on the left?|do you get used to driving/are you getting used to driving|G|Te acostumbras: presente → Do you get used to…?",
+"Juan se está acostumbrando a su nuevo trabajo.|Juan is getting used to his new job.|is getting used to|G|Se está acostumbrando: is getting, no get.",
+"No me acostumbro a hacer dinero.|I can't get used to making money./I don't get used to making money.|can not get used to making/do not get used to making|G|Lo más natural es I can't get used to.",
+"¿Te has acostumbrado a estudiar francés?|Have you got used to studying French?|have you got used to studying|G|Te has acostumbrado: present perfect. study → studying.",
+"Ella se acostumbrará a escribir mejor.|She will get used to writing better.|will get used to writing|G|writing se escribe con una sola t.",
+"Esos amigos se están acostumbrando a enviar cartas.|Those friends are getting used to sending letters.|are getting used to sending|G|",
+"Me acostumbro a cantar rap.|I get used to singing rap.|get used to singing|G|",
+"¿Me acostumbro a cantar rap?|Do I get used to singing rap?|do i get used to singing|G|",
+"No me acostumbro a cantar rap.|I don't get used to singing rap./I can't get used to singing rap.|do not get used to singing/can not get used to singing|G|",
+"¿Te acostumbrarás a comer aquí?|Will you get used to eating here?|will you get used to eating|G|",
+"Sam se está acostumbrando a vivir allí.|Sam is getting used to living there.|is getting used to living|G|",
+"Me acostumbré a la comida muy rápido.|I got used to the food very quickly./I got used to the food really quickly./I got used to the food very fast.|got used to the food|G|Me acostumbré: get en pasado → got.",
+"Nunca me acostumbraré a madrugar.|I will never get used to getting up early./I will never get used to waking up early.|never get used to getting/never get used to waking|G|",
+"Tienes que acostumbrarte a hablar en público.|You have to get used to speaking in public.|get used to speaking|G|Detrás de have to, get va en infinitivo.",
+"Mi hermano se está acostumbrando a vivir solo.|My brother is getting used to living alone./My brother is getting used to living on his own./My brother is getting used to living by himself.|is getting used to living|G|",
+
+/* ---------- MEZCLADAS ---------- */
+"Solía vivir en el campo, así que no estoy acostumbrado al tráfico.|I used to live in the country, so I am not used to traffic./I used to live in the country, so I am not used to the traffic./I used to live in the countryside, so I am not used to traffic./I used to live in the countryside, so I am not used to the traffic.|used to live&am not used to|B|Dos estructuras: solía (used to live) y no estoy acostumbrado (am not used to).",
+"Solía trabajar de noche, así que estoy acostumbrado a dormir de día.|I used to work at night, so I am used to sleeping during the day./I used to work at night, so I am used to sleeping in the day.|used to work&am used to sleeping|B|",
+"Solíamos vivir en Irlanda, pero nunca nos acostumbramos a la lluvia.|We used to live in Ireland, but we never got used to the rain.|used to live&never got used to|G|"
+];
+
+
+/* drop items whose answer equals the base (sanity) */
+var WF_ITEMS = [];
+RAW.forEach(function(line, i){
+  var p = line.split("|");
+  if (p.length < 5) return;
+  var ans = p[2].split("/").map(function(s){return s.trim()});
+  if (norm(ans[0]) === norm(p[1])) return;
+  WF_ITEMS.push({id:"w"+i, s:p[0], base:p[1], ans:ans, cls:p[3], aff:p[4], note:p[5]||""});
+});
+
+var WF_GROUPS = [
+  {k:"all", label:"Todo"},
+  {k:"pre", label:"Prefijos"},
+  {k:"N", label:"Sustantivos"},
+  {k:"A", label:"Adjetivos"},
+  {k:"V", label:"Verbos"},
+  {k:"D", label:"Adverbios"},
+  {k:"dbl", label:"Varios cambios"}
+];
+var CLS = {N:"un sustantivo", A:"un adjetivo", V:"un verbo", D:"un adverbio"};
+var CLS_TAG = {N:"Sustantivo", A:"Adjetivo", V:"Verbo", D:"Adverbio"};
+function groupOf(it){
+  var parts = it.aff.split(/\s+/).filter(Boolean);
+  var hasPre = parts.some(function(a){return /^[a-z]+-$/.test(a)});
+  var nSuf = parts.filter(function(a){return /^-/.test(a)}).length;
+  if ((hasPre && nSuf) || nSuf > 1) return "dbl";
+  if (hasPre) return "pre";
+  return it.cls;
+}
+WF_ITEMS.forEach(function(it){ it.g = groupOf(it) });
+var UT_ITEMS = [];
+UTRAW.forEach(function(line, i){
+  var p = line.split("|"); if (p.length < 5) return;
+  UT_ITEMS.push({id:"u"+i, es:p[0], s:p[0], base:"", ans:p[1].split("/").map(function(x){return x.trim()}), core:p[2], cls:p[3], g:p[3], aff:"", note:p[4]||"", ut:true});
+});
+var UT_GROUPS = [
+  {k:"all", label:"Todo"},
+  {k:"S", label:"Solía"},
+  {k:"B", label:"Estar acostumbrado"},
+  {k:"G", label:"Acostumbrarse"}
+];
+
+function norm(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[\s\-'’._?!,¿¡]/g,"").replace(/iz(e|ed|es|ing|ation|ations)$/,"is$1");
+}
+
+/* ---------- storage ---------- */
+var store = {
+  get:function(k,d){try{var v=localStorage.getItem("wf_"+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set:function(k,v){try{localStorage.setItem("wf_"+k,JSON.stringify(v))}catch(e){}}
+};
+var mode = store.get("mode", "wf"); if (mode!=="ut") mode = "wf";
+var ITEMS, GROUPS, byId, seen, fails, group;
+function K(k){ return mode==="ut" ? "ut2_"+k : k }
+function loadMode(){
+  ITEMS = mode==="ut" ? UT_ITEMS : WF_ITEMS;
+  GROUPS = mode==="ut" ? UT_GROUPS : WF_GROUPS;
+  byId = {}; ITEMS.forEach(function(it){byId[it.id]=it});
+  seen = store.get(K("seen"), {}); fails = store.get(K("fails"), {}); group = store.get(K("group"), "all");
+  if (!GROUPS.some(function(g){return g.k===group})) group = "all";
+  Object.keys(fails).forEach(function(id){ if(!byId[id]) delete fails[id] });
+}
+loadMode();
+
+/* ---------- helpers ---------- */
+var $ = function(id){return document.getElementById(id)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function shuffle(a){ for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t} return a }
+function pool(){ return ITEMS.filter(function(it){ return group==="all" || it.g===group }) }
+function isOk(it, v){ return it.ans.some(function(a){return norm(a)===norm(v)}) }
+
+function highlight(word, aff){
+  var parts = aff.split(/\s+/).filter(Boolean), lw = word.toLowerCase(), start=0, end=word.length;
+  parts.forEach(function(a){ if (/^[a-z]+-$/.test(a)) { var x=a.slice(0,-1); if (lw.indexOf(x)===0) start = x.length; } });
+  var sufs = parts.filter(function(a){return /^-/.test(a)}).map(function(a){return a.replace(/^-/,"")});
+  if (sufs.length) {
+    var first = sufs[0].replace(/ise$/,"is"), idx = lw.lastIndexOf(first);
+    if (idx < 0 && first==="is") idx = lw.lastIndexOf("iz");
+    if (idx > start) end = idx;
+  }
+  if (start===0 && end===word.length) return esc(word);
+  return (start?'<mark>'+esc(word.slice(0,start))+'</mark>':'')+esc(word.slice(start,end))+(end<word.length?'<mark>'+esc(word.slice(end))+'</mark>':'');
+}
+
+/* ---------- explanations ---------- */
+var CUE = {
+  N:["the","a","an","his","her","my","your","their","our","its","of","for","some","no","this","that"],
+  A:["very","so","too","really","quite","more","most","is","are","was","were","be","been","feel","felt","look","looks","looked","seem","seems","get","got","totally","completely","extremely","absolutely","still"],
+  V:["to","can","can't","must","should","will","could","would","didn't","don't","couldn't","please"]
+};
+function reason(it){
+  var before = it.s.split("___")[0].trim();
+  var w = before.split(/\s+/).pop().toLowerCase().replace(/[^a-z']/g,"");
+  var r;
+  if (!before && it.cls==="D") r = "Va al principio de la frase y con coma, así que pide un adverbio";
+  else if (CUE[it.cls] && CUE[it.cls].indexOf(w)>=0) r = "Va después de “"+w+"”, así que pide "+CLS[it.cls];
+  else if (it.cls==="D") r = "Dice cómo o hacia dónde se hace la acción, así que pide un adverbio";
+  else if (it.cls==="A" && /^\s*[a-z]+\s/i.test(it.s.split("___")[1]||"") && it.g!=="pre") r = "El hueco pide "+CLS[it.cls];
+  else r = "El hueco pide "+CLS[it.cls];
+  if (it.g==="pre") r += ". El tipo de palabra no cambia: lo que cambia es el significado, con el prefijo "+it.aff;
+  return r+".";
+}
+function lev(a,b){var m=a.length,n=b.length,d=[];for(var i=0;i<=m;i++){d[i]=[i]}for(var j=0;j<=n;j++)d[0][j]=j;for(i=1;i<=m;i++)for(j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+var NEG = ["un","im","in","il","ir","dis","mis","non"];
+function diagnose(it, typed){
+  var t = norm(typed), c = norm(it.ans[0]), b = norm(it.base);
+  if (!t) return "No contestaste. Empieza siempre por el paso 1: ¿qué tipo de palabra pide el hueco?";
+  if (/^(modificate|desinstall|desagree|ilegal|unpossible|inlegal)$/.test(t)) return "Esa palabra no existe en inglés. Es un calco del español.";
+  if (t===b) return it.g==="pre" ? "Te faltaba el prefijo "+it.aff+". El tipo de palabra ya era el correcto; lo que cambia es el sentido." : "Dejaste la palabra igual. En Word Formation siempre hay que transformarla.";
+  if (it.cls==="N" && /(ed|ing|ful|less|ous|ive|able|ible)$/.test(t)) return "Has formado un adjetivo, pero el hueco pide un sustantivo.";
+  if (it.cls==="A" && /(ment|ness|tion|sion|ity|ship|dom|hood|ance|ence)$/.test(t)) return "Has formado un sustantivo, pero el hueco pide un adjetivo.";
+  if (it.cls!=="D" && /ly$/.test(t) && !/ly$/.test(c)) return "Has puesto un adverbio en -ly, pero el hueco pide "+CLS[it.cls]+".";
+  if (it.cls==="D" && /ly$/.test(c) && !/ly$/.test(t)) return "Falta el -ly: el hueco pide un adverbio, porque dice cómo se hace la acción.";
+  if (/ing$/.test(c) && /ed$/.test(t)) return "Pusiste -ed, pero -ed es cómo se siente una persona. Aquí es la cosa que provoca el sentimiento, así que va -ing.";
+  if (/ed$/.test(c) && /ing$/.test(t)) return "Pusiste -ing, pero -ing es lo que provoca el sentimiento. Aquí es cómo se siente la persona, así que va -ed.";
+  if (/less$/.test(c) && /ful$/.test(t)) return "-ful significa con y -less significa sin. Lee el contexto: aquí el sentido es sin.";
+  if (/ful$/.test(c) && /less$/.test(t)) return "-ful significa con y -less significa sin. Lee el contexto: aquí el sentido es con.";
+  for (var i=0;i<NEG.length;i++){ var p=NEG[i];
+    if (c.indexOf(p)===0 && t===c.slice(p.length)) return "Te faltaba el prefijo "+p+"-. La frase tiene sentido negativo o contrario.";
+    if (t.indexOf(p)===0 && t.slice(p.length)===c.replace(/^(un|im|in|il|ir|dis|mis|non)/,"") && c.indexOf(p)!==0) return "El sentido negativo está bien, pero el prefijo no. Recuerda: il- delante de l, im- delante de m o p, ir- delante de r.";
+    if (t.indexOf(p)===0 && t.slice(p.length)===c) return "Sobra el prefijo "+p+"-. La frase no tiene sentido negativo.";
+  }
+  if (c.length>4 && t.length>4 && t.slice(0,4)===c.slice(0,4) && lev(t,c)>2) return "Vas bien con la raíz, pero el sufijo no es ese. Repasa qué sufijos forman "+CLS[it.cls].replace(/^un /,"")+"s.";
+  if (lev(t,c)<=2) return "Casi. Revisa la ortografía letra a letra.";
+  return "";
+}
+
+/* ---------- used to: explicaciones ---------- */
+var UT_RULE = {
+  S:"Solía → used to + infinitivo. En negativas y preguntas, con did o didn't, se escribe use to (sin -d).",
+  B:"Estar acostumbrado → be used to + -ing (o un sustantivo). El que cambia de tiempo es be: am, is, are, was, were.",
+  G:"Acostumbrarse (me, te, se…) → get used to + -ing. El que cambia de tiempo es get: get, gets, getting, got, will get."
+};
+/* frase en minúsculas, sin tildes ni puntuación y con las contracciones deshechas */
+function words(x){
+  x = String(x||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’`´]/g,"'");
+  x = x.replace(/\bcan't\b/g,"can not").replace(/\bcannot\b/g,"can not").replace(/\bwon't\b/g,"will not")
+       .replace(/n't\b/g," not").replace(/'m\b/g," am").replace(/'re\b/g," are").replace(/'ve\b/g," have")
+       .replace(/'ll\b/g," will").replace(/'s\b/g," is").replace(/'d\b/g," would")
+       .replace(/\bgotten\b/g,"got").replace(/\bmom\b/g,"mum");
+  x = x.replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+  return x.replace(/\b(did|do|does|is|are|was|were|have|has|had|could|would|should)nt\b/g,"$1 not")
+          .replace(/\bcant\b/g,"can not").replace(/\bwont\b/g,"will not").replace(/\bim\b/g,"i am").replace(/\bive\b/g,"i have");
+}
+function squash(x){ return words(x).replace(/ /g,"") }
+function coreOk(it, typed){
+  var t = " "+words(typed)+" ";
+  return it.core.split("/").some(function(alt){
+    return alt.split("&").every(function(part){ return t.indexOf(" "+words(part)+" ")>=0 });
+  });
+}
+function utCheck(it, typed){
+  var t = squash(typed);
+  if (!t) return "no";
+  if (it.ans.some(function(a){return squash(a)===t})) return "ok";
+  if (!coreOk(it, typed)) return "no";
+  var best = Math.min.apply(null, it.ans.map(function(a){return lev(t, squash(a))}));
+  return best <= Math.max(3, Math.round(t.length*0.12)) ? "near" : "rest";
+}
+var BE = "(am|is|are|was|were|be|been)", GET = "(get|gets|getting|got)";
+function utDiagnose(it, typed){
+  var t = words(typed), c = it.cls, r;
+  if (!t) return "No contestaste. Primero decide: ¿es solía, estar acostumbrado o acostumbrarse?";
+  if (coreOk(it, typed)) return "La parte de used to está bien. El fallo está en el resto de la frase: compárala con la del cuaderno.";
+  if (/\bdid\b.*\bused to\b/.test(t)) return "Con did o didn't se quita la -d: use to, no used to.";
+  if (new RegExp("\\b"+BE+"( not)? use to\\b|\\b"+GET+" use to\\b").test(t)) return "Aquí va used con -d: be used to / get used to.";
+  if (!/\bused? to\b/.test(t)) return "No has usado used to. "+UT_RULE[c];
+  if (c==="S" && /\bused? to \w+ing\b/.test(t)) return "Solía va con infinitivo: used to play, no used to playing.";
+  if (c==="S" && new RegExp("\\b("+BE.slice(1,-1)+"|"+GET.slice(1,-1)+") used to\\b").test(t)) return "Solía no lleva be ni get: es used to + infinitivo.";
+  if (c==="S" && /^¿/.test(it.es) && !/\bdid\b/.test(t)) return "Es una pregunta en pasado: Did + sujeto + use to + infinitivo.";
+  if (c==="S" && /no sol/i.test(it.es) && !/\bdid not use to\b|\bnever used to\b/.test(t)) return "Es negativa: didn't use to + infinitivo (o never used to).";
+  r = t.match(/\bused to (\w+)/);
+  if ((c==="B"||c==="G") && r && !/ing$/.test(r[1]) && ["the","a","an","my","your","his","her","its","our","their","this","that","it","so","such","much","him","them","me","you","cold"].indexOf(r[1])<0)
+    return "Después de be / get used to va -ing: used to "+r[1]+"ing… no used to "+r[1]+". (Ojo con la ortografía: drive → driving, get → getting.)";
+  if (c==="G" && new RegExp("\\b"+BE+"( not)? used to\\b").test(t) && !new RegExp("\\b"+GET+"\\b").test(t)) return "En español hay me / te / se (acostumbrarse), así que es get used to, no be used to.";
+  if (c==="B" && new RegExp("\\b"+GET+"\\b.*\\bused to\\b").test(t) && !/never got used/.test(it.core)) return "Estar acostumbrado es un estado: be used to, no get used to.";
+  if (c==="B" && !new RegExp("\\b"+BE+"\\b").test(t)) return "Te falta el verbo be (am, is, are…) delante de used to.";
+  if (c==="G" && !new RegExp("\\b"+GET+"\\b").test(t)) return "Te falta get delante de used to.";
+  if (c==="G") return "La estructura get used to está bien, pero el tiempo o la persona de get no. Mira el verbo en español: me acostumbro (get), se acostumbra (gets), me estoy acostumbrando (am getting), me acostumbré (got), me he acostumbrado (have got), me acostumbraré (will get).";
+  if (c==="B") return "La estructura be used to está bien, pero revisa la forma de be: am, is, are, was, were, have been.";
+  if (c==="S") return "La estructura used to + infinitivo está bien, pero el verbo no es el que va aquí.";
+  return "";
+}
+function utHL(w){ return esc(w).replace(/(used to|use to)/gi,'<mark>$1</mark>') }
+function hl(it){ return it.ut ? utHL(it.ans[0]) : highlight(it.ans[0], it.aff) }
+function why(it){ return it.ut ? UT_RULE[it.cls] : reason(it) }
+function diag(it, typed){ return it.ut ? utDiagnose(it, typed) : diagnose(it, typed) }
+
+/* ---------- block session ---------- */
+var BLOCK = 20;
+var D = {list:[], i:0, res:[], state:"ask", hint:0, review:false, timer:null};
+
+function buildBlock(){
+  var p = pool(), fresh = shuffle(p.filter(function(it){return !seen[it.id]}));
+  if (fresh.length < BLOCK) {
+    var pick = {}; fresh.forEach(function(it){pick[it.id]=1});
+    p.forEach(function(it){ if(!pick[it.id]) delete seen[it.id] });
+    store.set(K("seen"), seen);
+    fresh = fresh.concat(shuffle(p.filter(function(it){return !pick[it.id]})));
+  }
+  return fresh.slice(0, BLOCK).map(function(it){return it.id});
+}
+function startBlock(ids, review){
+  D.list = ids; D.i = 0; D.res = []; D.review = !!review;
+  $("drill").hidden = false; document.body.classList.add("locked");
+  fit(); showQ();
+}
+function cur(){ return byId[D.list[D.i]] }
+
+function showQ(){
+  clearTimeout(D.timer);
+  var it = cur(); D.state = "ask"; D.hint = 0;
+  $("dock").hidden = false; $("endActions").hidden = true;
+  $("dcount").textContent = (D.i+1)+"/"+D.list.length;
+  $("barFill").style.width = (D.i/D.list.length*100)+"%";
+  var parts = it.s.split("___");
+  $("dmain").className = "dmain";
+  $("dmain").innerHTML = it.ut ?
+    '<p class="des"><span>Traduce al inglés</span></p><p class="dsent">'+esc(it.es)+'</p><div id="dhint"></div><div id="dfeed"></div>' :
+    '<p class="dsent">'+esc(parts[0])+'<span class="slot" id="slot"></span>'+esc(parts[1]||"")+'</p>'+
+    '<p class="dbase"><span>Palabra base</span>'+esc(it.base)+'</p>'+
+    '<div id="dhint"></div><div id="dfeed"></div>';
+  var a = $("ans"); a.value = ""; a.disabled = false; a.className = "";
+  $("goBtn").textContent = "Comprobar"; $("goBtn").className = "go";
+  $("hintBtn").disabled = false; $("skipBtn").hidden = false; $("hintBtn").hidden = !!it.ut;
+  syncSlot(); a.focus({preventScroll:true});
+}
+function syncSlot(){
+  var s = $("slot"); if (!s) return;
+  var v = $("ans").value.trim();
+  s.textContent = v || "    ";
+  s.classList.toggle("filled", !!v);
+}
+function submit(){
+  if (D.state==="wait") return;
+  if (D.state==="bad") { next(); return; }
+  var v = $("ans").value.trim();
+  if (!v) { $("ans").focus(); return; }
+  grade(v);
+}
+function grade(v){
+  var it = cur();
+  if (it.ut) { gradeUT(it, v); return; }
+  var ok = isOk(it, v);
+  D.res.push({id:it.id, typed:v, ok:ok});
+  if (D.review) { if (ok) delete fails[it.id]; }
+  else { seen[it.id]=1; store.set(K("seen"),seen); if(!ok) fails[it.id]=(fails[it.id]||0)+1; }
+  store.set(K("fails"), fails);
+  var slot = $("slot");
+  if (ok) {
+    D.state = "wait";
+    slot.textContent = v; slot.className = "slot filled ok";
+    $("goBtn").textContent = "✓"; $("goBtn").className = "go ok";
+    D.timer = setTimeout(next, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 350 : 650);
+  } else {
+    D.state = "bad";
+    slot.innerHTML = (v?'<s>'+esc(v)+'</s> ':'')+'<b>'+esc(it.ans[0])+'</b>';
+    slot.className = "slot filled bad";
+    $("dfeed").innerHTML = '<div class="feed"><p class="fw">'+hl(it)+'</p><p>'+esc(why(it))+(it.note?' '+esc(it.note):'')+'</p></div>';
+    $("ans").className = "bad";
+    $("goBtn").textContent = "Seguir"; $("goBtn").className = "go";
+    $("hintBtn").hidden = true; $("skipBtn").hidden = true;
+  }
+  renderMeta();
+}
+function gradeUT(it, v){
+  var res = utCheck(it, v), ok = res==="ok" || res==="near";
+  D.res.push({id:it.id, typed:v, ok:ok});
+  if (D.review) { if (ok) delete fails[it.id]; }
+  else { seen[it.id]=1; store.set(K("seen"),seen); if(!ok) fails[it.id]=(fails[it.id]||0)+1; }
+  store.set(K("fails"), fails);
+  $("hintBtn").hidden = true; $("skipBtn").hidden = true;
+  if (res==="ok") {
+    D.state = "wait";
+    $("dfeed").innerHTML = '<div class="feed ok"><p class="fw">'+utHL(v)+'</p></div>';
+    $("goBtn").textContent = "✓"; $("goBtn").className = "go ok";
+    D.timer = setTimeout(next, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 500 : 900);
+  } else if (res==="near") {
+    D.state = "bad";
+    $("dfeed").innerHTML = '<div class="feed ok"><p>Bien, la estructura es correcta. Revisa algún detalle comparando con la del cuaderno:</p><p class="fw">'+utHL(it.ans[0])+'</p>'+(it.note?'<p>'+esc(it.note)+'</p>':'')+'</div>';
+    $("goBtn").textContent = "Seguir"; $("goBtn").className = "go ok";
+  } else {
+    D.state = "bad";
+    var dg = utDiagnose(it, v);
+    $("dfeed").innerHTML = '<div class="feed">'+(v?'<p>Pusiste: <s>'+esc(v)+'</s></p>':'')+'<p class="fw">'+utHL(it.ans[0])+'</p>'+
+      (dg?'<p class="dg">'+esc(dg)+'</p>':'')+'<p>'+esc(UT_RULE[it.cls])+(it.note?' '+esc(it.note):'')+'</p>'+
+      (v?'<button type="button" class="link" id="overBtn">Mi frase también estaba bien</button>':'')+'</div>';
+    $("ans").className = "bad";
+    $("goBtn").textContent = "Seguir"; $("goBtn").className = "go";
+    var ob = $("overBtn");
+    if (ob) ob.onclick = function(){
+      D.res[D.res.length-1].ok = true;
+      if (!D.review && fails[it.id]) { fails[it.id]--; if (fails[it.id]<=0) delete fails[it.id]; }
+      if (D.review) delete fails[it.id];
+      store.set(K("fails"), fails); renderMeta(); next();
+    };
+  }
+  renderMeta();
+}
+function next(){
+  clearTimeout(D.timer);
+  if (D.i+1 >= D.list.length) { summary(); return; }
+  D.i++; showQ();
+}
+function summary(){
+  D.state = "end";
+  $("barFill").style.width = "100%";
+  $("dcount").textContent = "Fin";
+  $("ans").blur(); $("dock").hidden = true; $("endActions").hidden = false;
+  var wrong = D.res.filter(function(r){return !r.ok}), n = D.res.length, good = n - wrong.length;
+  var msg = good===n ? "Bloque perfecto." : good >= n*0.8 ? "Muy bien. Repasa estos y lo tienes." : good >= n*0.5 ? "Vas bien. Fíjate en por qué has fallado estos." : "Toca repasar. Lee cada explicación con calma.";
+  var h = '<div class="sum"><p class="snum">'+good+'<span>/'+n+'</span></p><p class="smsg">'+msg+'</p>';
+  if (wrong.length) {
+    h += '<p class="shead">Tus fallos</p><div class="slist">'+wrong.map(function(r){
+      var it = byId[r.id], parts = it.s.split("___"), dg = diag(it, r.typed);
+      if (it.ut) return '<div class="sitem"><p class="ss">'+esc(it.es)+'</p>'+
+        '<p class="sy">'+(r.typed?'Pusiste <s>'+esc(r.typed)+'</s>':'Sin respuesta')+'</p><p class="sy">Era <b>'+utHL(it.ans[0])+'</b></p>'+
+        '<p class="sw">'+esc(UT_RULE[it.cls])+(it.note?' '+esc(it.note):'')+(dg?'<br><span class="dg">'+esc(dg)+'</span>':'')+'</p></div>';
+      return '<div class="sitem"><p class="ss">'+esc(parts[0])+'<b>'+esc(it.ans[0])+'</b>'+esc(parts[1]||"")+'</p>'+
+        '<p class="sy">'+(r.typed?'Pusiste <s>'+esc(r.typed)+'</s> · ':'Sin respuesta · ')+'era <b>'+hl(it)+'</b></p>'+
+        '<p class="sw">'+esc(why(it))+(it.note?' '+esc(it.note):'')+(dg?'<br><span class="dg">'+esc(dg)+'</span>':'')+'</p></div>';
+    }).join("")+'</div>';
+  }
+  h += '</div>';
+  $("dmain").className = "dmain end";
+  $("dmain").innerHTML = h; $("dmain").scrollTop = 0;
+  $("retryBtn").hidden = !wrong.length;
+  $("retryBtn").textContent = "Repetir mis "+wrong.length+" fallo"+(wrong.length===1?"":"s");
+  $("moreBtn").textContent = D.review ? (Object.keys(fails).length?"Seguir repasando fallos":"Bloque nuevo") : "Otro bloque de 20";
+  renderMeta();
+}
+function closeDrill(){
+  clearTimeout(D.timer);
+  $("drill").hidden = true; document.body.classList.remove("locked");
+  $("ans").blur(); renderHome(); renderFails();
+}
+
+/* keep the keyboard open: buttons in the dock don't steal focus */
+["goBtn","hintBtn","skipBtn"].forEach(function(id){
+  $(id).addEventListener("pointerdown", function(e){ e.preventDefault() });
+});
+$("dock").addEventListener("submit", function(e){ e.preventDefault(); submit(); });
+$("ans").addEventListener("input", function(){ if (D.state==="ask") syncSlot(); else if (D.state==="bad") {} });
+$("hintBtn").onclick = function(){
+  var it = cur(); D.hint++;
+  if (it.ut) $("dhint").innerHTML = '<p class="hintline">Estructura: <b>'+UT_HINT[it.cls]+'</b>'+(D.hint>=2?' · empieza por <b>'+esc(it.ans[0].split(" ")[0])+'</b>':'')+'</p>';
+  else $("dhint").innerHTML = '<p class="hintline">Pide <b>'+CLS[it.cls]+'</b>'+(D.hint>=2?' · afijo <b>'+esc(it.aff)+'</b>':'')+'</p>';
+  if (D.hint>=2) $("hintBtn").disabled = true;
+  $("ans").focus({preventScroll:true});
+};
+$("skipBtn").onclick = function(){ if (D.state==="ask") grade(""); };
+$("quitBtn").onclick = closeDrill;
+$("exitBtn").onclick = closeDrill;
+$("retryBtn").onclick = function(){ startBlock(D.res.filter(function(r){return !r.ok}).map(function(r){return r.id}), D.review); };
+$("moreBtn").onclick = function(){
+  if (D.review && Object.keys(fails).length) startBlock(shuffle(Object.keys(fails)).slice(0,BLOCK), true);
+  else startBlock(buildBlock(), false);
+};
+document.addEventListener("keydown", function(e){
+  if ($("drill").hidden) return;
+  if (e.key==="Escape") closeDrill();
+  if (e.key==="Enter" && D.state==="end" && document.activeElement.tagName!=="BUTTON") { e.preventDefault(); $("moreBtn").click(); }
+});
+
+/* fit the drill to the visible area so the answer bar sits just above the keyboard */
+function fit(){
+  var vv = window.visualViewport, d = $("drill");
+  d.style.height = (vv ? vv.height : window.innerHeight)+"px";
+  d.style.top = (vv ? vv.offsetTop : 0)+"px";
+}
+if (window.visualViewport) { visualViewport.addEventListener("resize", fit); visualViewport.addEventListener("scroll", fit); }
+window.addEventListener("resize", fit);
+
+/* ---------- home ---------- */
+function renderHome(){
+  var counts = {all:ITEMS.length}; ITEMS.forEach(function(it){counts[it.g]=(counts[it.g]||0)+1});
+  $("chips").innerHTML = GROUPS.map(function(g){
+    return '<button class="chip" id="chip-'+g.k+'" data-g="'+g.k+'" aria-pressed="'+(group===g.k)+'">'+g.label+'<small>'+(counts[g.k]||0)+'</small></button>';
+  }).join("");
+  var p = pool(), s = p.filter(function(it){return seen[it.id]}).length;
+  $("homeSeen").textContent = "Llevas "+s+" de "+p.length+" frases de este apartado. Ninguna se repite hasta que las hayas visto todas.";
+  var nf = Object.keys(fails).length;
+  $("homeFails").hidden = !nf;
+  $("homeFails").textContent = "Repasar mis fallos ("+nf+")";
+  renderMeta();
+}
+function renderMeta(){
+  var n = Object.keys(fails).length;
+  $("failCount").textContent = n; $("failCount").classList.toggle("hot", n>0);
+}
+$("chips").addEventListener("click", function(e){
+  var b = e.target.closest(".chip"); if (!b) return;
+  group = b.dataset.g; store.set(K("group"), group); renderHome();
+});
+$("startBtn").onclick = function(){ startBlock(buildBlock(), false) };
+$("homeFails").onclick = function(){ startBlock(shuffle(Object.keys(fails)).slice(0,BLOCK), true) };
+
+/* ---------- fallos ---------- */
+function renderFails(){
+  var ids = Object.keys(fails);
+  $("reviewBtn").disabled = !ids.length;
+  $("failList").innerHTML = ids.length ? ids.map(function(id){
+    var it = byId[id];
+    return '<div class="row"><p class="s">'+(it.ut?esc(it.es):esc(it.s.replace("___","____"))+' <span class="base" style="font-size:12px">('+esc(it.base)+')</span>')+'</p>'+
+      '<button class="x" data-id="'+id+'" aria-label="Quitar de mis fallos">Quitar</button>'+
+      '<p class="a">'+(fails[id]>1?'Fallada '+fails[id]+' veces · ':'')+'<b>'+esc(it.ans[0])+'</b></p></div>';
+  }).join("") : '<p class="empty">Todavía no tienes fallos guardados. Cuando falles una frase en un bloque, aparecerá aquí.</p>';
+  renderMeta();
+}
+$("failList").addEventListener("click", function(e){
+  var b = e.target.closest(".x"); if (!b) return;
+  delete fails[b.dataset.id]; store.set(K("fails"), fails); renderFails(); renderHome();
+});
+$("reviewBtn").onclick = function(){ startBlock(shuffle(Object.keys(fails)).slice(0,BLOCK), true) };
+
+/* ---------- routing ---------- */
+function route(){
+  var v = (location.hash||"#practicar").slice(1);
+  if (["practicar","fallos","trucos"].indexOf(v)<0) v = "practicar";
+  ["practicar","fallos","trucos"].forEach(function(k){ $("view-"+k).hidden = k!==v });
+  document.querySelectorAll("nav a").forEach(function(a){ if(a.dataset.view===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current") });
+  if (v==="fallos") renderFails();
+}
+window.addEventListener("hashchange", route);
+
+function applyMode(){
+  var ut = mode==="ut";
+  $("mode-wf").setAttribute("aria-pressed", !ut); $("mode-ut").setAttribute("aria-pressed", ut);
+  $("h1").innerHTML = ut ? 'Used <em>to</em>' : 'Word <em>Formation</em>';
+  $("sub").textContent = ut ? "Frases de tu cuaderno · tradúcelas al inglés" : "Frases tipo examen · escribe la palabra transformada";
+  $("how1").textContent = ut ? "Lee la frase en español y escríbela entera en inglés." : "Escribe la palabra y pulsa Enter.";
+  $("ans").placeholder = ut ? "Escribe la frase en inglés" : "Escribe la palabra";
+  $("tricks-ut").hidden = !ut; $("tricks-wf").hidden = ut;
+  $("foot").textContent = ITEMS.length+" frases de "+(ut?"used to":"word formation")+" · tu progreso y tus fallos se guardan en este navegador";
+}
+document.querySelector(".modes").addEventListener("click", function(e){
+  var b = e.target.closest(".mode"); if (!b || b.dataset.mode===mode) return;
+  mode = b.dataset.mode; store.set("mode", mode); loadMode(); applyMode(); renderHome(); renderFails();
+});
+applyMode(); renderHome(); route();
+</script>
+
+<a href="../" class="b1-back" title="Volver a 1 BACH">← 1 BACH</a><span class="b1-claude">Claude</span>
+<style>.b1-back{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:700 13px/1 system-ui,sans-serif;text-decoration:none;color:#141a2e;background:#fff;border-radius:999px;padding:9px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.b1-claude{position:fixed;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:600 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #d97757;color:#d97757;border-radius:999px;background:rgba(255,255,255,.92)}
+@media (min-width:1024px){.b1-back,.b1-claude{bottom:18px}}</style>
+<script type="module">
+import { alCambiarSesion, guardarProgreso } from "../shared/fb.js";
+const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
+function resumen(){ const n=(s,f)=>{s=s||{};f=f||{};return Object.keys(s).filter(k=>!f[k]).length};const ok=n(lee("wf_seen"),lee("wf_fails"))+n(lee("wf_ut2_seen"),lee("wf_ut2_fails"));if(!localStorage.getItem("wf_seen")&&!localStorage.getItem("wf_ut2_seen"))return null;return [ok,376]; }
+let ult="";
+function enviar(){let r=null;try{r=resumen()}catch(e){}if(!r)return;const k=r.join("/");if(k===ult)return;ult=k;guardarProgreso("wf",r[0],r[1])}
+let t=null;alCambiarSesion(u=>{clearInterval(t);if(u){ult="";enviar();t=setInterval(enviar,8000)}});
+addEventListener("visibilitychange",enviar);addEventListener("pagehide",enviar);
+</script>
+</body></html>

@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style></head><body>
+<title>Verbomat</title>
+<link rel="icon" type="image/png" href="icon-64.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#161d31">
+<meta name="apple-mobile-web-app-title" content="Verbomat">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens: dark-first; system light, explicit dark and explicit light all defined ---------- */
+:root{
+  --bg-deep:#080b12; --bg:#0d1220; --panel:#161d31; --panel-2:#1e2740;
+  --border:#2b3552; --text:#eef1f8; --text-dim:#8791ac; --text-faint:#5c6684;
+  --accent:#ffb454; --accent-ink:#1a1206;
+  --good:#4fe3c1; --bad:#ff6f81; --combo:#8ea1ff;
+  --hole:#070a13; --hole-shadow:rgba(0,0,0,.8); --hole-rim:rgba(255,255,255,.06);
+  --scan-op:.05;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg-deep:#e7eaf2; --bg:#f3f5fa; --panel:#ffffff; --panel-2:#e9edf6;
+    --border:#c9d1e3; --text:#161a2c; --text-dim:#565f7d; --text-faint:#7c86a4;
+    --accent:#b8640a; --accent-ink:#fffaf2;
+    --good:#0e9a7f; --bad:#c7203f; --combo:#4657c9;
+    --hole:#d9dfea; --hole-shadow:rgba(22,26,44,.32); --hole-rim:rgba(255,255,255,.95);
+    --scan-op:.025;
+  }
+}
+:root[data-theme="dark"]{
+  --bg-deep:#080b12; --bg:#0d1220; --panel:#161d31; --panel-2:#1e2740;
+  --border:#2b3552; --text:#eef1f8; --text-dim:#8791ac; --text-faint:#5c6684;
+  --accent:#ffb454; --accent-ink:#1a1206;
+  --good:#4fe3c1; --bad:#ff6f81; --combo:#8ea1ff;
+  --hole:#070a13; --hole-shadow:rgba(0,0,0,.8); --hole-rim:rgba(255,255,255,.06);
+  --scan-op:.05;
+}
+:root[data-theme="light"]{
+  --bg-deep:#e7eaf2; --bg:#f3f5fa; --panel:#ffffff; --panel-2:#e9edf6;
+  --border:#c9d1e3; --text:#161a2c; --text-dim:#565f7d; --text-faint:#7c86a4;
+  --accent:#b8640a; --accent-ink:#fffaf2;
+  --good:#0e9a7f; --bad:#c7203f; --combo:#4657c9;
+  --hole:#d9dfea; --hole-shadow:rgba(22,26,44,.32); --hole-rim:rgba(255,255,255,.95);
+  --scan-op:.025;
+}
+
+*{box-sizing:border-box;}
+body{
+  background:var(--bg-deep); color:var(--text); margin:0;
+  font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  display:flex; justify-content:center;
+}
+button,input,textarea{font-family:inherit; color:inherit;}
+h1,h2,h3,p{margin:0;}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+#app{
+  width:100%; max-width:560px; min-height:100dvh; background:var(--bg);
+  display:flex; flex-direction:column; position:relative; border-inline:1px solid var(--border);
+}
+#app::before{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:5;
+  background:repeating-linear-gradient(0deg, rgba(128,140,180,var(--scan-op)) 0px, rgba(128,140,180,var(--scan-op)) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay;
+}
+
+/* ---------- shell ---------- */
+.topbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:10;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 18px; background:var(--panel); border-bottom:1px solid var(--border);
+}
+.topbar-left{display:flex; align-items:center; gap:10px; min-width:0;}
+.wordmark{
+  font-family:'Press Start 2P',monospace; font-size:11px; letter-spacing:.04em; color:var(--accent);
+  text-shadow:0 0 10px color-mix(in srgb, var(--accent) 50%, transparent);
+  display:flex; align-items:center; gap:4px; white-space:nowrap;
+}
+.logo{flex:0 0 auto; width:30px; height:30px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); box-shadow:0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);}
+.cursor{display:inline-block; width:7px; height:11px; background:var(--accent); animation:blink 1s steps(1) infinite;}
+@keyframes blink{50%{opacity:0}}
+.soundbtn{
+  flex:0 0 auto; width:28px; height:28px; padding:0; display:grid; place-items:center;
+  background:none; border:1px solid var(--border); border-radius:8px; color:var(--text-dim); cursor:pointer;
+}
+.soundbtn svg{width:15px; height:15px;}
+.soundbtn:active{background:var(--panel-2);}
+.daybadge{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--text-faint); display:flex; align-items:baseline; gap:6px; font-variant-numeric:tabular-nums;
+}
+.daybadge b{font-size:15px; color:var(--accent); letter-spacing:0;}
+.daybadge.pending b{color:var(--text-dim);}
+
+.screen{flex:1; padding:18px 18px 30px; display:flex; flex-direction:column; gap:16px;}
+
+.tabbar{
+  position:sticky; bottom:0; z-index:10; display:flex; gap:2px;
+  padding:10px 8px calc(10px + env(safe-area-inset-bottom,0px));
+  background:var(--panel); border-top:1px solid var(--border);
+}
+.tab{
+  flex:1; background:none; border:none; cursor:pointer; padding:8px 0; border-radius:8px;
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.04em;
+  color:var(--text-faint); text-transform:uppercase; text-align:center; white-space:nowrap;
+}
+.tab.active{color:var(--accent); font-weight:700;}
+.tab:active{background:var(--panel-2);}
+
+/* ---------- type & generic ---------- */
+.eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase;}
+.h2{font-size:21px; font-weight:700; letter-spacing:-.01em; text-wrap:balance; line-height:1.2;}
+.intro{font-size:13.5px; color:var(--text-dim); line-height:1.5; max-width:62ch;}
+.center{text-align:center;} .dim{color:var(--text-dim);} .faint{color:var(--text-faint);} .small{font-size:12.5px;}
+.hero{display:flex; flex-direction:column; gap:8px;}
+.lv-top{display:flex; justify-content:space-between; align-items:flex-end; gap:12px;}
+.lv-count{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); white-space:nowrap; font-variant-numeric:tabular-nums;}
+.lv-count b{font-size:20px; color:var(--accent);}
+.subbar{display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:22px;}
+.subbar-actions{display:flex; gap:16px;}
+.linkbtn{background:none; border:none; color:var(--accent); font-size:13px; font-weight:600; cursor:pointer; padding:2px 0;}
+.linkbtn.danger{color:var(--bad);}
+.linkbtn.faintlink{color:var(--text-faint); font-weight:400; text-decoration:underline; font-size:12px; align-self:center;}
+
+.btn{border:none; border-radius:12px; padding:13px 18px; font-size:15px; font-weight:700; cursor:pointer; text-align:center;}
+.btn-primary{background:var(--accent); color:var(--accent-ink);}
+.btn-primary:active{opacity:.85;}
+.btn-ghost{background:var(--panel-2); color:var(--text); border:1px solid var(--border);}
+.btn-block{width:100%;}
+.btn-col{display:flex; flex-direction:column; gap:10px;}
+
+.stat-strip{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+.stat{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; min-width:0;}
+.stat .n{font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text);}
+.stat .n small{font-size:.6em; color:var(--text-faint); font-weight:500;}
+.stat .l{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); line-height:1.3;}
+
+.mode-grid{display:grid; grid-template-columns:1fr; gap:12px;}
+.mode-btn{
+  display:flex; flex-direction:column; align-items:stretch; gap:4px; text-align:left;
+  background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:15px 17px;
+  cursor:pointer; transition:border-color .15s, transform .1s;
+}
+.mode-btn:hover{border-color:var(--accent);}
+.mode-btn:active{transform:scale(.99);}
+.mb-top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.mode-btn .tag{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em; color:var(--accent); text-transform:uppercase;}
+.mode-btn .badge{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; background:var(--panel-2); color:var(--text-dim);
+  border:1px solid var(--border); border-radius:20px; padding:2px 9px; font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.mode-btn .title{font-size:17px; font-weight:700;}
+.mode-btn .desc{font-size:12.5px; color:var(--text-dim); line-height:1.4;}
+
+.warn{
+  border:1px solid color-mix(in srgb, var(--bad) 45%, var(--border)); background:color-mix(in srgb, var(--bad) 8%, var(--panel));
+  border-radius:12px; padding:10px 12px; font-size:12.5px; line-height:1.45;
+}
+.sync-row{display:flex; gap:10px; flex-wrap:wrap;}
+.sync-row .btn{flex:1 1 160px; font-size:13.5px; padding:11px 14px;}
+.box{border:1px dashed var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:8px; background:var(--panel-2);}
+.box .h, .tricks-panel .h{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase;}
+.box textarea{background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px; font-size:12px; resize:vertical; min-height:76px; font-family:'IBM Plex Mono',monospace;}
+
+.toast{
+  position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom,0px)); z-index:30;
+  transform:translate(-50%,10px); opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  background:var(--text); color:var(--bg); padding:9px 14px; border-radius:10px; font-size:13px; max-width:calc(100% - 32px);
+}
+.toast.show{opacity:1; transform:translate(-50%,0);}
+
+/* ---------- medals & holes ---------- */
+.hole{background:var(--hole); box-shadow:inset 0 3px 8px var(--hole-shadow), 0 1px 0 var(--hole-rim);}
+.m-gold{background:radial-gradient(circle at 34% 28%, #fff4c4 0 12%, #f6d360 34%, #d39f22 68%, #9a6c0a 100%); color:#3b2700;}
+.m-silver{background:radial-gradient(circle at 34% 28%, #ffffff 0 12%, #e3e7ee 34%, #aab3c1 68%, #717b8c 100%); color:#1d232e;}
+.m-bronze{background:radial-gradient(circle at 34% 28%, #ffe3c8 0 12%, #e0a46e 34%, #aa6a34 68%, #6e3f18 100%); color:#2b1606;}
+
+.rack{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:11px;}
+.rack-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+.rack-count{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
+.rack-count b{color:var(--accent); font-size:15px;}
+.rack-grid{display:grid; grid-template-columns:repeat(9,minmax(0,1fr)); gap:7px;}
+.slot{
+  aspect-ratio:1; width:100%; max-width:100%; border-radius:50%; border:none; padding:0; cursor:pointer;
+  display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:10.5px;
+}
+.slot.hole{color:var(--text-faint);}
+.slot.medal{box-shadow:inset 0 0 0 2px rgba(255,255,255,.35), inset 0 -3px 5px rgba(0,0,0,.22), 0 2px 5px rgba(0,0,0,.25);}
+.rack-hint{font-size:12px; color:var(--text-faint); line-height:1.4;}
+
+/* ---------- quiz ---------- */
+.quizhead{display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13px; color:var(--text-dim);}
+.quizhead b{color:var(--text); font-variant-numeric:tabular-nums;}
+.runbox{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-dim); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.runbox b{display:inline-block; color:var(--accent); font-size:17px; min-width:1ch; text-align:center;}
+.runbox.hot b{color:var(--combo);}
+.runbox.bump b{animation:bump .35s ease;}
+@keyframes bump{50%{transform:scale(1.4);}}
+.pbar{height:6px; background:var(--panel-2); border-radius:4px; overflow:hidden;}
+.pbar i{display:block; height:100%; background:var(--accent); border-radius:0 4px 4px 0;}
+
+.examtable{border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--panel);}
+.examtable .head, .examtable .row, .examtable .hintrow{display:grid; grid-template-columns:repeat(4,minmax(0,1fr));}
+.examtable .head div{
+  padding:7px 3px; font-family:'IBM Plex Mono',monospace; font-size:clamp(7.5px,2.4vw,9.5px); letter-spacing:.04em;
+  text-transform:uppercase; color:var(--text-faint); background:var(--panel-2); text-align:center; border-bottom:1px solid var(--border); line-height:1.15;
+}
+.examtable .cell{min-width:0; padding:12px 4px; display:flex; align-items:center; justify-content:center; border-right:1px solid var(--border); text-align:center;}
+.examtable .cell:last-child{border-right:none;}
+.examtable .cell.given{
+  font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--accent); font-size:clamp(10.5px,3.2vw,14px);
+  word-break:break-word; line-height:1.2; background:color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.examtable .cell input{
+  width:100%; min-width:0; border:none; background:transparent; color:var(--text); text-align:center;
+  font-family:'IBM Plex Mono',monospace; font-size:clamp(11px,3.3vw,14px); outline:none;
+  border-bottom:2px solid var(--border); padding:4px 1px; border-radius:0;
+}
+.examtable .cell input:focus{border-bottom-color:var(--accent);}
+.examtable .cell.ok{background:color-mix(in srgb, var(--good) 12%, transparent);}
+.examtable .cell.bad{background:color-mix(in srgb, var(--bad) 12%, transparent);}
+.examtable .cell.ok input{border-bottom-color:var(--good); color:var(--good);}
+.examtable .cell.bad input{border-bottom-color:var(--bad); color:var(--bad);}
+.examtable .hintrow{border-top:1px dashed var(--border);}
+.hcell{min-width:0; padding:7px 4px; display:flex; flex-direction:column; align-items:center; border-right:1px solid var(--border);}
+.hcell:last-child{border-right:none;}
+.hint-chip{
+  background:none; border:1px solid var(--border); color:var(--text-dim); border-radius:20px; cursor:pointer;
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:3px 9px;
+}
+.hint-text{font-size:11.5px; line-height:1.3; text-align:center; word-break:break-word; color:var(--text);}
+
+.feedback{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:10px 14px;
+  display:flex; flex-direction:column; gap:6px; font-size:12.5px; margin-top:12px;
+}
+.fb-line{display:flex; flex-wrap:wrap; gap:3px 9px; align-items:baseline;}
+.fb-col{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--bad); min-width:86px;}
+.fb-line b{font-family:'IBM Plex Mono',monospace; color:var(--text);}
+.fb-line s{font-family:'IBM Plex Mono',monospace; color:var(--text-faint);}
+.fb-line em{font-style:normal; color:var(--text-faint); font-size:11.5px;}
+.fb-run{color:var(--text-dim); font-size:12px;}
+.fb-good{color:var(--good); font-weight:600;}
+#qSubmit{margin-top:12px;}
+
+.tricks-panel{border:1px dashed var(--border); border-radius:14px; padding:14px; background:var(--panel-2); display:flex; flex-direction:column; gap:10px;}
+.tp-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+.tp-status{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint);}
+.tp-status.saved{color:var(--good);}
+.tp-fields{display:flex; flex-direction:column; gap:8px;}
+.trick-field{display:grid; grid-template-columns:92px minmax(0,1fr); gap:10px; align-items:start;}
+.trick-field > span{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-faint); padding-top:10px;}
+.trick-field.is-wrong > span{color:var(--bad); font-weight:700;}
+.trick-field textarea{
+  width:100%; min-width:0; background:var(--bg); border:1px solid var(--border); border-radius:10px;
+  padding:8px 10px; font-size:13.5px; line-height:1.35; resize:none; overflow:hidden; min-height:36px; color:var(--text);
+}
+.trick-field textarea:focus{outline:none; border-color:var(--accent);}
+.trick-field.is-wrong textarea{border-color:color-mix(in srgb, var(--bad) 55%, var(--border));}
+.tp-hint{font-size:11.5px; color:var(--text-faint); line-height:1.4;}
+
+/* ---------- summary ---------- */
+.sum-hero{display:flex; flex-direction:column; align-items:center; gap:6px; padding:4px 0;}
+.sum-score{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:46px; line-height:1; font-variant-numeric:tabular-nums;}
+.sum-score small{font-size:20px; color:var(--text-faint);}
+.sum-label{color:var(--text-dim); font-size:13px;}
+.pct-chip{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; padding:3px 10px; border-radius:20px; background:var(--panel-2); border:1px solid var(--border);}
+.note{font-size:12.5px; color:var(--text-dim); text-align:center;}
+.kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;}
+.kpis .stat{padding:10px 11px;}
+.kpis .stat .n{font-size:19px;}
+.kpis .stat .l{font-size:10px;}
+.section-h{font-weight:700; font-size:15px; display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-top:4px;}
+.section-h small{font-weight:400; color:var(--text-faint); font-size:11.5px; text-align:right;}
+.colbars{display:flex; flex-direction:column; gap:11px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px;}
+.cb-row{display:grid; grid-template-columns:88px minmax(0,1fr) 62px; gap:10px; align-items:center;}
+.cb-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim);}
+.cb-row.worst .cb-label{color:var(--text); font-weight:700;}
+.cb-track{height:10px; background:var(--panel-2); border-radius:0 4px 4px 0; overflow:hidden;}
+.cb-track i{display:block; height:100%; background:var(--bad); border-radius:0 4px 4px 0;}
+.cb-val{font-family:'IBM Plex Mono',monospace; font-size:12px; text-align:right; font-variant-numeric:tabular-nums;}
+.cb-val small{color:var(--text-faint);}
+.cb-note{font-size:12px; color:var(--text-dim);}
+.cb-note b{color:var(--text);}
+
+.fail-list{display:flex; flex-direction:column; gap:8px;}
+.mini{display:grid; grid-template-columns:repeat(4,minmax(0,1fr));}
+.mini > div{
+  min-width:0; padding:8px 4px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.25;
+  border-right:1px solid var(--border); word-break:break-word; display:flex; flex-direction:column; gap:2px; justify-content:center;
+}
+.mini > div:last-child{border-right:none;}
+.mini-head > div{border-right:none; font-size:clamp(7.5px,2.4vw,9.5px); text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); padding:0 4px;}
+.fail-item{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden;}
+.mini .g{color:var(--accent); font-weight:700; background:color-mix(in srgb, var(--accent) 8%, transparent);}
+.mini .k{color:var(--text-dim);}
+.mini .x{background:color-mix(in srgb, var(--bad) 10%, transparent);}
+.mini .x s{color:var(--bad);}
+.mini .x b{color:var(--text);}
+.fail-meta{display:flex; justify-content:space-between; gap:10px; padding:6px 10px; font-size:11.5px; color:var(--text-faint); border-top:1px solid var(--border); background:var(--panel-2);}
+.fail-meta b{color:var(--bad);}
+.perfect-note{text-align:center; color:var(--good); font-weight:700; padding:6px 0;}
+.last-card{
+  display:flex; flex-direction:column; gap:3px; text-align:left; cursor:pointer;
+  background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:13px 15px;
+}
+.last-card .lc-main{font-size:15px;} .last-card .lc-main b{font-family:'IBM Plex Mono',monospace; font-size:18px;}
+.last-card .lc-link{font-size:12.5px; color:var(--accent); font-weight:600;}
+
+/* ---------- levels map ---------- */
+.unit{display:flex; flex-direction:column;}
+.unit-band{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:2px;}
+.u-k{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; color:var(--accent); text-transform:uppercase;}
+.u-t{font-weight:700; font-size:16px;}
+.u-s{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-faint);}
+.path{display:flex; flex-direction:column; align-items:center; gap:28px; padding:44px 0 22px;}
+.node-wrap{display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; transform:translateX(var(--x,0px));}
+.node-wrap.has-bubble{margin-top:18px;}
+.path > .node-wrap.has-bubble:first-child{margin-top:0;}
+.node{
+  width:68px; height:68px; border-radius:50%; border:none; padding:0; cursor:pointer; position:relative;
+  display:grid; place-items:center; font-family:'Press Start 2P',monospace; font-size:15px; transition:transform .12s;
+}
+.node:active{transform:translateY(2px);}
+.node.is-current{
+  background:var(--accent); color:var(--accent-ink);
+  box-shadow:inset 0 -6px 0 rgba(0,0,0,.22), 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
+  animation:ring 2.4s ease-in-out infinite;
+}
+@keyframes ring{50%{box-shadow:inset 0 -6px 0 rgba(0,0,0,.22), 0 0 0 11px color-mix(in srgb, var(--accent) 7%, transparent);}}
+.node.is-locked{background:var(--panel-2); color:var(--text-faint); box-shadow:inset 0 -6px 0 rgba(0,0,0,.14); cursor:default;}
+.node.medal{box-shadow:inset 0 -6px 0 rgba(0,0,0,.2), inset 0 0 0 3px rgba(255,255,255,.3), 0 3px 10px rgba(0,0,0,.25);}
+.node-label{font-size:11.5px; color:var(--text-dim); max-width:128px; text-align:center; line-height:1.25; font-weight:600;}
+.node-sub{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint); margin-top:-3px;}
+.bubble{
+  position:absolute; top:-33px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  background:var(--panel); border:1px solid var(--border); color:var(--accent); border-radius:8px; padding:5px 9px;
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.1em;
+}
+.bubble::after{
+  content:""; position:absolute; left:50%; bottom:-5px; width:8px; height:8px; background:var(--panel);
+  border-right:1px solid var(--border); border-bottom:1px solid var(--border); transform:translateX(-50%) rotate(45deg);
+}
+.route-done{text-align:center; color:var(--good); font-weight:700;}
+
+.lv-intro{display:flex; gap:14px; align-items:flex-start;}
+.lv-badge{flex:0 0 auto; width:56px; height:56px; border-radius:50%; display:grid; place-items:center; font-family:'Press Start 2P',monospace; font-size:13px; color:var(--text-faint);}
+.lv-badge.medal{box-shadow:inset 0 0 0 3px rgba(255,255,255,.3), inset 0 -4px 7px rgba(0,0,0,.22);}
+.rule{font-size:13.5px; color:var(--text-dim); line-height:1.5; margin-top:6px;}
+.thresholds{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-faint); text-align:center; line-height:1.5;}
+
+.medal-stage{position:relative; width:132px; height:132px; margin:6px auto 2px;}
+.medal-stage > div{position:absolute; inset:0; border-radius:50%; display:grid; place-items:center;}
+.medal-stage .medal{
+  font-family:'Press Start 2P',monospace; font-size:26px;
+  box-shadow:inset 0 0 0 5px rgba(255,255,255,.3), inset 0 -8px 14px rgba(0,0,0,.25), 0 6px 18px rgba(0,0,0,.3);
+}
+.medal-stage .medal.drop{animation:drop .8s cubic-bezier(.2,1.5,.45,1) .25s both;}
+@keyframes drop{from{transform:translateY(-70px) scale(.55); opacity:0;} to{transform:none; opacity:1;}}
+.lr{display:flex; flex-direction:column; gap:8px;}
+
+/* ---------- verbs table ---------- */
+.chips{display:flex; gap:6px; overflow-x:auto; padding-bottom:2px;}
+.chips button{
+  flex:0 0 auto; background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);
+  border-radius:20px; padding:7px 13px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap;
+}
+.chips button.active{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+.legend{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:11.5px; color:var(--text-faint);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{display:inline-block; width:8px; height:8px; border-radius:50%; flex:0 0 auto;}
+.dot.d-none{border:1.5px solid var(--text-faint);}
+.dot.d-bad{background:var(--bad);}
+.dot.d-mid{background:var(--accent);}
+.dot.d-ok{background:var(--good);}
+.ctable{border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--panel);}
+.ct-head, .ct-row{display:grid; grid-template-columns:32px repeat(4,minmax(0,1fr));}
+.ct-head > div{
+  padding:7px 3px; font-family:'IBM Plex Mono',monospace; font-size:clamp(7.5px,2.4vw,9.5px); text-transform:uppercase;
+  letter-spacing:.04em; color:var(--text-faint); background:var(--panel-2); text-align:center; border-bottom:1px solid var(--border);
+}
+.ct-row{border-bottom:1px solid var(--border);}
+.ct-row:last-child{border-bottom:none;}
+.ct-row.clickable{cursor:pointer;}
+.ct-row.clickable:hover{background:var(--panel-2);}
+.ct-row[aria-expanded="true"]{background:var(--panel-2);}
+.ct-row > div{min-width:0; padding:8px 3px; font-family:'IBM Plex Mono',monospace; font-size:clamp(10px,3vw,12.5px); text-align:center; word-break:break-word; line-height:1.25;}
+.ct-row .num{color:var(--text-faint); font-size:10.5px; display:flex; flex-direction:column; align-items:center; gap:4px;}
+.ct-row .inf{font-weight:700;}
+.ct-row .mean{font-family:'IBM Plex Sans',sans-serif; color:var(--text-dim);}
+.wcount{color:var(--bad); font-weight:700;}
+.ct-group{padding:8px 12px; font-size:11.5px; font-weight:700; background:var(--panel-2); border-bottom:1px solid var(--border); color:var(--text-dim);}
+.ct-empty{padding:18px; text-align:center; color:var(--text-dim); font-size:13px;}
+.ct-detail{padding:12px; border-bottom:1px solid var(--border); background:var(--bg); display:flex; flex-direction:column; gap:10px;}
+.d-stats{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; color:var(--text-faint);}
+.d-stats b{color:var(--text); font-family:'IBM Plex Mono',monospace;}
+.d-wf{font-size:12px; color:var(--text-dim);}
+
+/* ---------- search ---------- */
+.searchbox{position:relative; display:flex; align-items:center;}
+.searchbox svg{position:absolute; left:13px; width:17px; height:17px; color:var(--text-faint); pointer-events:none;}
+.searchbox input{
+  width:100%; min-width:0; -webkit-appearance:none; appearance:none;
+  background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:12px 42px 12px 40px; font-size:16px; color:var(--text);
+}
+.searchbox input::placeholder{color:var(--text-faint);}
+.searchbox input:focus{outline:none; border-color:var(--accent);}
+.searchbox input::-webkit-search-cancel-button{-webkit-appearance:none; display:none;}
+.sclear{
+  position:absolute; right:6px; width:32px; height:32px; border:none; background:none; border-radius:8px;
+  color:var(--text-dim); font-size:20px; line-height:1; cursor:pointer; display:grid; place-items:center;
+}
+.sclear:active{background:var(--panel-2);}
+.search-info{font-size:12.5px; color:var(--text-dim); margin-top:-6px;}
+.search-info b{color:var(--accent); font-family:'IBM Plex Mono',monospace;}
+.ctable mark{background:color-mix(in srgb, var(--accent) 32%, transparent); color:inherit; border-radius:3px; padding:0 1px;}
+
+/* ---------- tricks screen ---------- */
+.trick-card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px;}
+.trick-card .tv{font-family:'IBM Plex Mono',monospace; font-size:13.5px; font-weight:700; line-height:1.35;}
+.trick-card .tv span{color:var(--text-faint); font-weight:400;}
+.tc-foot{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+.empty{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:24px 20px; display:flex; flex-direction:column; gap:12px; align-items:center; text-align:center;}
+.empty p{color:var(--text-dim); font-size:14px; line-height:1.5;}
+
+@media (min-width:460px){
+  .mode-grid{grid-template-columns:1fr 1fr;}
+}
+@media (prefers-reduced-motion: reduce){
+  .cursor, .node.is-current, .runbox.bump b, .medal-stage .medal.drop{animation:none;}
+  .toast{transition:none;}
+}
+</style>
+
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-left">
+      <img class="logo" src="icon-64.png" alt="" width="30" height="30">
+      <div class="wordmark">VERBOMAT<span class="cursor"></span></div>
+      <button class="soundbtn" id="muteBtn" type="button"></button>
+    </div>
+    <div class="daybadge" id="dayBadge"></div>
+  </header>
+  <main class="screen" id="screen"></main>
+  <nav class="tabbar" id="tabbar" aria-label="Secciones"></nav>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= DATA (exactly as in the PDF) ================= */
+var RAW = [
+[1,"arise","arose","arisen","surgir"],[2,"awake","awoke","awoken","despertar(se)"],
+[3,"be","was, were","been","ser/estar"],[4,"beat","beat","beaten","golpear"],
+[5,"become","became","become","convertirse"],[6,"begin","began","begun","empezar"],
+[7,"bend","bent","bent","doblar(se)"],[8,"bet","bet","bet","apostar"],
+[9,"bite","bit","bitten","morder"],[10,"bleed","bled","bled","sangrar"],
+[11,"blow","blew","blown","soplar"],[12,"break","broke","broken","romper"],
+[13,"bring","brought","brought","traer"],[14,"broadcast","broadcast","broadcast","emitir"],
+[15,"build","built","built","construir"],[16,"burn","burnt","burnt","quemar(se)"],
+[17,"burst","burst","burst","estallar"],[18,"buy","bought","bought","comprar"],
+[19,"catch","caught","caught","coger, atrapar"],[20,"choose","chose","chosen","elegir"],
+[21,"come","came","come","venir"],[22,"cost","cost","cost","costar"],
+[23,"cut","cut","cut","cortar"],[24,"deal","dealt","dealt","tratar"],
+[25,"dig","dug","dug","cavar"],[26,"do","did","done","hacer"],
+[27,"draw","drew","drawn","dibujar"],[28,"dream","dreamt","dreamt","soñar"],
+[29,"drink","drank","drunk","beber"],[30,"drive","drove","driven","conducir"],
+[31,"eat","ate","eaten","comer"],[32,"fall","fell","fallen","caer(se)"],
+[33,"feed","fed","fed","alimentar"],[34,"feel","felt","felt","sentirse"],
+[35,"fight","fought","fought","pelearse"],[36,"find","found","found","encontrar"],
+[37,"fly","flew","flown","volar"],[38,"forbid","forbad(e)","forbidden","prohibir"],
+[39,"forget","forgot","forgotten","olvidar(se)"],[40,"forgive","forgave","forgiven","perdonar"],
+[41,"freeze","froze","frozen","helar(se)"],[42,"get","got","got","conseguir"],
+[43,"give","gave","given","dar"],[44,"go","went","gone","irse"],
+[45,"grow","grew","grown","crecer"],[46,"hang","hung","hung","colgar"],
+[47,"have","had","had","haber/tener"],[48,"hear","heard","heard","escuchar"],
+[49,"hide","hid","hidden","esconder(se)"],[50,"hit","hit","hit","golpear"],
+[51,"hold","held","held","agarrar(se)"],[52,"hurt","hurt","hurt","hacer daño"],
+[53,"keep","kept","kept","guardar"],[54,"kneel","knelt","knelt","arrodillarse"],
+[55,"know","knew","known","saber/conocer"],[56,"lay","laid","laid","poner huevo/ la mesa"],
+[57,"lead","led","led","llevar"],[58,"learn","learnt","learnt","aprender"],
+[59,"leave","left","left","dejar"],[60,"lend","lent","lent","prestar"],
+[61,"let","let","let","permitir"],[62,"lie","lay","lain","echarse"],
+[63,"light","lit","lit","encender(se)"],[64,"lose","lost","lost","perder"],
+[65,"make","made","made","hacer, fabricar"],[66,"mean","meant","meant","significar"],
+[67,"meet","met","met","encontrar(se), conocer(se)"],[68,"mistake","mistook","mistaken","equivocar(se)"],
+[69,"overtake","overtook","overtaken","adelantar"],[70,"pay","paid","paid","pagar"],
+[71,"put","put","put","poner, colocar"],[72,"read","read","read","leer"],
+[73,"ride","rode","ridden","montar"],[74,"ring","rang","rung","sonar"],
+[75,"rise","rose","risen","levantarse"],[76,"run","ran","run","correr"],
+[77,"say","said","said","decir"],[78,"see","saw","seen","ver"],
+[79,"seek","sought","sought","buscar"],[80,"sell","sold","sold","vender(se)"],
+[81,"send","sent","sent","enviar"],[82,"set","set","set","poner, establecer"],
+[83,"sew","sewed","sewn","coser"],[84,"shake","shook","shaken","agitar"],
+[85,"shine","shone","shone","brillar"],[86,"shoot","shot","shot","disparar"],
+[87,"show","showed","shown","mostrar"],[88,"shrink","shrank","shrunk","encoger(se)"],
+[89,"shut","shut","shut","cerrar(se)"],[90,"sing","sang","sung","cantar"],
+[91,"sink","sank","sunk","hundir(se)"],[92,"sit","sat","sat","sentar(se)"],
+[93,"sleep","slept","slept","dormir"],[94,"smell","smelt","smelt","oler"],
+[95,"speak","spoke","spoken","hablar"],[96,"spell","spelt","spelt","deletrear"],
+[97,"spend","spent","spent","pasar/gastar"],[98,"split","split","split","dividir(se)"],
+[99,"spoil","spoilt","spoilt","estropear(se)"],[100,"spread","spread","spread","extender(se)"],
+[101,"stand","stood","stood","estar de pie"],[102,"steal","stole","stolen","robar"],
+[103,"stick","stuck","stuck","pegar(se)"],[104,"sting","stung","stung","picar"],
+[105,"strike","struck","struck","golpear"],[106,"strive","strove","striven","esforzarse"],
+[107,"swear","swore","sworn","jurar"],[108,"sweep","swept","swept","barrer"],
+[109,"swim","swam","swum","nadar"],[110,"swing","swung","swung","balancear(se)"],
+[111,"take","took","taken","tomar, coger"],[112,"teach","taught","taught","enseñar"],
+[113,"tear","tore","torn","romper(se)"],[114,"tell","told","told","contar/decir"],
+[115,"think","thought","thought","pensar"],[116,"throw","threw","thrown","lanzar"],
+[117,"understand","understood","understood","entender"],[118,"upset","upset","upset","afligir"],
+[119,"wake","woke","woken","despertar(se)"],[120,"wear","wore","worn","llevar (puesto)"],
+[121,"weep","wept","wept","llorar"],[122,"win","won","won","ganar"],
+[123,"withdraw","withdrew","withdrawn","retirar(se)"],[124,"write","wrote","written","escribir"]
+];
+var VERBS = RAW.map(function(r){ return {id:r[0], inf:r[1], past:r[2], part:r[3], mean:r[4]}; });
+var VBYID = {}, VBYINF = {};
+VERBS.forEach(function(v){ VBYID[v.id] = v; VBYINF[v.inf] = v; });
+var ALL_IDS = VERBS.map(function(v){ return v.id; });
+var FIELDS = ["inf","past","part","mean"];
+var FCOL = {inf:"Infinitive", past:"Past S.", part:"P.Participle", mean:"Meaning"};
+
+/* ================= LEVELS (grouped by how the forms change) ================= */
+var UNITS = [
+  {n:1, title:"Iguales en las tres formas", sub:"A · A · A"},
+  {n:2, title:"Pasado igual al participio", sub:"A · B · B"},
+  {n:3, title:"Tres formas distintas", sub:"A · B · C"}
+];
+var LEVELS = [
+  {unit:1, title:"Trío idéntico I", rule:"Las tres formas se escriben igual: cut · cut · cut. Aquí solo tienes que acordarte del significado.", verbs:["bet","cost","cut","hit","hurt","let","put","set"]},
+  {unit:1, title:"Trío idéntico II", rule:"Otros siete que no cambian nunca. Ojo con read: se escribe igual, pero en pasado suena /red/.", verbs:["broadcast","burst","read","shut","split","spread","upset"]},
+  {unit:2, title:"-d → -t", rule:"La -d final se convierte en -t en pasado y participio: send → sent → sent.", verbs:["bend","build","lend","send","spend"]},
+  {unit:2, title:"ee → e + t", rule:"La doble e se acorta y se añade -t: sleep → slept → slept, meet → met → met.", verbs:["feel","keep","kneel","meet","sleep","sweep","weep"]},
+  {unit:2, title:"Añaden -t", rule:"Pasado y participio terminan en -t: learn → learnt, mean → meant, leave → left. En el examen, con -t como en el PDF.", verbs:["burn","deal","dream","learn","leave","mean","smell","spell","spoil"]},
+  {unit:2, title:"-ought / -aught", rule:"Todos acaban en -ought (bring, buy, fight, seek, think), menos catch y teach, que van con -aught.", verbs:["bring","buy","catch","fight","seek","teach","think"]},
+  {unit:2, title:"Terminan en -d (I)", rule:"Pasado y participio terminan en -d: say → said, make → made, pay → paid, hear → heard.", verbs:["find","have","hear","lay","make","pay","say"]},
+  {unit:2, title:"Terminan en -d (II)", rule:"También en -d, pero cambiando la vocal: feed → fed, sell → sold, hold → held, stand → stood.", verbs:["bleed","feed","hold","lead","sell","stand","tell","understand"]},
+  {unit:2, title:"Formas cortas", rule:"Pasado y participio iguales y cortos, con otra vocal: sit → sat, get → got, win → won.", verbs:["get","light","lose","shine","shoot","sit","win"]},
+  {unit:2, title:"Pasado con u", rule:"Pasado y participio con u: dig → dug, hang → hung, stick → stuck, swing → swung.", verbs:["dig","hang","stick","sting","strike","swing"]},
+  {unit:3, title:"i → a → u", rule:"i en el infinitivo, a en el pasado, u en el participio: sing → sang → sung.", verbs:["begin","drink","ring","shrink","sing","sink","swim"]},
+  {unit:3, title:"Participio en -wn", rule:"El participio termina en -wn: blow → blew → blown, show → showed → shown.", verbs:["blow","draw","fly","grow","know","sew","show","throw","withdraw"]},
+  {unit:3, title:"o + en", rule:"Pasado con o y participio = pasado + -en: break → broke → broken, freeze → froze → frozen.", verbs:["awake","break","choose","forget","freeze","speak","steal","wake"]},
+  {unit:3, title:"i → o → i + en", rule:"i en el infinitivo, o en el pasado, i + -en en el participio: write → wrote → written.", verbs:["arise","drive","ride","rise","strive","write"]},
+  {unit:3, title:"-ear y -ake", rule:"Dos rimas: swear → swore → sworn (igual tear y wear) y take → took → taken (igual shake, mistake y overtake).", verbs:["mistake","overtake","shake","swear","take","tear","wear"]},
+  {unit:3, title:"Participio en -en", rule:"Cada uno cambia a su manera, pero el participio siempre acaba en -en: eat → ate → eaten, see → saw → seen.", verbs:["beat","bite","eat","fall","forbid","forgive","give","hide","see"]},
+  {unit:3, title:"Los rebeldes", rule:"Sin patrón: be, do, go, lie… y tres que repiten el infinitivo en el participio: come → came → come.", verbs:["be","become","come","do","go","lie","run"]}
+];
+LEVELS.forEach(function(L, i){
+  L.i = i;
+  L.ids = L.verbs.map(function(inf){ return VBYINF[inf].id; }).sort(function(a,b){ return a-b; });
+});
+var LEVEL_OF = {};
+LEVELS.forEach(function(L){ L.ids.forEach(function(id){ LEVEL_OF[id] = L.i; }); });
+var TIER_CLASS = {1:"m-bronze", 2:"m-silver", 3:"m-gold"};
+var TIER_NAME = {1:"bronce", 2:"plata", 3:"oro"};
+var KIND_LABEL = {full:"Tanda completa", review:"Repaso de fallados", top:"Tus más fallados", level:"Nivel"};
+
+/* ================= ANSWER CHECKING (strict to the PDF) ================= */
+/* lay: the PDF writes "poner huevo/ la mesa"; the two real meanings are these. */
+var ALT_OVERRIDE = {56:{mean:["poner huevo","poner la mesa"]}};
+
+function norm(s){
+  return String(s == null ? "" : s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[()]/g,"").replace(/\s+/g," ").trim();
+}
+function squash(s){
+  return s.split(/[\s,\/;+&-]+/).filter(function(w){ return w && ["y","o","or","and"].indexOf(w) < 0; }).join("");
+}
+function escRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function expandAnswers(raw){
+  var out = [];
+  raw.split(/[,/]/).map(function(s){ return s.trim(); }).forEach(function(part){
+    var m = part.match(/^(.*)\(([^)]*)\)(.*)$/);
+    if(m){
+      var pre = m[1], inner = m[2], post = m[3];
+      if(inner === "se"){
+        /* reflexive "(se)" is required: "dividirse" or "dividir se", never plain "dividir" */
+        out.push((pre + inner + post).replace(/\s+/g," ").trim());
+        out.push((pre.replace(/\s+$/,"") + " " + inner + post).replace(/\s+/g," ").trim());
+      } else {
+        out.push((pre + post).replace(/\s+/g," ").trim());
+        out.push((pre + inner + post).replace(/\s+/g," ").trim());
+      }
+    } else if(part){ out.push(part); }
+  });
+  return out.filter(Boolean);
+}
+function alternatives(v, f){
+  var o = ALT_OVERRIDE[v.id];
+  var list = (o && o[f]) ? o[f] : expandAnswers(v[f]);
+  return list.map(norm).filter(Boolean);
+}
+var reCache = {};
+function checkField(v, f, typed){
+  var u = norm(typed);
+  if(!u) return false;
+  var alts = alternatives(v, f);
+  if(alts.indexOf(u) >= 0) return true;
+  /* the literal PDF text, whatever the spacing or separators ("ser/estar", "poner huevo/ la mesa") */
+  if(squash(u) === squash(norm(v[f]))) return true;
+  /* several correct alternatives joined by any separator: "ser estar", "was, were", "coger o atrapar" */
+  var key = v.id + ":" + f;
+  if(!reCache[key]){
+    var alt = alts.slice().sort(function(a,b){ return b.length - a.length; }).map(escRe).join("|");
+    var sep = "(?:\\s*[,/;+&-]\\s*|\\s+(?:y|o|or|and)\\s+|\\s+)";
+    reCache[key] = new RegExp("^(?:" + alt + ")(?:" + sep + "(?:" + alt + "))*$");
+  }
+  return reCache[key].test(u);
+}
+
+/* ================= STATE ================= */
+var KEY = "verbomat_v1";
+function defaultState(){
+  return {v:2, streak:{count:0, lastDate:null}, bestRun:0, tandasDone:0, stats:{}, mnemonics:{}, levels:{}, tanda:null, lastSummary:null, muted:false};
+}
+var state = defaultState();
+var storageOK = (function(){
+  try{ var k = "__verbomat_test"; localStorage.setItem(k, "1"); var ok = localStorage.getItem(k) === "1"; localStorage.removeItem(k); return ok; }
+  catch(e){ return false; }
+})();
+
+function normTricksMap(m){
+  var out = {};
+  if(!m || typeof m !== "object") return out;
+  Object.keys(m).forEach(function(id){
+    if(!VBYID[id]) return;
+    var val = m[id], t;
+    if(typeof val === "string") t = {inf:val, past:"", part:"", mean:""};
+    else if(val && typeof val === "object") t = {inf:String(val.inf || ""), past:String(val.past || ""), part:String(val.part || ""), mean:String(val.mean || "")};
+    if(t && (t.inf.trim() || t.past.trim() || t.part.trim() || t.mean.trim())) out[id] = t;
+  });
+  return out;
+}
+function normStats(st){
+  var out = {};
+  if(!st || typeof st !== "object") return out;
+  Object.keys(st).forEach(function(id){
+    if(!VBYID[id]) return;
+    var x = st[id] || {}, wf = x.wf || {};
+    out[id] = {seen:x.seen|0, wrong:x.wrong|0, streak:x.streak|0, wf:{inf:wf.inf|0, past:wf.past|0, part:wf.part|0, mean:wf.mean|0}};
+  });
+  return out;
+}
+function normLevels(lv){
+  var out = {};
+  if(!lv || typeof lv !== "object") return out;
+  Object.keys(lv).forEach(function(k){
+    var i = Number(k);
+    if(!(i >= 0 && i < LEVELS.length)) return;
+    var x = lv[k] || {};
+    out[i] = {best:Math.max(0, Math.min(3, x.best|0)), bestPerfect:x.bestPerfect|0, plays:x.plays|0};
+  });
+  return out;
+}
+function validTanda(t){
+  if(!t || typeof t !== "object" || !Array.isArray(t.ids) || !Array.isArray(t.givens) || !Array.isArray(t.results)) return null;
+  if(!t.ids.length || t.ids.length !== t.givens.length) return null;
+  if(!t.ids.every(function(id){ return VBYID[id]; })) return null;
+  if(!t.givens.every(function(g){ return FIELDS.indexOf(g) >= 0; })) return null;
+  return {kind:KIND_LABEL[t.kind] ? t.kind : "full", ids:t.ids, givens:t.givens, idx:Math.max(0, Math.min(t.ids.length, t.idx|0)),
+          results:t.results, run:t.run|0, maxRun:t.maxRun|0};
+}
+function migrate(o){
+  var s = defaultState();
+  if(!o || typeof o !== "object") return s;
+  if(typeof o.muted === "boolean") s.muted = o.muted;
+  if(o.streak && typeof o.streak === "object"){
+    s.streak = {count:o.streak.count|0, lastDate:typeof o.streak.lastDate === "string" ? o.streak.lastDate : null};
+  }
+  s.mnemonics = normTricksMap(o.mnemonics);
+  if(o.v === 2){
+    s.bestRun = o.bestRun|0;
+    s.tandasDone = o.tandasDone|0;
+    s.stats = normStats(o.stats);
+    s.levels = normLevels(o.levels);
+    s.tanda = validTanda(o.tanda);
+    s.lastSummary = (o.lastSummary && typeof o.lastSummary === "object" && Array.isArray(o.lastSummary.failed)) ? o.lastSummary : null;
+  } else if(o.boxes && typeof o.boxes === "object"){
+    /* first version: a verb in box 0 was failed last time */
+    Object.keys(o.boxes).forEach(function(id){
+      if(!VBYID[id]) return;
+      var box = (o.boxes[id] || {}).box|0;
+      s.stats[id] = box > 0 ? {seen:box, wrong:0, streak:box, wf:{}} : {seen:1, wrong:1, streak:0, wf:{}};
+    });
+  }
+  return s;
+}
+function load(){
+  if(!storageOK) return false;
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(!raw) return false;
+    state = migrate(JSON.parse(raw));
+    return true;
+  }catch(e){ return false; }
+}
+function save(){
+  if(!storageOK) return;
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+}
+
+/* ================= SOUND (synthesized, no audio files) ================= */
+var AC = null;
+function ac(){
+  if(AC === null){
+    try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = false; }
+  }
+  if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
+  return AC || null;
+}
+function tone(c, freq, t0, dur, opts){
+  opts = opts || {};
+  var osc = c.createOscillator(), gain = c.createGain();
+  osc.type = opts.type || "square";
+  osc.frequency.setValueAtTime(freq, t0);
+  if(opts.slideTo) osc.frequency.exponentialRampToValueAtTime(opts.slideTo, t0 + dur);
+  var peak = opts.vol == null ? 0.14 : opts.vol;
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + Math.min(0.012, dur * 0.3));
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain); gain.connect(c.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.03);
+}
+function playCorrect(run){
+  if(state.muted) return;
+  var c = ac(); if(!c) return;
+  var t = c.currentTime, step = Math.min(run, 8), base = 660 + step * 28;
+  tone(c, base, t, 0.09, {type:"square", vol:.12});
+  tone(c, base * 1.5, t + 0.05, 0.11, {type:"square", vol:.09});
+  if(run > 0 && run % 5 === 0){
+    [0, 1, 2].forEach(function(i){ tone(c, base * 1.5 + i * 150, t + 0.12 + i * 0.08, 0.13, {type:"triangle", vol:.11}); });
+  }
+}
+function playWrong(){
+  if(state.muted) return;
+  var c = ac(); if(!c) return;
+  tone(c, 190, c.currentTime, 0.17, {type:"sawtooth", vol:.08, slideTo:105});
+}
+function playRecord(){
+  if(state.muted) return;
+  var c = ac(); if(!c) return;
+  var t = c.currentTime;
+  [523.25, 659.25, 783.99, 1046.50].forEach(function(f, i){ tone(c, f, t + i * 0.09, 0.16, {type:"square", vol:.12}); });
+}
+var MEDAL_SEQ = {1:[392.00, 523.25], 2:[392.00, 523.25, 659.25], 3:[392.00, 523.25, 659.25, 783.99, 1046.50]};
+function playMedal(tier){
+  if(state.muted || !tier) return;
+  var c = ac(); if(!c) return;
+  var t = c.currentTime, seq = MEDAL_SEQ[tier];
+  seq.forEach(function(f, i){ tone(c, f, t + i * 0.1, 0.22, {type:"triangle", vol:.14}); });
+  if(tier === 3) tone(c, 1318.51, t + seq.length * 0.1 + 0.04, 0.36, {type:"triangle", vol:.13});
+}
+var ICON_SOUND_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17.2 8.8a5 5 0 0 1 0 6.4"/><path d="M19.8 6.2a9 9 0 0 1 0 11.6"/></svg>';
+var ICON_SOUND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9.5l5.5 5"/><path d="M22 9.5l-5.5 5"/></svg>';
+function updateMuteBtn(){
+  var b = document.getElementById("muteBtn");
+  if(!b) return;
+  b.innerHTML = state.muted ? ICON_SOUND_OFF : ICON_SOUND_ON;
+  b.setAttribute("aria-label", state.muted ? "Sonido desactivado, activar" : "Sonido activado, desactivar");
+  b.setAttribute("aria-pressed", state.muted ? "true" : "false");
+}
+document.getElementById("muteBtn").addEventListener("click", function(){
+  state.muted = !state.muted;
+  save();
+  updateMuteBtn();
+  if(!state.muted){ var c = ac(); if(c) tone(c, 700, c.currentTime, 0.07, {type:"square", vol:.1}); }
+});
+
+/* ================= HELPERS ================= */
+function $(sel, root){ return (root || document).querySelector(sel); }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; });
+}
+function ymd(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function todayStr(){ return ymd(new Date()); }
+function addDays(dateStr, n){ var d = new Date(dateStr + "T00:00:00"); d.setDate(d.getDate() + n); return ymd(d); }
+function fmtDate(s){ if(!s) return ""; var p = s.split("-"); return p[2] + "/" + p[1]; }
+function pct(a, b){ return b ? Math.round(a / b * 100) : 0; }
+function need(n, r){ return Math.ceil(n * r - 1e-9); }
+function tierFor(p, n){ return p >= n ? 3 : p >= need(n, .8) ? 2 : p >= need(n, .6) ? 1 : 0; }
+function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function randField(){ return FIELDS[Math.floor(Math.random() * FIELDS.length)]; }
+function scrollTop(){ try{ window.scrollTo(0, 0); }catch(e){} }
+function plural(n, one, many){ return n === 1 ? one : many; }
+
+function statOf(id){
+  var s = state.stats[id];
+  if(!s) s = {seen:0, wrong:0, streak:0, wf:{}};
+  if(!s.wf) s.wf = {};
+  return s;
+}
+function masteredCount(){ return VERBS.filter(function(v){ return (statOf(v.id).streak) >= 3; }).length; }
+function dotClass(s){ if(!s || !s.seen) return "d-none"; if(s.streak >= 3) return "d-ok"; if(s.streak >= 1) return "d-mid"; return "d-bad"; }
+function bumpDaily(){
+  var t = todayStr();
+  if(state.streak.lastDate === t) return;
+  state.streak.count = state.streak.lastDate === addDays(t, -1) ? state.streak.count + 1 : 1;
+  state.streak.lastDate = t;
+}
+function dailyShown(){
+  var t = todayStr(), l = state.streak.lastDate;
+  return (l === t || l === addDays(t, -1)) ? state.streak.count : 0;
+}
+function medalCount(){ return LEVELS.filter(function(L){ return levelBest(L.i) > 0; }).length; }
+function levelBest(i){ return (state.levels[i] || {}).best | 0; }
+function isUnlocked(i){ return i === 0 || levelBest(i - 1) > 0; }
+function currentLevel(){ for(var i = 0; i < LEVELS.length; i++){ if(!levelBest(i)) return i; } return -1; }
+function topFailedIds(n){
+  return VERBS.map(function(v){ return {id:v.id, s:state.stats[v.id]}; })
+    .filter(function(o){ return o.s && o.s.wrong > 0 && o.s.streak < 3; })
+    .sort(function(a, b){ return (b.s.wrong - a.s.wrong) || (b.s.wrong / b.s.seen - a.s.wrong / a.s.seen) || (a.id - b.id); })
+    .slice(0, n).map(function(o){ return o.id; });
+}
+
+/* tricks: one per column, saved on every keystroke, deleted only when emptied or from "Trucos" */
+function rawTricks(id){
+  var m = state.mnemonics[id] || {};
+  return {inf:m.inf || "", past:m.past || "", part:m.part || "", mean:m.mean || ""};
+}
+function tricksOf(id){
+  var m = rawTricks(id);
+  return {inf:m.inf.trim(), past:m.past.trim(), part:m.part.trim(), mean:m.mean.trim()};
+}
+function hasTricks(id){ var t = tricksOf(id); return !!(t.inf || t.past || t.part || t.mean); }
+function setTrick(id, f, val){
+  var m = rawTricks(id);
+  m[f] = val;
+  if(!(m.inf.trim() || m.past.trim() || m.part.trim() || m.mean.trim())) delete state.mnemonics[id];
+  else state.mnemonics[id] = m;
+  save();
+}
+
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById("toast");
+  if(!el){ el = document.createElement("div"); el.id = "toast"; el.className = "toast"; el.setAttribute("role", "status"); document.getElementById("app").appendChild(el); }
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2600);
+}
+function armConfirm(btn, label, confirmLabel, fn){
+  var armed = false, timer = null;
+  btn.addEventListener("click", function(){
+    if(!armed){
+      armed = true; btn.textContent = confirmLabel;
+      timer = setTimeout(function(){ armed = false; btn.textContent = label; }, 4000);
+      return;
+    }
+    clearTimeout(timer); fn();
+  });
+}
+function autoGrow(ta){ ta.style.height = "auto"; ta.style.height = Math.max(36, ta.scrollHeight + 2) + "px"; }
+
+/* ================= SESSIONS (shared by exam and levels) ================= */
+function newSession(kind, ids, extra){
+  var list = shuffle(ids.slice());
+  var s = {kind:kind, ids:list, givens:list.map(randField), idx:0, results:[], run:0, maxRun:0};
+  if(extra) Object.keys(extra).forEach(function(k){ s[k] = extra[k]; });
+  return s;
+}
+function recordAnswer(sess, r){
+  var before = state.bestRun;
+  sess.results.push(r);
+  sess.idx++;
+  if(r.perfect){
+    sess.run++;
+    if(sess.run > sess.maxRun) sess.maxRun = sess.run;
+    if(sess.run > state.bestRun) state.bestRun = sess.run;
+  } else {
+    sess.run = 0;
+  }
+  var s = statOf(r.id);
+  s.seen++;
+  if(r.perfect){ s.streak++; } else { s.streak = 0; s.wrong++; }
+  FIELDS.forEach(function(f){ if(f !== r.given && !r.ok[f]) s.wf[f] = (s.wf[f] | 0) + 1; });
+  state.stats[r.id] = s;
+  bumpDaily();
+  save();
+  return {newRecord: state.bestRun > before};
+}
+function buildSummary(sess, early){
+  var asked = {}, wrong = {}, perfect = 0, failed = [];
+  FIELDS.forEach(function(f){ asked[f] = 0; wrong[f] = 0; });
+  sess.results.forEach(function(r){
+    if(r.perfect) perfect++; else failed.push({id:r.id, given:r.given, ans:r.ans, ok:r.ok});
+    FIELDS.forEach(function(f){ if(f !== r.given){ asked[f]++; if(!r.ok[f]) wrong[f]++; } });
+  });
+  var blanks = 0, bad = 0;
+  FIELDS.forEach(function(f){ blanks += asked[f]; bad += wrong[f]; });
+  return {sid:++soundSeq, kind:sess.kind, total:sess.ids.length, n:sess.results.length, perfect:perfect, blanks:blanks, blanksOk:blanks - bad,
+          asked:asked, wrong:wrong, failed:failed, maxRun:sess.maxRun, early:!!early, date:todayStr()};
+}
+
+/* ================= SHELL ================= */
+var TABS = [
+  {key:"home", label:"Inicio"}, {key:"exam", label:"Examen"}, {key:"levels", label:"Niveles"},
+  {key:"verbs", label:"Verbos"}, {key:"tricks", label:"Trucos"}
+];
+var screen = "home";
+var examView = "auto";
+var soundSeq = 0, lastSummarySound = null, lastLevelSound = null;
+var levelView = {mode:"map"};
+var verbsMode = "pdf";
+var $screen = document.getElementById("screen");
+var $tabbar = document.getElementById("tabbar");
+var $day = document.getElementById("dayBadge");
+
+function go(s){
+  screen = s;
+  if(s === "exam") examView = "auto";
+  if(s === "levels" && levelView.mode !== "play") levelView = {mode:"map"};
+  render();
+  scrollTop();
+}
+function renderShell(){
+  $tabbar.innerHTML = TABS.map(function(t){
+    var a = screen === t.key;
+    return '<button class="tab' + (a ? ' active' : '') + '" data-tab="' + t.key + '"' + (a ? ' aria-current="page"' : '') + '>' + (a ? '[' + t.label + ']' : t.label) + '</button>';
+  }).join("");
+  var today = state.streak.lastDate === todayStr();
+  $day.className = "daybadge" + (today ? "" : " pending");
+  $day.title = today ? "Hoy ya has practicado" : "Practica hoy para mantener la racha";
+  $day.innerHTML = 'Racha diaria <b>' + dailyShown() + '</b>';
+}
+$tabbar.addEventListener("click", function(e){
+  var b = e.target.closest("[data-tab]");
+  if(b) go(b.getAttribute("data-tab"));
+});
+function render(){
+  renderShell();
+  if(screen === "exam") renderExam();
+  else if(screen === "levels") renderLevels();
+  else if(screen === "verbs") renderVerbs();
+  else if(screen === "tricks") renderTricks();
+  else renderHome();
+}
+function openLevel(i){
+  screen = "levels";
+  levelView = isUnlocked(i) ? {mode:"intro", level:i} : {mode:"map"};
+  render(); scrollTop();
+  if(!isUnlocked(i)) toast("Supera el nivel " + i + " para desbloquear el " + (i + 1) + ".");
+}
+
+/* ================= HOME ================= */
+function rackHTML(){
+  var earned = medalCount();
+  return '<section class="rack" aria-label="Logros">' +
+    '<div class="rack-head"><span class="eyebrow">Logros</span><span class="rack-count"><b>' + earned + '</b>/' + LEVELS.length + ' medallas</span></div>' +
+    '<div class="rack-grid">' + LEVELS.map(function(L){
+      var b = levelBest(L.i);
+      var name = 'Nivel ' + (L.i + 1) + ' · ' + L.title + (b ? ' · medalla de ' + TIER_NAME[b] : ' · sin medalla');
+      return '<button class="slot ' + (b ? 'medal ' + TIER_CLASS[b] : 'hole') + '" data-level="' + L.i + '" title="' + esc(name) + '" aria-label="' + esc(name) + '">' + (L.i + 1) + '</button>';
+    }).join("") + '</div>' +
+    (earned === 0 ? '<p class="rack-hint">Cada nivel superado llena su hueco con una medalla: bronce, plata u oro según tus aciertos.</p>' : '') +
+  '</section>';
+}
+function modeBtn(goKey, badge, tag, title, desc){
+  return '<button class="mode-btn" data-go="' + goKey + '"><span class="mb-top"><span class="tag">' + tag + '</span><span class="badge">' + esc(badge) + '</span></span>' +
+    '<span class="title">' + esc(title) + '</span><span class="desc">' + esc(desc) + '</span></button>';
+}
+function renderHome(){
+  var t = state.tanda, ls = state.lastSummary, cur = currentLevel();
+  var nTricks = Object.keys(state.mnemonics).length;
+  var html = '';
+  if(!storageOK){
+    html += '<div class="warn" role="status">Este navegador no está guardando datos de esta página (modo privado o almacenamiento bloqueado), así que tu progreso y tus trucos se perderán al cerrarla. Antes de salir, usa «Copiar código de progreso».</div>';
+  }
+  html += rackHTML();
+  html += '<p class="intro">Los 124 verbos irregulares del PDF de bachillerato: examen con la tabla de 4 columnas, niveles por patrones y tus propios trucos.</p>';
+  html += '<div class="stat-strip">' +
+    '<div class="stat"><div class="n">' + dailyShown() + '</div><div class="l">Racha diaria (días)</div></div>' +
+    '<div class="stat"><div class="n">' + masteredCount() + '<small>/124</small></div><div class="l">Dominados (3 seguidos bien)</div></div>' +
+    '<div class="stat"><div class="n">' + state.bestRun + '</div><div class="l">Récord de aciertos seguidos</div></div>' +
+    '<div class="stat"><div class="n">' + state.tandasDone + '</div><div class="l">Tandas de 124 completas</div></div>' +
+  '</div>';
+  html += '<div class="mode-grid">' +
+    modeBtn("exam", t ? t.idx + "/" + t.ids.length : "124", "Modo principal", t ? "Continuar tanda" : "Modo Examen",
+      t ? "Vas por el verbo " + Math.min(t.idx + 1, t.ids.length) + " de " + t.ids.length + ". Sigue donde lo dejaste."
+        : (ls ? "Última tanda: " + ls.perfect + "/" + ls.n + " perfectos. Empieza otra o repasa tus fallos."
+              : "Los 124 en la tabla del PDF: te dan una columna y rellenas las otras tres.")) +
+    modeBtn("levels", medalCount() + "/" + LEVELS.length, "Ruta", cur >= 0 ? "Nivel " + (cur + 1) + " · " + LEVELS[cur].title : "Ruta completada",
+      "17 niveles por patrones de terminación. Cada uno llena un hueco con su medalla.") +
+    modeBtn("verbs", masteredCount() + "/124", "Colección", "Tabla completa", "Los 124 verbos como en el PDF, con tu progreso y lo que más fallas.") +
+    modeBtn("tricks", String(nTricks), "Mnemotecnia", "Mis trucos",
+      nTricks ? "Tienes trucos en " + nTricks + " " + plural(nTricks, "verbo", "verbos") + ". Se guardan hasta que los borres."
+              : "Una pista por columna. Se crean al fallar en el examen y se guardan solas.") +
+  '</div>';
+  html += '<div class="sync-row">' +
+      '<button class="btn btn-ghost" id="showExport" type="button">Copiar código de progreso</button>' +
+      '<button class="btn btn-ghost" id="showImport" type="button">Restaurar desde un código</button>' +
+    '</div>' +
+    '<div class="box" id="exportBox" hidden></div>' +
+    '<div class="box" id="importBox" hidden></div>' +
+    '<button class="linkbtn faintlink" id="resetBtn" type="button">Restablecer progreso (tus trucos se conservan)</button>';
+  $screen.innerHTML = html;
+
+  $screen.querySelectorAll("[data-go]").forEach(function(b){ b.addEventListener("click", function(){ go(b.getAttribute("data-go")); }); });
+  $screen.querySelectorAll(".slot").forEach(function(b){ b.addEventListener("click", function(){ openLevel(Number(b.getAttribute("data-level"))); }); });
+
+  var $exportBox = $("#exportBox"), $importBox = $("#importBox");
+  $("#showExport").addEventListener("click", function(){
+    $importBox.hidden = true;
+    if(!$exportBox.hidden){ $exportBox.hidden = true; return; }
+    var code = exportCode();
+    $exportBox.hidden = false;
+    $exportBox.innerHTML = '<div class="h">Tu código de progreso</div>' +
+      '<p class="small dim">Cópialo y pégalo en Verbomat desde otro dispositivo o navegador (este mismo enlace) para recuperar tu racha, tus medallas, tus estadísticas y tus trucos.</p>' +
+      '<textarea id="exportText" readonly>' + code + '</textarea>' +
+      '<button type="button" class="btn btn-ghost" id="copyExport" style="align-self:flex-start;">Copiar</button>' +
+      '<div id="copyMsg" class="small" style="color:var(--good);min-height:16px;"></div>';
+    var ta = $("#exportText");
+    $("#copyExport").addEventListener("click", function(){
+      var msg = $("#copyMsg");
+      function manual(){ ta.select(); msg.textContent = "Selecciona el texto y cópialo a mano."; }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(code).then(function(){ msg.textContent = "Copiado."; }).catch(manual);
+      } else manual();
+    });
+  });
+  $("#showImport").addEventListener("click", function(){
+    $exportBox.hidden = true;
+    if(!$importBox.hidden){ $importBox.hidden = true; return; }
+    $importBox.hidden = false;
+    $importBox.innerHTML = '<div class="h">Pega tu código aquí</div>' +
+      '<textarea id="importText" placeholder="Pega el código copiado en el otro dispositivo…"></textarea>' +
+      '<button type="button" class="btn btn-ghost" id="doImport" style="align-self:flex-start;">Restaurar progreso</button>' +
+      '<div id="importMsg" class="small" style="min-height:16px;"></div>';
+    $("#doImport").addEventListener("click", function(){
+      var code = $("#importText").value, msg = $("#importMsg");
+      if(!code.trim()){ msg.style.color = "var(--bad)"; msg.textContent = "Pega antes un código."; return; }
+      if(importFromCode(code)){ msg.style.color = "var(--good)"; msg.textContent = "Progreso restaurado."; renderShell(); setTimeout(renderHome, 700); }
+      else { msg.style.color = "var(--bad)"; msg.textContent = "Ese código no es válido: cópialo entero otra vez."; }
+    });
+  });
+  armConfirm($("#resetBtn"), "Restablecer progreso (tus trucos se conservan)", "¿Seguro? Toca otra vez para borrar estadísticas, medallas y rachas", function(){
+    var keep = state.mnemonics;
+    state = defaultState(); state.mnemonics = keep; save();
+    examView = "auto"; levelView = {mode:"map"};
+    render();
+  });
+}
+function exportCode(){
+  try{
+    var data = {v:2, streak:state.streak, bestRun:state.bestRun, tandasDone:state.tandasDone, stats:state.stats,
+                mnemonics:state.mnemonics, levels:state.levels, tanda:state.tanda};
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  }catch(e){ return ""; }
+}
+function importFromCode(code){
+  try{
+    var obj = JSON.parse(decodeURIComponent(escape(atob(code.replace(/\s+/g, "")))));
+    if(!obj || typeof obj !== "object") return false;
+    var incoming = migrate(obj);
+    /* never lose a trick: keep local ones the code doesn't have */
+    Object.keys(state.mnemonics).forEach(function(id){
+      var a = incoming.mnemonics[id], b = state.mnemonics[id];
+      if(!a){ incoming.mnemonics[id] = b; return; }
+      FIELDS.forEach(function(f){ if(!String(a[f] || "").trim() && String(b[f] || "").trim()) a[f] = b[f]; });
+    });
+    state = incoming;
+    save();
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ================= QUIZ CARD (the PDF row) ================= */
+function quizCardHTML(sess, headLeft){
+  var id = sess.ids[sess.idx], v = VBYID[id], given = sess.givens[sess.idx];
+  var tr = tricksOf(id);
+  var hasHints = FIELDS.some(function(f){ return tr[f]; });
+  var head = FIELDS.map(function(f){ return '<div>' + FCOL[f] + '</div>'; }).join("");
+  var row = FIELDS.map(function(f){
+    if(f === given) return '<div class="cell given" data-col="' + f + '">' + esc(v[f]) + '</div>';
+    return '<div class="cell" data-col="' + f + '"><input type="text" id="ans-' + f + '" data-col="' + f + '" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="' + FCOL[f] + '"></div>';
+  }).join("");
+  var hints = hasHints ? '<div class="hintrow">' + FIELDS.map(function(f){
+      return '<div class="hcell">' + (tr[f] ? '<button type="button" class="hint-chip" aria-label="Ver tu pista de ' + FCOL[f] + '">pista</button><div class="hint-text" hidden>' + esc(tr[f]) + '</div>' : '') + '</div>';
+    }).join("") + '</div>' : '';
+  var p = (sess.idx / sess.ids.length * 100).toFixed(1);
+  return '<div class="quizhead"><span>' + headLeft + '</span>' +
+      '<span class="runbox' + (sess.run >= 10 ? ' hot' : '') + '" id="runbox">Racha <b id="runN">' + sess.run + '</b> · récord <span id="runRec">' + state.bestRun + '</span></span></div>' +
+    '<div class="pbar" aria-hidden="true"><i style="width:' + p + '%"></i></div>' +
+    '<form id="qForm" autocomplete="off">' +
+      '<div class="examtable"><div class="head">' + head + '</div><div class="row">' + row + '</div>' + hints + '</div>' +
+      '<div class="feedback" id="feedback" hidden></div>' +
+      '<button type="submit" class="btn btn-primary btn-block" id="qSubmit">Comprobar</button>' +
+    '</form>' +
+    '<div class="tricks-panel" id="tricksPanel" hidden></div>' +
+    '<button type="button" class="linkbtn" id="addTrick" hidden>+ Añadir un truco para este verbo</button>';
+}
+function wireQuizCard(sess, next){
+  var form = $("#qForm");
+  var id = sess.ids[sess.idx], v = VBYID[id], given = sess.givens[sess.idx];
+  var askCols = FIELDS.filter(function(f){ return f !== given; });
+  var inputs = askCols.map(function(f){ return form.querySelector('input[data-col="' + f + '"]'); });
+  var checked = false;
+
+  inputs.forEach(function(inp, k){
+    inp.setAttribute("enterkeyhint", k < inputs.length - 1 ? "next" : "done");
+    inp.addEventListener("keydown", function(e){
+      if(e.key !== "Enter" || e.isComposing || checked) return;
+      e.preventDefault();
+      if(k < inputs.length - 1) inputs[k + 1].focus(); else check();
+    });
+  });
+  form.querySelectorAll(".hint-chip").forEach(function(b){
+    b.addEventListener("click", function(){ b.hidden = true; var t = b.nextElementSibling; if(t) t.hidden = false; });
+  });
+  form.addEventListener("submit", function(e){ e.preventDefault(); if(checked) next(); else check(); });
+  if(inputs[0]) inputs[0].focus({preventScroll:true});
+
+  function check(){
+    if(checked) return;
+    checked = true;
+    var ans = {}, ok = {}, wrongCols = [];
+    askCols.forEach(function(f, k){
+      var inp = inputs[k];
+      ans[f] = inp.value;
+      ok[f] = checkField(v, f, inp.value);
+      form.querySelector('.cell[data-col="' + f + '"]').classList.add(ok[f] ? "ok" : "bad");
+      inp.readOnly = true;
+      if(!ok[f]) wrongCols.push(f);
+    });
+    var perfect = wrongCols.length === 0;
+    var prevRun = sess.run;
+    var rec = recordAnswer(sess, {id:id, given:given, ans:ans, ok:ok, perfect:perfect});
+    renderShell();
+    if(perfect){
+      playCorrect(sess.run);
+      if(rec.newRecord && sess.run >= 3) setTimeout(playRecord, 170);
+    } else {
+      playWrong();
+    }
+
+    var fb = $("#feedback"), lines = [];
+    if(!perfect){
+      wrongCols.forEach(function(f){
+        var you = ans[f].trim();
+        lines.push('<div class="fb-line"><span class="fb-col">' + FCOL[f] + '</span><b>' + esc(v[f]) + '</b>' + (you ? '<s>' + esc(you) + '</s>' : '<em>en blanco</em>') + '</div>');
+      });
+      if(prevRun >= 3) lines.push('<div class="fb-run">Racha de ' + prevRun + ' cortada.</div>');
+    } else if(rec.newRecord && sess.run >= 3){
+      lines.push('<div class="fb-good">Nuevo récord: ' + sess.run + ' seguidos.</div>');
+    }
+    if(lines.length){ fb.hidden = false; fb.innerHTML = lines.join(""); }
+
+    var rb = $("#runbox");
+    $("#runN").textContent = sess.run;
+    $("#runRec").textContent = state.bestRun;
+    rb.classList.toggle("hot", sess.run >= 10);
+    if(perfect){ rb.classList.remove("bump"); void rb.offsetWidth; rb.classList.add("bump"); }
+
+    var btn = $("#qSubmit");
+    btn.textContent = sess.idx >= sess.ids.length ? "Ver resultados" : "Siguiente →";
+    var panel = $("#tricksPanel");
+    if(!perfect){
+      openTricks(panel, id, wrongCols, next);
+    } else {
+      var add = $("#addTrick");
+      add.hidden = false;
+      add.addEventListener("click", function(){ add.hidden = true; openTricks(panel, id, [], next); });
+      btn.focus({preventScroll:true});
+    }
+  }
+}
+function trickFieldsHTML(id, wrong){
+  var m = rawTricks(id);
+  return FIELDS.map(function(f){
+    var w = wrong.indexOf(f) >= 0;
+    return '<label class="trick-field' + (w ? ' is-wrong' : '') + '"><span>' + FCOL[f] + '</span>' +
+      '<textarea rows="1" data-trick="' + f + '" data-vid="' + id + '" placeholder="' + (w ? 'Aquí te has liado: ¿qué te ayudaría?' : 'Pista para esta columna') + '">' + esc(m[f]) + '</textarea></label>';
+  }).join("");
+}
+function wireTrickFields(root, onEnter){
+  var status = root.querySelector("[data-status]");
+  root.querySelectorAll("textarea[data-trick]").forEach(function(ta){
+    autoGrow(ta);
+    ta.addEventListener("input", function(){
+      setTrick(Number(ta.getAttribute("data-vid")), ta.getAttribute("data-trick"), ta.value);
+      autoGrow(ta);
+      if(status){ status.textContent = storageOK ? "Guardado" : "No se puede guardar en este navegador"; status.classList.toggle("saved", storageOK); }
+    });
+    ta.addEventListener("keydown", function(e){
+      if(e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); if(onEnter) onEnter(); else ta.blur(); }
+    });
+  });
+}
+function openTricks(panel, id, wrongCols, onEnter){
+  panel.hidden = false;
+  panel.innerHTML = '<div class="tp-head"><span class="h">Tus trucos · ' + esc(VBYID[id].inf) + '</span><span class="tp-status" data-status>Se guardan solos</span></div>' +
+    '<div class="tp-fields">' + trickFieldsHTML(id, wrongCols) + '</div>' +
+    '<p class="tp-hint">Escribe en la columna que quieras y pulsa Enter para pasar al siguiente verbo: se guarda solo.</p>';
+  wireTrickFields(panel, onEnter);
+  var ta = panel.querySelector('textarea[data-trick="' + (wrongCols[0] || "inf") + '"]');
+  if(ta){ ta.focus(); try{ ta.setSelectionRange(ta.value.length, ta.value.length); }catch(e){} }
+}
+
+function miniHeadHTML(){ return '<div class="mini mini-head" aria-hidden="true">' + FIELDS.map(function(f){ return '<div>' + FCOL[f] + '</div>'; }).join("") + '</div>'; }
+function failItemHTML(r){
+  var v = VBYID[r.id], s = statOf(r.id);
+  var cells = FIELDS.map(function(f){
+    if(f === r.given) return '<div class="g">' + esc(v[f]) + '</div>';
+    if(r.ok[f]) return '<div class="k">' + esc(v[f]) + '</div>';
+    var you = String(r.ans[f] || "").trim();
+    return '<div class="x"><s>' + (you ? esc(you) : '—') + '</s><b>' + esc(v[f]) + '</b></div>';
+  }).join("");
+  return '<div class="fail-item"><div class="mini">' + cells + '</div>' +
+    '<div class="fail-meta"><span>#' + v.id + (LEVEL_OF[v.id] != null ? ' · nivel ' + (LEVEL_OF[v.id] + 1) : '') + '</span><span>Fallado <b>' + s.wrong + '</b> ' + plural(s.wrong, 'vez', 'veces') + ' de ' + s.seen + '</span></div></div>';
+}
+
+/* ================= EXAM ================= */
+function startTanda(kind, ids){
+  state.tanda = newSession(kind, ids);
+  save();
+  examView = "auto"; screen = "exam";
+  render(); scrollTop();
+}
+function finalizeTanda(early){
+  var t = state.tanda;
+  if(!t) return false;
+  if(!t.results.length){ state.tanda = null; save(); return false; }
+  var complete = t.results.length === t.ids.length;
+  state.lastSummary = buildSummary(t, early && !complete);
+  if(t.kind === "full" && complete) state.tandasDone = (state.tandasDone | 0) + 1;
+  state.tanda = null;
+  save();
+  return true;
+}
+function renderExam(){
+  var t = state.tanda;
+  if(t && t.idx >= t.ids.length){ if(finalizeTanda(false)) examView = "summary"; }
+  if(state.tanda) return renderExamCard();
+  if(examView === "summary" && state.lastSummary) return renderSummary(state.lastSummary);
+  return renderExamStart();
+}
+function renderExamStart(){
+  var ls = state.lastSummary, top = topFailedIds(20);
+  $screen.innerHTML =
+    '<div class="hero"><div class="eyebrow">Modo Examen</div><h2 class="h2">Como en el examen real</h2>' +
+    '<p class="intro">Cada verbo es una fila de la tabla del PDF con sus 4 columnas en su sitio: te damos una y escribes las otras tres. Al acabar la tanda verás dónde fallas, columna a columna, y podrás repetir solo los fallados.</p></div>' +
+    '<div class="btn-col">' +
+      '<button class="btn btn-primary" id="startFull" type="button">Empezar tanda de 124 verbos</button>' +
+      (ls && ls.failed.length ? '<button class="btn btn-ghost" id="redoFailed" type="button">Repetir ' + (ls.failed.length === 1 ? 'el verbo fallado' : 'los ' + ls.failed.length + ' fallados') + ' de tu última tanda</button>' : '') +
+      (top.length ? '<button class="btn btn-ghost" id="topFailed" type="button">Tus ' + top.length + ' más fallados de siempre</button>' : '') +
+    '</div>' +
+    (ls ? '<button class="last-card" id="openLast" type="button"><span class="eyebrow">Última: ' + KIND_LABEL[ls.kind] + ' · ' + fmtDate(ls.date) + '</span>' +
+          '<span class="lc-main"><b>' + ls.perfect + '</b>/' + ls.n + ' verbos perfectos</span><span class="lc-link">Ver resultados →</span></button>' : '');
+  $("#startFull").addEventListener("click", function(){ startTanda("full", ALL_IDS); });
+  var r = $("#redoFailed"); if(r) r.addEventListener("click", function(){ startTanda("review", ls.failed.map(function(x){ return x.id; })); });
+  var tp = $("#topFailed"); if(tp) tp.addEventListener("click", function(){ startTanda("top", top); });
+  var ol = $("#openLast"); if(ol) ol.addEventListener("click", function(){ examView = "summary"; renderExam(); scrollTop(); });
+}
+function renderExamCard(){
+  var t = state.tanda;
+  $screen.innerHTML =
+    '<div class="subbar"><span class="eyebrow">' + KIND_LABEL[t.kind] + '</span><span class="subbar-actions">' +
+      '<button class="linkbtn" id="pauseBtn" type="button">Pausar</button><button class="linkbtn danger" id="finishBtn" type="button">Terminar</button></span></div>' +
+    quizCardHTML(t, 'Verbo <b>' + (t.idx + 1) + '</b> de ' + t.ids.length);
+  wireQuizCard(t, function(){ render(); scrollTop(); });
+  $("#pauseBtn").addEventListener("click", function(){ go("home"); toast("Tanda guardada: continúa cuando quieras."); });
+  armConfirm($("#finishBtn"), "Terminar", "¿Terminar ya? Toca otra vez", function(){
+    examView = finalizeTanda(true) ? "summary" : "auto";
+    render(); scrollTop();
+  });
+}
+function renderSummary(sum){
+  if(sum.sid !== lastSummarySound){
+    lastSummarySound = sum.sid;
+    setTimeout(function(){ playMedal(tierFor(sum.perfect, sum.n)); }, 300);
+  }
+  function rateOf(f){ return sum.asked[f] ? sum.wrong[f] / sum.asked[f] : 0; }
+  var worst = null;
+  FIELDS.forEach(function(f){ if(sum.wrong[f] > 0 && (!worst || rateOf(f) > rateOf(worst))) worst = f; });
+  var failed = sum.failed.slice().sort(function(a, b){ return (statOf(b.id).wrong - statOf(a.id).wrong) || (a.id - b.id); });
+  var top = topFailedIds(20);
+  var html =
+    '<div class="subbar"><span class="eyebrow">Resultados · ' + KIND_LABEL[sum.kind] + '</span><span class="faint small">' + fmtDate(sum.date) + '</span></div>' +
+    '<div class="sum-hero"><div class="sum-score">' + sum.perfect + '<small>/' + sum.n + '</small></div>' +
+      '<div class="sum-label">verbos perfectos (las 3 casillas bien)</div><span class="pct-chip">' + pct(sum.perfect, sum.n) + ' %</span>' +
+      (sum.early ? '<p class="note">Terminaste antes: respondiste ' + sum.n + ' de ' + sum.total + ' verbos.</p>' : '') + '</div>' +
+    '<div class="kpis">' +
+      '<div class="stat"><div class="n">' + sum.maxRun + '</div><div class="l">Racha máx. en la tanda</div></div>' +
+      '<div class="stat"><div class="n">' + state.bestRun + '</div><div class="l">Tu récord de racha</div></div>' +
+      '<div class="stat"><div class="n">' + sum.blanksOk + '<small>/' + sum.blanks + '</small></div><div class="l">Casillas bien</div></div>' +
+    '</div>' +
+    '<div class="section-h">Dónde fallas <small>fallos / veces que salió en blanco</small></div>' +
+    '<div class="colbars">' + FIELDS.map(function(f){
+      var r = rateOf(f);
+      return '<div class="cb-row' + (f === worst ? ' worst' : '') + '" title="' + FCOL[f] + ': ' + sum.wrong[f] + ' fallos de ' + sum.asked[f] + ' (' + Math.round(r * 100) + ' %)">' +
+        '<span class="cb-label">' + FCOL[f] + '</span><span class="cb-track"><i style="width:' + (r * 100).toFixed(1) + '%"></i></span>' +
+        '<span class="cb-val">' + sum.wrong[f] + '<small> / ' + sum.asked[f] + '</small></span></div>';
+    }).join("") +
+    (worst ? '<p class="cb-note">Donde más fallas: <b>' + FCOL[worst] + '</b> (' + Math.round(rateOf(worst) * 100) + ' % de las veces).</p>' : '<p class="cb-note">Ningún fallo en ninguna columna.</p>') +
+    '</div>';
+  if(failed.length){
+    html += '<div class="section-h">Verbos fallados (' + failed.length + ') <small>los que más fallas, primero</small></div>' +
+      '<div class="fail-list">' + miniHeadHTML() + failed.map(failItemHTML).join("") + '</div>';
+  }
+  html += '<div class="btn-col">' +
+    (failed.length ? '<button class="btn btn-primary" id="redoFailed" type="button">' + (failed.length === 1 ? 'Examen solo con el verbo fallado' : 'Examen solo con los ' + failed.length + ' fallados') + '</button>'
+                   : '<div class="perfect-note">Tanda perfecta: no hay fallos que repasar.</div>') +
+    (top.length ? '<button class="btn btn-ghost" id="topFailed" type="button">Tus ' + top.length + ' más fallados de siempre</button>' : '') +
+    '<button class="btn ' + (failed.length ? 'btn-ghost' : 'btn-primary') + '" id="newFull" type="button">Nueva tanda de 124</button>' +
+  '</div>';
+  $screen.innerHTML = html;
+  var r = $("#redoFailed"); if(r) r.addEventListener("click", function(){ startTanda("review", failed.map(function(x){ return x.id; })); });
+  var tp = $("#topFailed"); if(tp) tp.addEventListener("click", function(){ startTanda("top", top); });
+  $("#newFull").addEventListener("click", function(){ startTanda("full", ALL_IDS); });
+}
+
+/* ================= LEVELS ================= */
+var OFFS = [0, 46, 66, 46, 0, -46, -66, -46];
+var LOCK_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+
+function renderLevels(){
+  if(levelView.mode === "play"){
+    if(levelView.sess.idx >= levelView.sess.ids.length) finalizeLevel();
+    else return renderLevelPlay();
+  }
+  if(levelView.mode === "result") return renderLevelResult();
+  if(levelView.mode === "intro") return renderLevelIntro(levelView.level);
+  return renderLevelMap();
+}
+function renderLevelMap(){
+  var cur = currentLevel(), earned = medalCount();
+  var html = '<div class="lv-top"><div><div class="eyebrow">Niveles</div><h2 class="h2">Ruta de patrones</h2></div><div class="lv-count"><b>' + earned + '</b>/' + LEVELS.length + ' medallas</div></div>' +
+    '<p class="intro">Los verbos agrupados por cómo cambian. Supera un nivel (60 % de verbos perfectos) para ganar su medalla y abrir el siguiente; con todo perfecto, oro.</p>';
+  if(cur < 0) html += '<p class="route-done">Ruta completada. Repite niveles para subir tus medallas a oro.</p>';
+  UNITS.forEach(function(U){
+    var levels = LEVELS.filter(function(L){ return L.unit === U.n; });
+    html += '<section class="unit"><div class="unit-band"><span class="u-k">Unidad ' + U.n + '</span><span class="u-t">' + U.title + '</span><span class="u-s">' + U.sub + '</span></div><div class="path">';
+    levels.forEach(function(L, k){
+      var b = levelBest(L.i), locked = !isUnlocked(L.i), rec = state.levels[L.i] || {};
+      var cls = locked ? "is-locked" : (b ? "medal " + TIER_CLASS[b] : "is-current");
+      var label = "Nivel " + (L.i + 1) + ": " + L.title + (locked ? " (bloqueado)" : b ? " (medalla de " + TIER_NAME[b] + ")" : "");
+      html += '<div class="node-wrap' + (L.i === cur ? ' has-bubble' : '') + '" style="--x:' + OFFS[k % OFFS.length] + 'px">' +
+        (L.i === cur ? '<span class="bubble">' + (rec.plays ? 'REINTENTAR' : 'EMPEZAR') + '</span>' : '') +
+        '<button class="node ' + cls + '" data-level="' + L.i + '" type="button" aria-label="' + esc(label) + '"' + (locked ? ' aria-disabled="true"' : '') + '>' + (locked ? LOCK_SVG : (L.i + 1)) + '</button>' +
+        '<span class="node-label">' + esc(L.title) + '</span>' +
+        (b ? '<span class="node-sub">' + TIER_NAME[b] + ' · ' + rec.bestPerfect + '/' + L.ids.length + '</span>' : '') +
+      '</div>';
+    });
+    html += '</div></section>';
+  });
+  $screen.innerHTML = html;
+  $screen.querySelectorAll(".node").forEach(function(n){
+    n.addEventListener("click", function(){
+      var i = Number(n.getAttribute("data-level"));
+      if(!isUnlocked(i)){ toast("Supera el nivel " + i + " para desbloquear este."); return; }
+      levelView = {mode:"intro", level:i}; renderLevels(); scrollTop();
+    });
+  });
+}
+function ctRowHTML(v, opts){
+  opts = opts || {};
+  var s = state.stats[v.id];
+  return '<div class="ct-row' + (opts.clickable ? ' clickable' : '') + '" data-id="' + v.id + '"' + (opts.clickable ? ' role="button" tabindex="0" aria-expanded="false"' : '') + '>' +
+    '<div class="num"><i class="dot ' + dotClass(s) + '"></i>' + (opts.showWrong ? '<span class="wcount">' + s.wrong + '×</span>' : v.id) + '</div>' +
+    '<div class="inf">' + hl(v.inf, opts.q) + '</div><div>' + hl(v.past, opts.q) + '</div><div>' + hl(v.part, opts.q) + '</div><div class="mean">' + hl(v.mean, opts.q) + '</div></div>';
+}
+function ctHeadHTML(first){ return '<div class="ct-head"><div>' + first + '</div>' + FIELDS.map(function(f){ return '<div>' + FCOL[f] + '</div>'; }).join("") + '</div>'; }
+function renderLevelIntro(i){
+  var L = LEVELS[i], rec = state.levels[i] || {}, b = rec.best | 0, n = L.ids.length;
+  $screen.innerHTML =
+    '<div class="subbar"><button class="linkbtn" id="backMap" type="button">← Mapa</button><span class="eyebrow">Unidad ' + L.unit + ' · Nivel ' + (i + 1) + '</span></div>' +
+    '<div class="lv-intro"><div class="lv-badge ' + (b ? 'medal ' + TIER_CLASS[b] : 'hole') + '">' + (i + 1) + '</div>' +
+      '<div><h2 class="h2">' + esc(L.title) + '</h2><p class="rule">' + esc(L.rule) + '</p></div></div>' +
+    '<div class="ctable">' + ctHeadHTML("#") + L.ids.map(function(id){ return ctRowHTML(VBYID[id]); }).join("") + '</div>' +
+    '<p class="thresholds">Bronce ' + need(n, .6) + '/' + n + ' · Plata ' + need(n, .8) + '/' + n + ' · Oro ' + n + '/' + n + ' verbos perfectos</p>' +
+    (b ? '<p class="center small dim">Tu mejor resultado: medalla de ' + TIER_NAME[b] + ' (' + rec.bestPerfect + '/' + n + ').</p>' : '') +
+    '<button class="btn btn-primary btn-block" id="startLevel" type="button">' + (b === 3 ? 'Repetir nivel' : b ? 'Mejorar medalla' : 'Empezar nivel') + '</button>';
+  $("#backMap").addEventListener("click", function(){ levelView = {mode:"map"}; renderLevels(); scrollTop(); });
+  $("#startLevel").addEventListener("click", function(){ startLevel(i); });
+}
+function startLevel(i){
+  levelView = {mode:"play", sess:newSession("level", LEVELS[i].ids, {level:i})};
+  screen = "levels"; render(); scrollTop();
+}
+function renderLevelPlay(){
+  var s = levelView.sess, L = LEVELS[s.level];
+  $screen.innerHTML =
+    '<div class="subbar"><span class="eyebrow">Nivel ' + (s.level + 1) + ' · ' + esc(L.title) + '</span><button class="linkbtn" id="quitLevel" type="button">Salir</button></div>' +
+    quizCardHTML(s, 'Verbo <b>' + (s.idx + 1) + '</b> de ' + s.ids.length);
+  wireQuizCard(s, function(){ renderLevels(); scrollTop(); });
+  $("#quitLevel").addEventListener("click", function(){ levelView = {mode:"map"}; renderLevels(); scrollTop(); });
+}
+function finalizeLevel(){
+  var s = levelView.sess, n = s.ids.length;
+  var perfect = s.results.filter(function(r){ return r.perfect; }).length;
+  var tier = tierFor(perfect, n);
+  var prev = state.levels[s.level] || {best:0, bestPerfect:0, plays:0};
+  state.levels[s.level] = {best:Math.max(prev.best | 0, tier), bestPerfect:Math.max(prev.bestPerfect | 0, perfect), plays:(prev.plays | 0) + 1};
+  save();
+  levelView = {mode:"result", level:s.level, res:{sid:++soundSeq, tier:tier, prevBest:prev.best | 0, perfect:perfect, n:n,
+    failed:s.results.filter(function(r){ return !r.perfect; }), maxRun:s.maxRun}};
+}
+function renderLevelResult(){
+  var i = levelView.level, r = levelView.res;
+  if(r.sid !== lastLevelSound){
+    lastLevelSound = r.sid;
+    setTimeout(function(){ playMedal(r.tier); }, 300);
+  }
+  var improved = r.tier > r.prevBest;
+  var title = r.tier ? (improved ? (r.prevBest ? '¡Subes a ' + TIER_NAME[r.tier] + '!' : '¡Medalla de ' + TIER_NAME[r.tier] + '!') : 'Medalla de ' + TIER_NAME[r.tier] + ' otra vez')
+                     : 'Sin medalla esta vez';
+  var tip = r.tier === 3 ? 'Nivel perfecto.'
+          : r.tier === 2 ? 'Para oro: ' + r.n + '/' + r.n + ' verbos perfectos.'
+          : r.tier === 1 ? 'Para plata: ' + need(r.n, .8) + '/' + r.n + ' verbos perfectos.'
+          : 'Necesitas ' + need(r.n, .6) + '/' + r.n + ' verbos perfectos para la medalla de bronce y abrir el siguiente nivel.';
+  var next = i + 1 < LEVELS.length && isUnlocked(i + 1);
+  var shown = Math.max(r.tier, r.prevBest);
+  var html = '<div class="lr">' +
+      '<div class="medal-stage"><div class="hole"></div>' + (shown ? '<div class="medal ' + TIER_CLASS[shown] + (improved ? ' drop' : '') + '">' + (i + 1) + '</div>' : '') + '</div>' +
+      '<h2 class="h2 center">' + title + '</h2>' +
+      '<p class="center dim">' + r.perfect + ' de ' + r.n + ' verbos perfectos (' + pct(r.perfect, r.n) + ' %) · racha máx. ' + r.maxRun + '</p>' +
+      '<p class="center faint small">' + tip + '</p>' +
+    '</div>';
+  if(r.failed.length) html += '<div class="section-h">Fallos en este nivel <small>' + r.failed.length + '</small></div><div class="fail-list">' + miniHeadHTML() + r.failed.map(failItemHTML).join("") + '</div>';
+  html += '<div class="btn-col">' +
+    (next ? '<button class="btn btn-primary" id="nextLevel" type="button">Siguiente nivel</button>' : '') +
+    '<button class="btn ' + (next ? 'btn-ghost' : 'btn-primary') + '" id="retryLevel" type="button">Repetir nivel</button>' +
+    '<button class="btn btn-ghost" id="toMap" type="button">Volver al mapa</button></div>';
+  $screen.innerHTML = html;
+  var nb = $("#nextLevel"); if(nb) nb.addEventListener("click", function(){ levelView = {mode:"intro", level:i + 1}; renderLevels(); scrollTop(); });
+  $("#retryLevel").addEventListener("click", function(){ startLevel(i); });
+  $("#toMap").addEventListener("click", function(){ levelView = {mode:"map"}; renderLevels(); scrollTop(); });
+}
+
+/* ================= VERBS (the full table) ================= */
+/* search: accent- and case-insensitive, ignores the "(se)" brackets, looks in all four columns */
+var verbsQuery = "";
+var SEARCH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>';
+var foldCache = {};
+function fold(s){
+  s = String(s);
+  if(foldCache[s]) return foldCache[s];
+  var out = "", map = [];
+  for(var i = 0; i < s.length; i++){
+    var c = s[i];
+    if(c === "(" || c === ")") continue;
+    var f = c.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    for(var k = 0; k < f.length; k++){ out += f[k]; map.push(i); }
+  }
+  return (foldCache[s] = {s:out, map:map});
+}
+function hl(text, q){
+  text = String(text);
+  if(!q) return esc(text);
+  var fm = fold(text), at = wordAt(fm.s, q);
+  if(at < 0) return esc(text);
+  var a = fm.map[at], b = fm.map[at + q.length - 1] + 1;
+  return esc(text.slice(0, a)) + '<mark>' + esc(text.slice(a, b)) + '</mark>' + esc(text.slice(b));
+}
+function verbMatches(v, q){
+  if(!q) return true;
+  if(/^\d+$/.test(q)) return v.id === Number(q);
+  return FIELDS.some(function(f){ return wordAt(fold(v[f]).s, q) >= 0; });
+}
+/* only matches at the start of a word: "ser" finds ser/estar, not co-ser */
+function wordAt(s, q){
+  var at = s.indexOf(q);
+  while(at > 0 && /[a-z0-9]/.test(s[at - 1])) at = s.indexOf(q, at + 1);
+  return at;
+}
+function detailHTML(v){
+  var s = statOf(v.id);
+  var wf = FIELDS.filter(function(f){ return s.wf[f]; }).map(function(f){ return FCOL[f] + ' ' + s.wf[f]; }).join(' · ');
+  return '<div class="ct-detail" data-detail="' + v.id + '">' +
+    '<div class="d-stats"><span>Visto <b>' + s.seen + '</b></span><span>Fallado <b>' + s.wrong + '</b></span><span>Seguidos bien <b>' + s.streak + '</b></span><span>Nivel <b>' + (LEVEL_OF[v.id] + 1) + '</b></span></div>' +
+    (wf ? '<div class="d-wf">Fallos por columna: ' + wf + '</div>' : '') +
+    '<div class="tricks-panel"><div class="tp-head"><span class="h">Tus trucos</span><span class="tp-status" data-status>Se guardan solos</span></div>' +
+      '<div class="tp-fields">' + trickFieldsHTML(v.id, []) + '</div></div>' +
+  '</div>';
+}
+function renderVerbs(){
+  var chips = [["pdf", "Orden del PDF"], ["pattern", "Por patrón"], ["failed", "Más fallados"]];
+  $screen.innerHTML =
+    '<div class="lv-top"><div><div class="eyebrow">Verbos</div><h2 class="h2">La tabla completa</h2></div><div class="lv-count"><b>' + masteredCount() + '</b>/124 dominados</div></div>' +
+    '<div class="searchbox" role="search">' + SEARCH_SVG +
+      '<input type="search" id="verbSearch" placeholder="Buscar: golpear, broke, sentarse…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Buscar un verbo en inglés o su significado" value="' + esc(verbsQuery) + '">' +
+      '<button type="button" class="sclear" id="verbSearchClear" aria-label="Borrar la búsqueda"' + (verbsQuery ? '' : ' hidden') + '>×</button>' +
+    '</div>' +
+    '<p class="search-info" id="searchInfo" aria-live="polite" hidden></p>' +
+    '<div class="chips">' + chips.map(function(c){ return '<button type="button" data-mode="' + c[0] + '" class="' + (verbsMode === c[0] ? 'active' : '') + '">' + c[1] + '</button>'; }).join("") + '</div>' +
+    '<div class="legend"><span><i class="dot d-ok"></i>Dominado</span><span><i class="dot d-mid"></i>En progreso</span><span><i class="dot d-bad"></i>Último intento fallado</span><span><i class="dot d-none"></i>Sin ver</span></div>' +
+    '<div class="ctable" id="ctable"></div>' +
+    '<p class="small faint center">Toca un verbo para ver tus estadísticas y escribir tus trucos.</p>';
+
+  var table = $("#ctable"), input = $("#verbSearch"), clear = $("#verbSearchClear"), info = $("#searchInfo");
+
+  function fill(){
+    var q = norm(verbsQuery), n = 0, rows = "", opts = {clickable:true, q:q};
+    var noMatch = '<div class="ct-empty">Ningún verbo coincide con «' + esc(verbsQuery.trim()) + '». Prueba con otra palabra, en inglés o en español.</div>';
+    if(verbsMode === "pattern"){
+      LEVELS.forEach(function(L){
+        var list = L.ids.map(function(id){ return VBYID[id]; }).filter(function(v){ return verbMatches(v, q); });
+        if(!list.length) return;
+        rows += '<div class="ct-group">Nivel ' + (L.i + 1) + ' · ' + esc(L.title) + '</div>';
+        list.forEach(function(v){ rows += ctRowHTML(v, opts); n++; });
+      });
+      if(!n) rows = noMatch;
+    } else if(verbsMode === "failed"){
+      var all = VERBS.filter(function(v){ var s = state.stats[v.id]; return s && s.wrong > 0; })
+        .sort(function(a, b){ return (state.stats[b.id].wrong - state.stats[a.id].wrong) || (a.id - b.id); });
+      var list = all.filter(function(v){ return verbMatches(v, q); });
+      n = list.length;
+      rows = !all.length ? '<div class="ct-empty">Todavía no has fallado ningún verbo. Haz una tanda en el Modo Examen.</div>'
+           : n ? list.map(function(v){ return ctRowHTML(v, {clickable:true, showWrong:true, q:q}); }).join("")
+           : noMatch;
+    } else {
+      VERBS.forEach(function(v){ if(verbMatches(v, q)){ rows += ctRowHTML(v, opts); n++; } });
+      if(!n) rows = noMatch;
+    }
+    table.innerHTML = ctHeadHTML(verbsMode === "failed" ? "×" : "#") + rows;
+    clear.hidden = !verbsQuery;
+    if(q && n){
+      info.hidden = false;
+      info.innerHTML = '<b>' + n + '</b> ' + plural(n, 'verbo encontrado', 'verbos encontrados') + (verbsMode === "failed" ? ' entre los que has fallado' : '');
+    } else {
+      info.hidden = true;
+    }
+  }
+  fill();
+
+  input.addEventListener("input", function(){ verbsQuery = input.value; fill(); });
+  input.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && !e.isComposing){ e.preventDefault(); input.blur(); }
+    if(e.key === "Escape" && verbsQuery){ e.preventDefault(); verbsQuery = ""; input.value = ""; fill(); }
+  });
+  clear.addEventListener("click", function(){ verbsQuery = ""; input.value = ""; fill(); input.focus(); });
+  $screen.querySelectorAll("[data-mode]").forEach(function(b){
+    b.addEventListener("click", function(){
+      verbsMode = b.getAttribute("data-mode");
+      $screen.querySelectorAll("[data-mode]").forEach(function(x){ x.classList.toggle("active", x === b); });
+      fill();
+    });
+  });
+  function toggle(row){
+    var id = Number(row.getAttribute("data-id"));
+    var open = table.querySelector(".ct-detail");
+    var wasThis = open && Number(open.getAttribute("data-detail")) === id;
+    if(open){
+      open.remove();
+      var pr = table.querySelector('.ct-row[aria-expanded="true"]');
+      if(pr) pr.setAttribute("aria-expanded", "false");
+    }
+    if(wasThis) return;
+    row.insertAdjacentHTML("afterend", detailHTML(VBYID[id]));
+    row.setAttribute("aria-expanded", "true");
+    wireTrickFields(row.nextElementSibling, null);
+  }
+  table.addEventListener("click", function(e){
+    if(e.target.closest(".ct-detail")) return;
+    var row = e.target.closest(".ct-row.clickable");
+    if(row) toggle(row);
+  });
+  table.addEventListener("keydown", function(e){
+    if((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("ct-row")){ e.preventDefault(); toggle(e.target); }
+  });
+}
+
+/* ================= TRICKS ================= */
+function renderTricks(){
+  var ids = Object.keys(state.mnemonics).map(Number).filter(function(id){ return VBYID[id] && hasTricks(id); }).sort(function(a, b){ return a - b; });
+  if(!ids.length){
+    $screen.innerHTML = '<div class="empty"><div class="eyebrow">Mis trucos</div>' +
+      '<p>Aún no tienes trucos. Cuando falles un verbo en el examen o en un nivel, te saldrán cuatro casillas, una por columna: escribe lo que te ayude y pasa al siguiente, se guarda solo. También puedes añadirlos desde Verbos.</p>' +
+      '<button class="btn btn-primary" id="goExam" type="button">Ir al Modo Examen</button></div>';
+    $("#goExam").addEventListener("click", function(){ go("exam"); });
+    return;
+  }
+  $screen.innerHTML =
+    '<div class="lv-top"><div><div class="eyebrow">Mnemotecnia</div><h2 class="h2">Mis trucos</h2></div><div class="lv-count"><b>' + ids.length + '</b> ' + plural(ids.length, 'verbo', 'verbos') + '</div></div>' +
+    '<p class="intro">Se guardan solos mientras escribes y no se borran nunca, salvo que los borres tú aquí. Vaciar una casilla borra solo esa pista.</p>' +
+    ids.map(function(id){
+      var v = VBYID[id];
+      return '<div class="trick-card" data-card="' + id + '"><div class="tv">' + esc(v.inf) + ' <span>· ' + esc(v.past) + ' · ' + esc(v.part) + ' · ' + esc(v.mean) + '</span></div>' +
+        '<div class="tp-fields">' + trickFieldsHTML(id, []) + '</div>' +
+        '<div class="tc-foot"><span class="tp-status" data-status>Se guardan solos</span><button class="linkbtn danger" type="button" data-del="' + id + '">Borrar trucos de este verbo</button></div></div>';
+    }).join("");
+  $screen.querySelectorAll(".trick-card").forEach(function(card){
+    wireTrickFields(card, null);
+    var del = card.querySelector("[data-del]");
+    armConfirm(del, "Borrar trucos de este verbo", "¿Seguro? Toca otra vez", function(){
+      delete state.mnemonics[Number(del.getAttribute("data-del"))];
+      save(); renderTricks();
+    });
+  });
+}
+
+/* ================= BOOT ================= */
+var booted = false;
+function boot(data){
+  if(booted) return;
+  booted = true;
+  var loaded = load();
+  if(!loaded && data && data.state) state = migrate(data.state);
+  var sc = data && data.screen;
+  if(sc === "collection") sc = "verbs";
+  screen = ["home", "exam", "levels", "verbs", "tricks"].indexOf(sc) >= 0 ? sc : "home";
+  updateMuteBtn();
+  render();
+}
+try{
+  var hot = window.claude && window.claude.hot;
+  if(hot && hot.snapshot) hot.snapshot(function(){ return {screen:screen, state:state}; });
+  if(hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
+}catch(e){ boot({}); }
+setTimeout(function(){ boot({}); }, 1500);
+})();
+</script>
+
+<a href="../" class="b1-back" title="Volver a 1 BACH">← 1 BACH</a><span class="b1-claude">Claude</span>
+<style>.b1-back{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:700 13px/1 system-ui,sans-serif;text-decoration:none;color:#141a2e;background:#fff;border-radius:999px;padding:9px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.b1-claude{position:fixed;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:600 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #d97757;color:#d97757;border-radius:999px;background:rgba(255,255,255,.92)}
+@media (min-width:1024px){.b1-back,.b1-claude{bottom:18px}}</style>
+<script type="module">
+import { alCambiarSesion, guardarProgreso } from "../shared/fb.js";
+const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
+function resumen(){ const st=lee("verbomat_v1");if(!st||!st.stats)return null;const ok=Object.values(st.stats).filter(x=>(x.streak|0)>=2).length;return [ok,124]; }
+let ult="";
+function enviar(){let r=null;try{r=resumen()}catch(e){}if(!r)return;const k=r.join("/");if(k===ult)return;ult=k;guardarProgreso("verbos",r[0],r[1])}
+let t=null;alCambiarSesion(u=>{clearInterval(t);if(u){ult="";enviar();t=setInterval(enviar,8000)}});
+addEventListener("visibilitychange",enviar);addEventListener("pagehide",enviar);
+</script>
+</body></html>

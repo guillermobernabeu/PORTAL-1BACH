@@ -1,0 +1,979 @@
+{
+"temas": [
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "",
+"orden": 1,
+"titulo": "Word formation: prefijos y sufijos",
+"tri": 1,
+"id": "i1"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "",
+"orden": 2,
+"titulo": "Used to, be used to, get used to",
+"tri": 1,
+"id": "i2"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "",
+"orden": 3,
+"titulo": "Verbos irregulares",
+"tri": 1,
+"id": "i3"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "Todos los tiempos",
+"orden": 4,
+"titulo": "Voz pasiva",
+"tri": 1,
+"id": "i4"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "",
+"orden": 5,
+"titulo": "Preguntas con wh-",
+"tri": 1,
+"id": "i5"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "",
+"orden": 6,
+"titulo": "Idioms",
+"tri": 1,
+"id": "i6"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "Entra la lista del 1st term (135 palabras). Examen el 12 de noviembre",
+"orden": 7,
+"titulo": "Vocabulary",
+"tri": 1,
+"id": "i7"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "Prueba oral el 16 de noviembre",
+"orden": 8,
+"titulo": "Speaking",
+"tri": 1,
+"id": "i8"
+},
+{
+"asig": "ingles",
+"estado": "sin",
+"nota": "",
+"orden": 9,
+"titulo": "Past simple",
+"tri": 1,
+"id": "i9"
+}
+],
+"recursos": [
+{
+"id": "p-vocab",
+"asig": "ingles",
+"tri": 1,
+"tema": "i7",
+"tipo": "app",
+"cat": "App",
+"claude": true,
+"destacado": true,
+"titulo": "Vocabulary 1st Term",
+"nota": "Definición ↔ palabra · la lista de la clase",
+"url": "vocabulary/"
+},
+{
+"id": "p-vocablista",
+"asig": "ingles",
+"tri": 1,
+"tema": "i7",
+"tipo": "doc",
+"cat": "Lista oficial",
+"titulo": "Vocabulary 1st term (lista oficial)",
+"paginas": [
+"docs/p/vocab1t/p-001.jpg",
+"docs/p/vocab1t/p-002.jpg"
+],
+"url": ""
+},
+{
+"id": "p-verbos",
+"asig": "ingles",
+"tri": 1,
+"tema": "i3",
+"tipo": "app",
+"cat": "App",
+"claude": true,
+"titulo": "Verbomat · verbos irregulares",
+"nota": "Los 124 verbos por niveles",
+"url": "verbos/"
+},
+{
+"id": "p-afijos",
+"asig": "ingles",
+"tri": 1,
+"tema": "i1",
+"tipo": "app",
+"cat": "App",
+"claude": true,
+"destacado": true,
+"titulo": "Afijomat · prefijos y sufijos",
+"nota": "Word formation por niveles",
+"url": "afijos/"
+},
+{
+"id": "p-wf",
+"asig": "ingles",
+"tri": 1,
+"tema": "i1",
+"tipo": "app",
+"cat": "App",
+"claude": true,
+"destacado": true,
+"titulo": "Word Formation y Used to · frases de examen",
+"nota": "Bloques de 20 frases tipo examen",
+"url": "wordformation/"
+},
+{
+"id": "p-ut",
+"asig": "ingles",
+"tri": 1,
+"tema": "i2",
+"tipo": "app",
+"cat": "App",
+"claude": true,
+"titulo": "Used to · frases de examen",
+"nota": "Dentro de Word Formation, apartado Used to",
+"url": "wordformation/"
+}
+],
+"examenes": [
+{
+"alcance": "Prueba oral",
+"asig": "ingles",
+"fecha": "2026-11-16",
+"hecho": false,
+"horas": 2,
+"temas": [
+"i8"
+],
+"titulo": "Speaking",
+"id": "e10",
+"nota": null
+},
+{
+"alcance": "Definitions, translate, grammar (past simple, make questions) e idioms. Inglés no tiene global",
+"asig": "ingles",
+"fecha": "2026-11-19",
+"hecho": false,
+"horas": 7,
+"temas": [
+"i7",
+"i9",
+"i5",
+"i6"
+],
+"titulo": "Examen grande de Inglés",
+"id": "e11",
+"nota": null
+},
+{
+"alcance": "Sistema óseo, articular y muscular (presentación del profesor)",
+"asig": "ef",
+"fecha": "",
+"hecho": false,
+"horas": 5,
+"temas": [],
+"titulo": "Examen teórico: bases anatómicas",
+"id": "e12",
+"nota": null
+},
+{
+"alcance": "Prefijos y sufijos. Aplazado al jueves 12, el mismo día que el de Vocabulary.",
+"asig": "ingles",
+"fecha": "2026-11-12",
+"hecho": false,
+"horas": 3,
+"temas": [
+"i1"
+],
+"titulo": "Word formation (subir nota)",
+"id": "e15",
+"nota": null
+},
+{
+"alcance": "Tema 1 (escasez, coste de oportunidad, FPP) y tema 2 (modelo del consumidor y mercado)",
+"asig": "economia",
+"fecha": "2026-11-06",
+"hecho": false,
+"horas": 6,
+"temas": [],
+"titulo": "Temas 1 y 2",
+"id": "e7",
+"nota": null
+},
+{
+"alcance": "Formulación inorgánica y orgánica, isomería, reactividad y disoluciones",
+"asig": "fyq",
+"fecha": "2026-11-11",
+"hecho": false,
+"horas": 10,
+"temas": [],
+"titulo": "Examen de Química",
+"id": "e8",
+"nota": null
+},
+{
+"alcance": "Lista Vocabulary 1st term (135 palabras)",
+"asig": "ingles",
+"fecha": "2026-11-12",
+"hecho": false,
+"horas": 4,
+"temas": [
+"i7"
+],
+"titulo": "Vocabulary",
+"id": "e9",
+"nota": null
+},
+{
+"alcance": "26, 27 y 30 de noviembre y 1 de diciembre. Falta saber qué día cae cada asignatura. Filosofía: solo temas nuevos (no entran 1, 2 y 3)",
+"asig": "global",
+"dias": [
+"2026-11-26",
+"2026-11-27",
+"2026-11-30",
+"2026-12-01"
+],
+"fecha": "2026-11-26",
+"hecho": false,
+"titulo": "Semana de globales",
+"id": "g1",
+"temas": [],
+"nota": null
+},
+{
+"alcance": "Existencialismo o transhumanismo: qué es, autores, comparativa y reflexión personal. Mínimo 5 folios, a ordenador",
+"asig": "filosofia",
+"fecha": "2026-11-20",
+"hecho": false,
+"horas": 8,
+"temas": [],
+"titulo": "Entrega del trabajo por grupos",
+"id": "t14",
+"nota": null
+}
+],
+"vocab": [
+{
+"id": "ingles",
+"asig": "ingles",
+"titulo": "Vocabulary 1st term",
+"items": [
+{
+"en": "cook",
+"es": "cocinero",
+"term": 1
+},
+{
+"en": "to reject",
+"es": "rechazar",
+"term": 1
+},
+{
+"en": "baggage",
+"es": "equipaje",
+"term": 1
+},
+{
+"en": "among",
+"es": "entre (muchos)",
+"term": 1
+},
+{
+"en": "postage",
+"es": "sello, gastos de envío",
+"term": 1
+},
+{
+"en": "application",
+"es": "solicitud",
+"term": 1
+},
+{
+"en": "burial",
+"es": "entierro",
+"term": 1
+},
+{
+"en": "designed",
+"es": "diseñado",
+"term": 1
+},
+{
+"en": "to bury",
+"es": "enterrar",
+"term": 1
+},
+{
+"en": "helpless",
+"es": "indefenso",
+"term": 1
+},
+{
+"en": "reliance",
+"es": "confianza",
+"term": 1
+},
+{
+"en": "to suffer",
+"es": "sufrir",
+"term": 1
+},
+{
+"en": "employee",
+"es": "empleado",
+"term": 1
+},
+{
+"en": "because of",
+"es": "a causa de",
+"term": 1
+},
+{
+"en": "payee",
+"es": "pagado",
+"ojo": "Es «beneficiario», la persona que recibe un pago.",
+"term": 1
+},
+{
+"en": "misguided",
+"es": "equivocado",
+"term": 1
+},
+{
+"en": "trainee",
+"es": "entrenado",
+"ojo": "Es «aprendiz» o «becario», no «entrenado».",
+"term": 1
+},
+{
+"en": "judgment",
+"es": "juicio",
+"term": 1
+},
+{
+"en": "brotherhood",
+"es": "hermandad",
+"term": 1
+},
+{
+"en": "side with",
+"es": "ponerse del lado de",
+"term": 1
+},
+{
+"en": "usefulness",
+"es": "utilidad",
+"term": 1
+},
+{
+"en": "to be aware of",
+"es": "ser consciente de",
+"term": 1
+},
+{
+"en": "membership",
+"es": "membresía",
+"term": 1
+},
+{
+"en": "fact",
+"es": "hecho",
+"term": 1
+},
+{
+"en": "robbery",
+"es": "robo",
+"term": 1
+},
+{
+"en": "strange-sounding",
+"es": "que suena extraño",
+"term": 1
+},
+{
+"en": "knowledge",
+"es": "conocimiento",
+"term": 1
+},
+{
+"en": "likely",
+"es": "probable",
+"term": 1
+},
+{
+"en": "acknowledge",
+"es": "reconocimiento",
+"ojo": "Es el verbo «reconocer». «Reconocimiento» es acknowledgement.",
+"term": 1
+},
+{
+"en": "lifetime",
+"es": "vida",
+"term": 1
+},
+{
+"en": "reddish",
+"es": "más o menos",
+"ojo": "Es «rojizo».",
+"term": 1
+},
+{
+"en": "to tease",
+"es": "tomar el pelo",
+"term": 1
+},
+{
+"en": "downwards",
+"es": "hacia abajo",
+"term": 1
+},
+{
+"en": "to stand out from",
+"es": "destacar",
+"term": 1
+},
+{
+"en": "homeward(s)",
+"es": "hacia casa",
+"term": 1
+},
+{
+"en": "crowd",
+"es": "multitud",
+"term": 1
+},
+{
+"en": "wealth",
+"es": "riqueza",
+"term": 1
+},
+{
+"en": "to rather",
+"es": "preferir",
+"ojo": "No existe solo: se usa would rather (preferiría).",
+"term": 1
+},
+{
+"en": "wealthy",
+"es": "rico",
+"term": 1
+},
+{
+"en": "would much rather than",
+"es": "preferiría",
+"term": 1
+},
+{
+"en": "settler",
+"es": "asentador",
+"ojo": "Es «colono».",
+"term": 1
+},
+{
+"en": "to fit in",
+"es": "encajar",
+"term": 1
+},
+{
+"en": "wide",
+"es": "ancho",
+"term": 1
+},
+{
+"en": "peer",
+"es": "compañero",
+"term": 1
+},
+{
+"en": "width",
+"es": "anchura",
+"term": 1
+},
+{
+"en": "reliable/dependable",
+"es": "de fiar",
+"term": 1
+},
+{
+"en": "parcel",
+"es": "paquete postal",
+"term": 1
+},
+{
+"en": "thoughtful",
+"es": "considerado",
+"term": 1
+},
+{
+"en": "judge",
+"es": "juez",
+"term": 1
+},
+{
+"en": "thrilled",
+"es": "emocionado",
+"term": 1
+},
+{
+"en": "court",
+"es": "corte",
+"term": 1
+},
+{
+"en": "amusing",
+"es": "entretenido, divertido",
+"term": 1
+},
+{
+"en": "to look over",
+"es": "ojear",
+"term": 1
+},
+{
+"en": "homesick",
+"es": "nostálgico",
+"term": 1
+},
+{
+"en": "to involve",
+"es": "involucrar",
+"term": 1
+},
+{
+"en": "to provide",
+"es": "proporcionar",
+"term": 1
+},
+{
+"en": "can´t believe his eyes",
+"es": "no creer lo que se está viendo",
+"term": 1
+},
+{
+"en": "blanket",
+"es": "manta",
+"term": 1
+},
+{
+"en": "report",
+"es": "informe",
+"term": 1
+},
+{
+"en": "to look up to",
+"es": "admirar",
+"term": 1
+},
+{
+"en": "to reprimand/ tell off",
+"es": "reñir",
+"term": 1
+},
+{
+"en": "to take after",
+"es": "cuidar",
+"ojo": "Es «parecerse a» un familiar. «Cuidar» es take care of / look after.",
+"term": 1
+},
+{
+"en": "to stay away",
+"es": "alejarse",
+"term": 1
+},
+{
+"en": "to live up to",
+"es": "estar a la altura",
+"term": 1
+},
+{
+"en": "bus shelter",
+"es": "autobús de doble altura",
+"ojo": "Es la «marquesina» de la parada. Autobús de dos pisos es double-decker.",
+"term": 1
+},
+{
+"en": "alike",
+"es": "similar",
+"term": 1
+},
+{
+"en": "to name after",
+"es": "llamar por",
+"ojo": "Es «ponerle a alguien el nombre de otra persona», en su honor.",
+"term": 1
+},
+{
+"en": "easy-going",
+"es": "fácil de llevar",
+"term": 1
+},
+{
+"en": "heaven",
+"es": "cielo",
+"term": 1
+},
+{
+"en": "irritating",
+"es": "irritante",
+"term": 1
+},
+{
+"en": "any more",
+"es": "ya no",
+"term": 1
+},
+{
+"en": "to prevent from",
+"es": "evitar",
+"term": 1
+},
+{
+"en": "fag= cigarette",
+"es": "cigarro(informal)",
+"term": 1
+},
+{
+"en": "provided/given",
+"es": "proporcionado",
+"term": 1
+},
+{
+"en": "psychologist",
+"es": "psicólogo",
+"term": 1
+},
+{
+"en": "to apply for",
+"es": "solicitar",
+"term": 1
+},
+{
+"en": "global Western culture",
+"es": "cultura global del oeste",
+"term": 1
+},
+{
+"en": "hurricane",
+"es": "huracán",
+"term": 1
+},
+{
+"en": "however",
+"es": "sin embargo",
+"term": 1
+},
+{
+"en": "lightning",
+"es": "relámpago",
+"term": 1
+},
+{
+"en": "forecast",
+"es": "pronóstico",
+"term": 1
+},
+{
+"en": "atmospheric pressure",
+"es": "presión atmosférica",
+"term": 1
+},
+{
+"en": "either",
+"es": "o",
+"ojo": "either… or = o… o. Al final de una negativa significa «tampoco».",
+"term": 1
+},
+{
+"en": "sandstorm",
+"es": "tormenta de arena",
+"term": 1
+},
+{
+"en": "to remain",
+"es": "mantenerse",
+"term": 1
+},
+{
+"en": "storm",
+"es": "tormenta",
+"term": 1
+},
+{
+"en": "seeding",
+"es": "siembra",
+"term": 1
+},
+{
+"en": "thunder",
+"es": "trueno",
+"term": 1
+},
+{
+"en": "drought",
+"es": "sequía",
+"term": 1
+},
+{
+"en": "tornado",
+"es": "tornado",
+"term": 1
+},
+{
+"en": "rainfall",
+"es": "lluvia",
+"term": 1
+},
+{
+"en": "tsunami",
+"es": "tsunami",
+"term": 1
+},
+{
+"en": "hailstones/hail",
+"es": "granizo",
+"term": 1
+},
+{
+"en": "typhoon",
+"es": "tifón",
+"term": 1
+},
+{
+"en": "crop",
+"es": "cosecha",
+"term": 1
+},
+{
+"en": "wind",
+"es": "viento",
+"term": 1
+},
+{
+"en": "harmless",
+"es": "inofensivo",
+"term": 1
+},
+{
+"en": "blood is thicker than water",
+"es": "la familia es lo primero",
+"term": 1
+},
+{
+"en": "fog",
+"es": "niebla",
+"term": 1
+},
+{
+"en": "it´s raining cats and dogs",
+"es": "está lloviendo a cántaros",
+"term": 1
+},
+{
+"en": "to take off",
+"es": "despegar",
+"term": 1
+},
+{
+"en": "face the music",
+"es": "enfrentarse a algo",
+"term": 1
+},
+{
+"en": "to land",
+"es": "aterrizar",
+"term": 1
+},
+{
+"en": "joy",
+"es": "alegría",
+"term": 1
+},
+{
+"en": "controversial",
+"es": "polémico",
+"term": 1
+},
+{
+"en": "heatwave",
+"es": "ola de calor",
+"term": 1
+},
+{
+"en": "to fear",
+"es": "temer",
+"term": 1
+},
+{
+"en": "soil",
+"es": "terreno cultivado",
+"ojo": "Es «suelo» o «tierra».",
+"term": 1
+},
+{
+"en": "eventually",
+"es": "finalmente",
+"term": 1
+},
+{
+"en": "to point out",
+"es": "señalar",
+"term": 1
+},
+{
+"en": "to divert",
+"es": "modificar",
+"ojo": "Es «desviar».",
+"term": 1
+},
+{
+"en": "to flood",
+"es": "inundar",
+"term": 1
+},
+{
+"en": "flood",
+"es": "inundación",
+"term": 1
+},
+{
+"en": "in fact",
+"es": "de hecho",
+"term": 1
+},
+{
+"en": "famine",
+"es": "hambruna",
+"term": 1
+},
+{
+"en": "to invest",
+"es": "invertir",
+"term": 1
+},
+{
+"en": "warfare",
+"es": "armamento (de guerra)",
+"ojo": "Es «guerra» o «conflicto bélico», no «armamento».",
+"term": 1
+},
+{
+"en": "parade",
+"es": "desfile",
+"term": 1
+},
+{
+"en": "massive",
+"es": "masivo",
+"term": 1
+},
+{
+"en": "sunstroke",
+"es": "golpe de calor",
+"term": 1
+},
+{
+"en": "sunshade",
+"es": "sombrilla",
+"term": 1
+},
+{
+"en": "torch",
+"es": "linterna",
+"term": 1
+},
+{
+"en": "shade",
+"es": "sombra",
+"term": 1
+},
+{
+"en": "duststorm",
+"es": "tormenta de polvo",
+"term": 1
+},
+{
+"en": "cold spell",
+"es": "ola de frío",
+"term": 1
+},
+{
+"en": "frostbite",
+"es": "congelación",
+"term": 1
+},
+{
+"en": "overcast",
+"es": "nublado",
+"term": 1
+},
+{
+"en": "mild",
+"es": "templado",
+"term": 1
+},
+{
+"en": "chilly",
+"es": "fresco",
+"term": 1
+},
+{
+"en": "commander",
+"es": "comandante",
+"term": 1
+},
+{
+"en": "whether",
+"es": "=if",
+"term": 1
+},
+{
+"en": "acid rain",
+"es": "lluvia ácida",
+"term": 1
+},
+{
+"en": "breeze",
+"es": "brisa",
+"term": 1
+},
+{
+"en": "cloud",
+"es": "nube",
+"term": 1
+},
+{
+"en": "cyclone",
+"es": "ciclón",
+"term": 1
+}
+]
+}
+],
+"practica": []
+}

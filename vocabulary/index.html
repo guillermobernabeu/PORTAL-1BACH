@@ -50,7 +50,7 @@ form.add input,form.add select,form.add textarea{border:1.5px solid var(--rule);
 <span class="claude">Claude</span>
 <section id="start"><h1>Vocabulary 1st Term</h1><p>Definición ↔ palabra · 1.º Bachillerato · lista compartida de la clase</p><button class="go" id="go">Empezar</button></section>
 <div class="wrap" id="app" hidden>
-<header><p style="margin:0 0 6px"><a href="../" style="color:var(--acc);font-weight:700;text-decoration:none">← Portal</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p></header>
+<header><p style="margin:0 0 6px"><a href="../" style="color:var(--acc);font-weight:700;text-decoration:none">← 1 BACH</a></p><h1><small>Inglés · 1.º Bachillerato</small>Vocabulary 1st Term</h1><p class="who" id="who">Conectando…</p></header>
 <div class="card" id="login" hidden><p class="prompt">Entra con tu cuenta de Google</p><p class="msg">Es la misma cuenta del portal: entras una vez y queda guardada.</p><p style="margin-top:12px"><button class="btn" id="gbtn">Entrar con Google</button></p><p class="msg" id="lmsg"></p></div>
 <nav class="tabs" id="tabs">
  <button data-t="dw" aria-pressed="true">Definición → palabra</button>
@@ -92,7 +92,7 @@ function corrige(ans,w){const a=norm(ans);if(!a)return 0;if(variantes(w.en).incl
  // un despiste de una letra
  for(const v of variantes(w.en)){if(Math.abs(v.length-a.length)<=1&&lev(v,a)<=1&&v.length>4)return 1}return 0}
 function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=m[0];m[0]=i;for(let j=1;j<=b.length;j++){const t=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return m[b.length]}
-function apunta(w,bien){if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats()}
+function apunta(w,bien){if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats();window.trasApuntar&&window.trasApuntar(w,bien)}
 // ---------- vistas ----------
 const main=$("#main");
 function pick(p){let w=p[Math.floor(Math.random()*p.length)];if(S.q&&p.length>1&&w.id===S.q.id)w=p[(p.indexOf(w)+1)%p.length];return w}
@@ -158,7 +158,7 @@ const k=e=>{if(e.code==="Space"){e.preventDefault();abrir()}};
 $("#go").onclick=abrir;addEventListener("keydown",k);
 </script>
 <script type="module">
-import { db, fs, entrar, alCambiarSesion, alCambiarClase } from "../shared/fb.js";
+import { db, fs, entrar, alCambiarSesion, alCambiarClase, nombreDe, guardarProgreso } from "../shared/fb.js";
 const COL = "vocabulary_palabras";
 const tabs = document.getElementById("tabs"), login = document.getElementById("login"), who = document.getElementById("who");
 const resto = [...document.querySelectorAll(".filt"), document.getElementById("stats"), document.getElementById("main")];
@@ -170,12 +170,16 @@ S.db = { collection: () => ({
 }) };
 document.getElementById("gbtn").onclick = () => entrar().catch(e => document.getElementById("lmsg").textContent = "No se pudo entrar (" + e.code + ").");
 let quitar = [];
+let OK = new Set(); try { OK = new Set(JSON.parse(localStorage.getItem("vocabOk") || "[]")); } catch (e) {}
+function enviarVocab() { const base = S.words.filter(w => w.por === "lista"); if (!base.length) return; const n = base.filter(w => OK.has(w.id)).length; guardarProgreso("vocab", n, base.length); }
+let tEnv = null;
+window.trasApuntar = (w, bien) => { bien ? OK.add(w.id) : OK.delete(w.id); try { localStorage.setItem("vocabOk", JSON.stringify([...OK])); } catch (e) {} clearTimeout(tEnv); tEnv = setTimeout(enviarVocab, 1500); };
 alCambiarSesion(user => {
   quitar.forEach(f => f()); quitar = [];
   if (!user) { verApp(false); who.textContent = "Tienes que entrar con tu cuenta de Google."; return; }
   S.me = user.uid; S.nombre = user.displayName || ""; verApp(true);
   who.textContent = "Conectado como " + (user.displayName || "tú");
-  quitar.push(alCambiarClase(us => { S.users = us; if (S.tab === "list") nueva(); }));
+  quitar.push(alCambiarClase(us => { S.users = {}; for (const k in us) S.users[k] = { ...us[k], nombre: nombreDe(us[k]) }; if (S.tab === "list") nueva(); }));
   let sembrado = false;
   quitar.push(fs.onSnapshot(fs.collection(db, COL), async (snap) => {
     if (snap.empty && !sembrado) {
@@ -184,7 +188,7 @@ alCambiarSesion(user => {
       try { await b.commit(); } catch (e) { console.warn(e); }
       return;
     }
-    const nuevo = !S.words.length; S.words = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const nuevo = !S.words.length; S.words = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (nuevo) enviarVocab();
     if (nuevo || S.tab === "list") nueva(); else stats();
   }, (err) => { who.textContent = "No se puede leer la lista (" + (err.code || "error") + ")."; }));
 });

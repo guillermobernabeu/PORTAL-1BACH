@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style></head><body>
+<title>Afijomat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600;700&family=Martian+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: one column on a phone with a bottom tab bar; on desktop a left sidebar and a centred working column.
+   The memorable part is the word tile: the base word is a paper tile, the affix is a coloured tile that snaps onto it. */
+:root{
+  --bg-deep:#0f0b17; --bg:#161022; --panel:#1f1830; --panel-2:#2a2140; --border:#3d3259;
+  --text:#f2eefb; --text-dim:#aaa0c6; --text-faint:#7f759c;
+  --pre:#ffb454; --pre-ink:#2b1800; --suf:#6cc7ff; --suf-ink:#05243a;
+  --stem:#efe9dc; --stem-ink:#1e1731; --link:#f08cff;
+  --accent:#efe9dc; --accent-ink:#1e1731; --focus:#6cc7ff;
+  --good:#5fe3a4; --bad:#ff7088;
+  --hole:#0b0812; --hole-shadow:rgba(0,0,0,.8); --hole-rim:rgba(255,255,255,.06);
+  --f-display:'Bricolage Grotesque','Avenir Next','Trebuchet MS',system-ui,sans-serif;
+  --f-body:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'Martian Mono','JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg-deep:#e8e4f1; --bg:#f4f1fa; --panel:#ffffff; --panel-2:#ece8f6; --border:#cfc6e3;
+    --text:#1e1731; --text-dim:#5c5377; --text-faint:#80779b;
+    --pre:#b85a05; --pre-ink:#fff6ea; --suf:#0a6cae; --suf-ink:#eff8ff;
+    --stem:#1e1731; --stem-ink:#f4f1fa; --link:#b02fd0;
+    --accent:#1e1731; --accent-ink:#f4f1fa; --focus:#0a6cae;
+    --good:#0b8a5b; --bad:#c42849;
+    --hole:#dcd6ea; --hole-shadow:rgba(30,23,49,.3); --hole-rim:rgba(255,255,255,.95);
+    color-scheme:light;
+  }
+}
+:root[data-theme="dark"]{
+  --bg-deep:#0f0b17; --bg:#161022; --panel:#1f1830; --panel-2:#2a2140; --border:#3d3259;
+  --text:#f2eefb; --text-dim:#aaa0c6; --text-faint:#7f759c;
+  --pre:#ffb454; --pre-ink:#2b1800; --suf:#6cc7ff; --suf-ink:#05243a;
+  --stem:#efe9dc; --stem-ink:#1e1731; --link:#f08cff;
+  --accent:#efe9dc; --accent-ink:#1e1731; --focus:#6cc7ff;
+  --good:#5fe3a4; --bad:#ff7088;
+  --hole:#0b0812; --hole-shadow:rgba(0,0,0,.8); --hole-rim:rgba(255,255,255,.06);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg-deep:#e8e4f1; --bg:#f4f1fa; --panel:#ffffff; --panel-2:#ece8f6; --border:#cfc6e3;
+  --text:#1e1731; --text-dim:#5c5377; --text-faint:#80779b;
+  --pre:#b85a05; --pre-ink:#fff6ea; --suf:#0a6cae; --suf-ink:#eff8ff;
+  --stem:#1e1731; --stem-ink:#f4f1fa; --link:#b02fd0;
+  --accent:#1e1731; --accent-ink:#f4f1fa; --focus:#0a6cae;
+  --good:#0b8a5b; --bad:#c42849;
+  --hole:#dcd6ea; --hole-shadow:rgba(30,23,49,.3); --hole-rim:rgba(255,255,255,.95);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box;}
+body{
+  background:var(--bg-deep); color:var(--text); margin:0;
+  font-family:var(--f-body); font-size:15px; line-height:1.45;
+  display:flex; justify-content:center;
+}
+button,input,textarea{font-family:inherit; color:inherit;}
+h1,h2,h3,p,ul,ol{margin:0; padding:0;}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+
+#app{
+  width:100%; max-width:560px; min-height:100dvh; background:var(--bg);
+  display:flex; flex-direction:column; border-inline:1px solid var(--border);
+}
+
+/* ---------- shell ---------- */
+.topbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:10;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 16px; background:var(--panel); border-bottom:1px solid var(--border);
+}
+.topbar-left{display:flex; align-items:center; gap:12px; min-width:0;}
+.wordmark{display:inline-flex; font-family:var(--f-display); font-weight:800; font-size:21px; letter-spacing:-.02em; line-height:1;}
+.wordmark span{display:inline-block; padding:.22em .42em .26em;}
+.wm-a{background:var(--stem); color:var(--stem-ink); border-radius:.3em 0 0 .3em;}
+.wm-b{background:var(--suf); color:var(--suf-ink); border-radius:0 .3em .3em 0; position:relative;}
+.wm-b::before{content:""; position:absolute; left:-.16em; top:50%; width:.32em; height:.32em; margin-top:-.16em; border-radius:50%; background:var(--suf);}
+.soundbtn{
+  flex:0 0 auto; width:30px; height:30px; padding:0; display:grid; place-items:center;
+  background:none; border:1px solid var(--border); border-radius:8px; color:var(--text-dim); cursor:pointer;
+}
+.soundbtn svg{width:16px; height:16px;}
+.soundbtn:hover{color:var(--text);}
+.daybadge{font-size:12.5px; color:var(--text-dim); font-variant-numeric:tabular-nums; text-align:right;}
+.daybadge b{font-family:var(--f-display); font-size:17px; color:var(--text);}
+.daybadge.pending b{color:var(--text-dim);}
+
+.screen{flex:1; padding:18px 16px 32px; display:flex; flex-direction:column; gap:16px; min-width:0;}
+
+.tabbar{
+  position:sticky; bottom:0; z-index:10; display:flex; gap:2px;
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));
+  background:var(--panel); border-top:1px solid var(--border);
+}
+.tab{
+  flex:1; min-width:0; background:none; border:none; cursor:pointer; padding:10px 0; border-radius:10px;
+  font-size:12.5px; font-weight:600; color:var(--text-faint); text-align:center; white-space:nowrap;
+}
+.tab .k{display:none;}
+.tab.active{color:var(--text); background:var(--panel-2);}
+.tab:hover{color:var(--text);}
+.kbd-help{display:none;}
+
+.toast{
+  position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom,0px)); z-index:30;
+  transform:translate(-50%,10px); opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  background:var(--text); color:var(--bg); padding:9px 14px; border-radius:10px; font-size:13px; max-width:calc(100% - 32px);
+}
+.toast.show{opacity:1; transform:translate(-50%,0);}
+
+/* ---------- type & generic ---------- */
+.eyebrow{font-size:12.5px; font-weight:600; color:var(--text-dim);}
+.h2{font-family:var(--f-display); font-size:25px; font-weight:800; letter-spacing:-.02em; text-wrap:balance; line-height:1.15;}
+.intro{font-size:14.5px; color:var(--text-dim); line-height:1.55; max-width:62ch;}
+.small{font-size:12.5px;} .dim{color:var(--text-dim);}
+.hero{display:flex; flex-direction:column; gap:8px;}
+.linkbtn{background:none; border:none; color:var(--text); font-size:14px; font-weight:600; cursor:pointer; padding:6px 0;}
+.linkbtn.faintlink{color:var(--text-faint); font-weight:400; text-decoration:underline; font-size:12.5px; align-self:center;}
+.linkbtn.danger{color:var(--bad);}
+.note{font-size:13.5px; color:var(--text-dim); text-align:center; text-wrap:balance;}
+
+.btn{border:none; border-radius:12px; padding:14px 18px; font-size:15.5px; font-weight:700; cursor:pointer; text-align:center;}
+.btn-primary{background:var(--accent); color:var(--accent-ink);}
+.btn-primary:active{opacity:.85;}
+.btn-ghost{background:var(--panel-2); color:var(--text); border:1px solid var(--border);}
+.btn-block{width:100%;}
+.btn-col{display:flex; flex-direction:column; gap:10px;}
+
+.stat-strip{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
+.stat{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:2px; min-width:0;}
+.stat .n{font-family:var(--f-display); font-size:27px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.1;}
+.stat .n small{font-size:.58em; color:var(--text-faint); font-weight:600;}
+.stat .l{font-size:12.5px; color:var(--text-dim); line-height:1.3;}
+
+.box{border:1px dashed var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--panel-2);}
+.box .h{font-size:13px; font-weight:700; color:var(--text-dim);}
+.box textarea{background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px; font-size:12px; resize:vertical; min-height:76px; font-family:var(--f-mono); width:100%;}
+.warn{border:1px solid color-mix(in srgb, var(--bad) 45%, var(--border)); background:color-mix(in srgb, var(--bad) 8%, var(--panel)); border-radius:12px; padding:10px 12px; font-size:13px;}
+.sync-row{display:flex; gap:10px; flex-wrap:wrap;}
+.sync-row .btn{flex:1 1 180px; font-size:14px; padding:12px 14px;}
+
+.seg{display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:4px;}
+.seg button{flex:1; min-width:0; border:none; background:none; border-radius:9px; padding:9px 6px; font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer;}
+.seg button.active{background:var(--accent); color:var(--accent-ink);}
+
+.section-h{font-family:var(--f-display); font-weight:800; font-size:17px; display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-top:6px;}
+.section-h small{font-family:var(--f-body); font-weight:500; color:var(--text-faint); font-size:12.5px; text-align:right;}
+
+/* ---------- tiles ---------- */
+.tile{
+  position:relative; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap;
+  font-family:var(--f-mono); font-weight:700; letter-spacing:-.02em; line-height:1.1;
+  padding:.22em .45em; border-radius:.3em;
+}
+.tile.stem{background:var(--stem); color:var(--stem-ink);}
+.tile.affix.pre{background:var(--pre); color:var(--pre-ink);}
+.tile.affix.suf{background:var(--suf); color:var(--suf-ink);}
+.tile.sm{font-size:15px;} .tile.xs{font-size:12.5px; padding:.14em .4em;}
+.tile .lk, .lk{font-style:normal; color:var(--link); text-decoration:underline; text-decoration-thickness:.07em; text-underline-offset:.12em;}
+.tile.stem .lk{color:var(--link);}
+.tiles{
+  display:inline-flex; align-items:stretch; position:relative; max-width:100%;
+  font-size:clamp(17px, calc(min(78vw, 500px) / (var(--n) * .75 + 2.2)), 54px);
+  filter:drop-shadow(0 .07em 0 rgba(0,0,0,.35));
+}
+.tiles .tile{padding:.3em .5em;}
+.tiles .tile:first-child{border-radius:.3em 0 0 .3em;}
+.tiles .tile:last-child{border-radius:0 .3em .3em 0;}
+.tiles.single .tile{border-radius:.3em;}
+.tiles .tile.affix::before{content:""; position:absolute; top:50%; width:.46em; height:.46em; margin-top:-.23em; border-radius:50%; z-index:1;}
+.tiles.is-suf .tile.affix.suf::before{left:-.23em; background:var(--suf);}
+.tiles.is-pre .tile.affix.pre::before{right:-.23em; background:var(--pre);}
+@keyframes snap-suf{0%{transform:translateX(1.3em); opacity:0;} 55%{transform:translateX(-.09em); opacity:1;} 100%{transform:none; opacity:1;}}
+@keyframes snap-pre{0%{transform:translateX(-1.3em); opacity:0;} 55%{transform:translateX(.09em); opacity:1;} 100%{transform:none; opacity:1;}}
+.tiles.is-suf .tile.affix.snap{animation:snap-suf .5s cubic-bezier(.2,.9,.3,1) .12s both;}
+.tiles.is-pre .tile.affix.snap{animation:snap-pre .5s cubic-bezier(.2,.9,.3,1) .12s both;}
+
+.chips{display:flex; flex-wrap:wrap; justify-content:center; gap:8px;}
+.chip{font-size:13px; border:1px solid var(--border); border-radius:999px; padding:4px 12px; background:var(--panel-2); color:var(--text-dim);}
+.chip.tr{color:var(--text); font-style:italic;}
+.btnchip{cursor:pointer; color:var(--text); border-style:dashed; font-weight:600;}
+.btnchip:hover{border-color:var(--text-dim);}
+
+/* ---------- map ---------- */
+.last-card{display:flex; flex-direction:column; gap:3px; text-align:left; cursor:pointer; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px 16px; color:var(--text);}
+.last-card .lc-main{font-size:15.5px;} .last-card .lc-main b{font-family:var(--f-display); font-size:19px;}
+.last-card .lc-link{font-size:13px; color:var(--text-dim); font-weight:600;}
+.last-card:hover{border-color:var(--text-dim);}
+.route-done{text-align:center; color:var(--good); font-weight:700;}
+.unit{display:flex; flex-direction:column;}
+.unit-band{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; border-left:5px solid var(--text-faint);}
+.unit-band.pre{border-left-color:var(--pre);} .unit-band.suf{border-left-color:var(--suf);}
+.u-t{font-family:var(--f-display); font-weight:800; font-size:17px;}
+.u-s{font-size:12.5px; color:var(--text-faint);}
+.u-c{font-family:var(--f-display); font-weight:800; font-size:17px; color:var(--text-dim); font-variant-numeric:tabular-nums;}
+.path{display:flex; flex-direction:column; align-items:center; gap:26px; padding:42px 0 20px;}
+.node-wrap{display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; transform:translateX(var(--x,0px));}
+.node-wrap.has-bubble{margin-top:16px;}
+.path > .node-wrap.has-bubble:first-child{margin-top:0;}
+.node{
+  width:68px; height:68px; border-radius:22px; border:none; padding:0; cursor:pointer; position:relative;
+  display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:25px; transition:transform .12s;
+}
+.node:active{transform:translateY(2px);}
+.node.plain{background:var(--panel-2); color:var(--text-dim); box-shadow:inset 0 -5px 0 rgba(0,0,0,.18), inset 0 0 0 2px var(--border);}
+.node.is-current.pre{background:var(--pre); color:var(--pre-ink);}
+.node.is-current.suf{background:var(--suf); color:var(--suf-ink);}
+.node.is-current{box-shadow:inset 0 -5px 0 rgba(0,0,0,.22), 0 0 0 6px color-mix(in srgb, var(--text) 14%, transparent); animation:ring 2.4s ease-in-out infinite;}
+@keyframes ring{50%{box-shadow:inset 0 -5px 0 rgba(0,0,0,.22), 0 0 0 11px color-mix(in srgb, var(--text) 4%, transparent);}}
+.node.medal{box-shadow:inset 0 -5px 0 rgba(0,0,0,.2), inset 0 0 0 3px rgba(255,255,255,.3), 0 3px 10px rgba(0,0,0,.25);}
+.node-label{font-size:13px; color:var(--text-dim); max-width:150px; text-align:center; line-height:1.25; font-weight:600;}
+.node-sub{font-size:12px; color:var(--text-faint); margin-top:-3px;}
+.bubble{
+  position:absolute; top:-33px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:4px 10px;
+  font-size:11.5px; font-weight:800; letter-spacing:.08em;
+}
+.bubble::after{content:""; position:absolute; left:50%; bottom:-5px; width:8px; height:8px; background:var(--panel); border-right:1px solid var(--border); border-bottom:1px solid var(--border); transform:translateX(-50%) rotate(45deg);}
+
+.m-gold{background:radial-gradient(circle at 34% 28%, #fff4c4 0 12%, #f6d360 34%, #d39f22 68%, #9a6c0a 100%); color:#3b2700;}
+.m-silver{background:radial-gradient(circle at 34% 28%, #ffffff 0 12%, #e3e7ee 34%, #aab3c1 68%, #717b8c 100%); color:#1d232e;}
+.m-bronze{background:radial-gradient(circle at 34% 28%, #ffe3c8 0 12%, #e0a46e 34%, #aa6a34 68%, #6e3f18 100%); color:#2b1606;}
+.hole{background:var(--hole); box-shadow:inset 0 3px 8px var(--hole-shadow), 0 1px 0 var(--hole-rim);}
+
+/* ---------- level intro ---------- */
+.lv-intro{display:flex; gap:14px; align-items:flex-start;}
+.lv-badge{flex:0 0 auto; width:58px; height:58px; border-radius:20px; display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:24px;}
+.lv-badge.plain{background:var(--panel-2); color:var(--text-dim); box-shadow:inset 0 0 0 2px var(--border);}
+.lv-badge.medal{box-shadow:inset 0 0 0 3px rgba(255,255,255,.3), inset 0 -4px 7px rgba(0,0,0,.22);}
+.rule{font-size:14.5px; color:var(--text-dim); line-height:1.55; margin-top:6px;}
+.aff-list{display:flex; flex-direction:column; gap:8px;}
+.aff-row{display:flex; gap:12px; align-items:baseline; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 12px;}
+.aff-row .tile{flex:0 0 auto; min-width:64px;}
+.aff-ex{font-size:14px; color:var(--text-dim); min-width:0; overflow-wrap:anywhere;}
+.nb{text-decoration:underline dotted; text-underline-offset:3px; text-decoration-color:var(--text-faint);}
+.thresholds{font-size:12.5px; color:var(--text-faint); text-align:center; line-height:1.5;}
+
+/* ---------- quiz ---------- */
+.quizhead{display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:13.5px; color:var(--text-dim);}
+.qtitle b{color:var(--text); font-variant-numeric:tabular-nums;}
+.runbox{font-size:12.5px; color:var(--text-dim); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.runbox b{display:inline-block; font-family:var(--f-display); color:var(--text); font-size:17px; min-width:1ch; text-align:center;}
+.runbox.hot b{color:var(--pre);}
+.runbox.bump b{animation:bump .35s ease;}
+@keyframes bump{50%{transform:scale(1.4);}}
+.pbar{height:6px; background:var(--panel-2); border-radius:4px; overflow:hidden;}
+.pbar i{display:block; height:100%; background:var(--text); border-radius:0 4px 4px 0; transition:width .25s;}
+.stage{background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:22px 16px 18px; display:flex; flex-direction:column; align-items:center; gap:16px; min-width:0;}
+.stage > *{max-width:100%;}
+.ask{font-size:13.5px; color:var(--text-dim);}
+.trickshow{font-size:13.5px; background:var(--panel-2); border:1px dashed var(--border); border-radius:10px; padding:8px 12px; text-align:left; width:100%;}
+.answer{
+  width:100%; min-width:0; background:var(--bg); border:2px solid var(--border); border-radius:14px; padding:14px 12px; text-align:center;
+  font-family:var(--f-mono); font-weight:700; font-size:clamp(17px,5.4vw,24px); letter-spacing:-.01em; color:var(--text);
+}
+.answer::placeholder{color:var(--text-faint); font-weight:500; font-size:.7em;}
+.answer:focus{outline:none; border-color:var(--text); box-shadow:0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);}
+.answer.ok{border-color:var(--good); color:var(--good);} .answer.ko{border-color:var(--bad); color:var(--bad);}
+.answer.shake{animation:shake .3s;}
+@keyframes shake{25%{transform:translateX(-6px);} 75%{transform:translateX(6px);}}
+#qBtn{width:100%;}
+.fb{display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; width:100%;}
+.fb-head{font-family:var(--f-display); font-weight:800; font-size:22px;}
+.fb-head.good{color:var(--good);} .fb-head.bad{color:var(--bad);}
+.fb-aff{font-size:14px; color:var(--text-dim); line-height:1.7;}
+.fb-aff em{font-style:normal; color:var(--text); font-weight:600;}
+.fb-aff small{color:var(--text-faint);}
+.fb-form{font-size:13.5px; color:var(--text-dim);} .fb-form b{font-family:var(--f-mono); color:var(--text);}
+.fb-yours{font-size:14px; color:var(--text-dim);}
+.fb-yours s{color:var(--bad); font-family:var(--f-mono);}
+.fb-msg{display:block; margin-top:2px; color:var(--text);}
+.fb-rule, .fb-truco{font-size:13.5px; background:var(--panel-2); border-radius:10px; padding:9px 12px; width:100%; text-align:left; color:var(--text-dim);}
+.fb-rule b, .fb-truco b{color:var(--text); margin-right:6px;}
+
+/* ---------- summary ---------- */
+.sum-hero{display:flex; flex-direction:column; align-items:center; gap:6px; padding:4px 0;}
+.sum-score{font-family:var(--f-display); font-weight:800; font-size:56px; line-height:1; font-variant-numeric:tabular-nums;}
+.sum-score small{font-size:.45em; color:var(--text-faint);}
+.pct-chip{font-size:13px; font-weight:700; padding:3px 12px; border-radius:20px; background:var(--panel-2); border:1px solid var(--border);}
+.kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;}
+.kpis .stat{padding:10px 12px;} .kpis .stat .n{font-size:23px;} .kpis .stat .l{font-size:12px;}
+.perfect-note{text-align:center; color:var(--good); font-weight:700; padding:6px 0;}
+.medal-stage{position:relative; width:128px; height:128px; margin:4px auto 0;}
+.medal-stage > div{position:absolute; inset:0; border-radius:50%; display:grid; place-items:center;}
+.medal-stage .medal{font-family:var(--f-display); font-weight:800; font-size:44px; box-shadow:inset 0 0 0 5px rgba(255,255,255,.3), inset 0 -8px 14px rgba(0,0,0,.25), 0 6px 18px rgba(0,0,0,.3);}
+.medal-stage .medal.drop{animation:drop .8s cubic-bezier(.2,1.5,.45,1) .25s both;}
+@keyframes drop{from{transform:translateY(-70px) scale(.55); opacity:0;} to{transform:none; opacity:1;}}
+.colbars{display:flex; flex-direction:column; gap:11px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px;}
+.colbars:not(.prog):not(.lrs){display:grid; grid-template-columns:max-content minmax(40px,1fr) max-content; gap:11px 12px; align-items:center;}
+.cb-row{display:contents;}
+.cb-label{display:flex; align-items:center; gap:6px; min-width:0;}
+.cb-track{height:10px; background:var(--panel-2); border-radius:0 4px 4px 0; overflow:hidden;}
+.cb-track i{display:block; height:100%; background:var(--bad); border-radius:0 4px 4px 0;}
+.cb-val{font-size:13px; text-align:right; font-variant-numeric:tabular-nums; font-weight:700;}
+.cb-val small{color:var(--text-faint); font-weight:500;}
+.fail-list{display:flex; flex-direction:column; gap:8px;}
+.fail-item{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:14px;}
+.fi-base{color:var(--text-dim); font-family:var(--f-mono); font-size:13px;}
+.fi-arrow{color:var(--text-faint);}
+.fi-ans{font-family:var(--f-mono); font-size:14px;}
+.fi-yours{margin-left:auto; color:var(--text-faint); font-size:12.5px;}
+.fi-yours s{color:var(--bad); font-family:var(--f-mono);}
+
+/* ---------- practice ---------- */
+.mode-grid{display:grid; grid-template-columns:1fr; gap:12px;}
+.mode-btn{display:flex; flex-direction:column; align-items:stretch; gap:4px; text-align:left; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:15px 17px; cursor:pointer; color:var(--text); transition:border-color .15s;}
+.mode-btn:hover:not(:disabled){border-color:var(--text-dim);}
+.mode-btn:disabled{opacity:.55; cursor:default;}
+.mb-top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.mode-btn .tag{font-size:12px; font-weight:700; color:var(--pre);}
+.mode-btn .badge{font-size:12px; background:var(--panel-2); color:var(--text-dim); border:1px solid var(--border); border-radius:20px; padding:2px 10px; font-variant-numeric:tabular-nums; white-space:nowrap;}
+.mode-btn .title{font-family:var(--f-display); font-size:19px; font-weight:800;}
+.mode-btn .desc{font-size:13.5px; color:var(--text-dim); line-height:1.45;}
+
+/* ---------- exam sheet ---------- */
+.xlist{list-style:none; display:flex; flex-direction:column; gap:10px;}
+.xrow{display:grid; grid-template-columns:26px minmax(0,1fr); gap:10px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px;}
+.xrow.is-ok{border-color:color-mix(in srgb, var(--good) 55%, var(--border));}
+.xrow.is-ko{border-color:color-mix(in srgb, var(--bad) 55%, var(--border));}
+.xn{font-family:var(--f-display); font-weight:800; color:var(--text-faint); padding-top:6px; font-variant-numeric:tabular-nums;}
+.xbody{display:flex; flex-direction:column; gap:8px; min-width:0;}
+.xmain{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.xbody .chips{justify-content:flex-start;}
+.xarrow{color:var(--text-faint);}
+.xin{flex:1 1 150px; min-width:0; background:var(--bg); border:2px solid var(--border); border-radius:10px; padding:9px 10px; font-family:var(--f-mono); font-weight:700; font-size:16px; color:var(--text);}
+.xin:focus{outline:none; border-color:var(--text);}
+.xin.ok{border-color:var(--good); color:var(--good);} .xin.ko{border-color:var(--bad); color:var(--bad);}
+.xfb{font-size:13.5px;} .xfb.good{color:var(--good); font-weight:700;} .xfb.bad{color:var(--text-dim);} .xfb.bad b{font-family:var(--f-mono); color:var(--text);}
+
+/* ---------- notes ---------- */
+.searchbox{position:relative; display:flex; align-items:center;}
+.searchbox svg{position:absolute; left:13px; width:17px; height:17px; color:var(--text-faint); pointer-events:none;}
+.searchbox input{width:100%; min-width:0; -webkit-appearance:none; appearance:none; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px 14px 12px 40px; font-size:16px; color:var(--text);}
+.searchbox input::placeholder{color:var(--text-faint);}
+.searchbox input:focus{outline:none; border-color:var(--text-dim);}
+.searchbox input::-webkit-search-cancel-button{-webkit-appearance:none; display:none;}
+.ac-grid{display:grid; grid-template-columns:1fr; gap:12px;}
+.affix-card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; min-width:0;}
+.affix-card header{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.ac-prog{font-size:12.5px; color:var(--text-faint);}
+.ac-mean{font-size:13.5px; color:var(--text-dim);} .ac-mean b{color:var(--text);}
+.ac-ex{list-style:none; display:flex; flex-wrap:wrap; gap:6px 14px; font-family:var(--f-mono); font-size:13.5px;}
+.ac-ex small{font-family:var(--f-body); color:var(--text-faint); font-size:12px;}
+.ac-trick{display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:var(--text-faint);}
+.ac-trick textarea{width:100%; min-width:0; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:8px 10px; font-size:14px; line-height:1.4; resize:none; overflow:hidden; min-height:40px; color:var(--text);}
+.ac-trick textarea:focus{outline:none; border-color:var(--text-dim);}
+.empty{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:22px 18px; text-align:center; color:var(--text-dim);}
+
+/* ---------- progress ---------- */
+.colbars.prog{display:grid; grid-template-columns:max-content minmax(40px,1fr) max-content; gap:9px 12px; align-items:center;}
+.pr-row{display:contents;}
+.pr-label{display:flex; align-items:center; gap:6px;}
+.ctag{font-size:11.5px; color:var(--text-faint); white-space:nowrap;}
+.pr-track{height:9px; background:var(--panel-2); border-radius:0 4px 4px 0; overflow:hidden;}
+.pr-track i{display:block; height:100%; background:var(--text-dim); border-radius:0 4px 4px 0;}
+.pr-track i.full{background:var(--good);}
+.pr-val{font-size:13px; text-align:right; font-weight:700; font-variant-numeric:tabular-nums;}
+.pr-val small{color:var(--text-faint); font-weight:500;}
+
+@media (min-width:460px){ .mode-grid{grid-template-columns:1fr 1fr;} }
+
+/* ================= tablet and desktop ================= */
+@media (min-width:640px){
+  #app{max-width:780px;}
+  .topbar{padding:14px 26px;}
+  .screen{padding:24px 28px 38px; gap:18px;}
+  .stat-strip{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .h2{font-size:29px;}
+  .intro{font-size:15.5px;}
+  .stage{padding:30px 28px 24px;}
+  .ac-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .xrow{padding:14px 16px;}
+}
+@media (min-width:1024px){
+  body{display:block; padding-inline:24px;}
+  #app{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:230px minmax(0,1fr); grid-template-rows:auto 1fr; grid-template-areas:"top top" "side main";}
+  .topbar{grid-area:top; padding:14px 30px;}
+  .screen{grid-area:main; padding:34px 48px 56px; gap:20px; max-width:940px; width:100%;}
+  .tabbar{grid-area:side; position:sticky; top:calc(env(safe-area-inset-top,0px) + 64px); bottom:auto; align-self:start; flex-direction:column; gap:4px; height:calc(100dvh - 64px); padding:22px 14px; border-top:none; border-right:1px solid var(--border);}
+  .tab{flex:0 0 auto; display:flex; justify-content:space-between; align-items:center; text-align:left; padding:12px 14px; font-size:14.5px;}
+  .tab .k{display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border:1px solid var(--border); border-bottom-width:2px; border-radius:5px; font-family:var(--f-mono); font-size:11px; color:var(--text-faint); font-weight:500;}
+  .kbd-help{display:block; margin-top:auto; padding:12px 6px 0; border-top:1px dashed var(--border); font-size:12.5px; line-height:1.8; color:var(--text-faint);}
+  .toast{bottom:32px;}
+  .mode-grid{gap:14px;} .mode-btn{padding:18px 20px;}
+  .screen > .btn-block, .screen .btn-col{max-width:440px;}
+  .stage{max-width:640px; align-self:flex-start; width:100%;}
+  .quizhead, .pbar{max-width:640px;}
+  .path{gap:30px;}
+  .node{width:76px; height:76px; font-size:28px;}
+  .ac-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .xlist{max-width:720px;}
+}
+@media (min-width:1024px) and (hover:none){ .kbd-help{display:none;} }
+@media (prefers-reduced-motion: reduce){
+  .node.is-current, .runbox.bump b, .medal-stage .medal.drop, .answer.shake{animation:none;}
+  .tiles .tile.affix.snap{animation:none !important;}
+  .toast, .pbar i{transition:none;}
+}
+
+/* progress by level */
+.colbars.lrs{gap:13px;}
+.lr{display:flex; flex-direction:column; gap:6px;}
+.lr-top{display:flex; align-items:center; gap:10px; min-width:0;}
+.lr-n{font-family:var(--f-display); font-weight:800; color:var(--text-faint); min-width:1.6em; font-variant-numeric:tabular-nums;}
+.lr-t{flex:1; min-width:0; font-size:14px; font-weight:600; overflow-wrap:anywhere;}
+.lr-medal{flex:0 0 auto; width:14px; height:14px; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);}
+.aff-details{display:flex; flex-direction:column; gap:10px;}
+.aff-details > summary{cursor:pointer; font-size:14px; font-weight:600; color:var(--text-dim); padding:6px 0;}
+.aff-details[open] > summary{margin-bottom:4px;}
+
+</style>
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="wordmark" role="img" aria-label="Afijomat"><span class="wm-a">afijo</span><span class="wm-b">mat</span></div>
+      <button class="soundbtn" id="muteBtn" type="button"></button>
+    </div>
+    <div class="daybadge" id="dayBadge"></div>
+  </header>
+  <main class="screen" id="screen"></main>
+  <nav class="tabbar" id="tabbar" aria-label="Secciones"></nav>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+"use strict";
+/* ================= DATA: everything comes from the two note sheets =================
+   Affixes (with every example word written on the sheets) and the exercises
+   (base word -> formed word) derived from those examples.
+   Words with no clear base word (village, parliament, complicate...) stay in the notes only. */
+var CLS = {n:"sustantivo", a:"adjetivo", v:"verbo", d:"adverbio"};
+
+/* id | label | kind | class of the result (suffixes) | meaning EN (sheet) | meaning ES | examples (* = no clear base) | note */
+var AFFIX_ROWS = [
+  /* ---- prefixes ---- */
+  ["anti","anti-","pre","","against / opposed to","en contra de","anti-government, anti-racist, anti-war, anti-clockwise",""],
+  ["auto","auto-","pre","","self","uno mismo","autobiography, automobile",""],
+  ["de","de-","pre","","reverse or change","invertir o cambiar","de-classify, decontaminate, demotivate",""],
+  ["dis","dis-","pre","","reverse or remove","invertir o quitar","disagree, displeasure, disqualify",""],
+  ["down","down-","pre","","reduce or lower","reducir o bajar","downgrade, downhearted*",""],
+  ["extra","extra-","pre","","beyond","más allá","extraordinary, extraterrestrial",""],
+  ["hyper","hyper-","pre","","extreme","extremo","hyperactive, hypertension",""],
+  ["in","il- / im- / in- / ir-","pre","","not","no","illegal, impossible, insecure, irregular","il- ante l · im- ante p · ir- ante r · in- en el resto (en tus ejemplos)"],
+  ["inter","inter-","pre","","between","entre","interactive, international",""],
+  ["mega","mega-","pre","","very big, important","muy grande, importante","megabyte, mega-deal, megaton",""],
+  ["mid","mid-","pre","","middle","medio","midday, midnight, mid-October",""],
+  ["mis","mis-","pre","","incorrectly, badly","incorrectamente, mal","misaligned, mislead, misspelt",""],
+  ["non","non-","pre","","not","no","non-payment, non-smoking",""],
+  ["over","over-","pre","","too much","demasiado","overcook, overcharge, overrate",""],
+  ["out","out-","pre","","go beyond","ir más allá, superar","outdo, out-perform, outrun",""],
+  ["post","post-","pre","","after","después","post-election, post-war",""],
+  ["pre","pre-","pre","","before","antes","prehistoric, pre-war",""],
+  ["pro","pro-","pre","","in favour of","a favor de","pro-communist, pro-democracy",""],
+  ["re","re-","pre","","again","otra vez","reconsider, redo, rewrite",""],
+  ["semi","semi-","pre","","half","medio, a medias","semicircle, semi-retired",""],
+  ["sub","sub-","pre","","under, below","bajo, debajo","submarine, sub-Saharan",""],
+  ["super","super-","pre","","above, beyond","por encima, más allá","super-hero, supermodel",""],
+  ["tele","tele-","pre","","at a distance","a distancia","television, telepathic*",""],
+  ["trans","trans-","pre","","across","a través","transatlantic, transfer*",""],
+  ["ultra","ultra-","pre","","extremely","extremadamente","ultra-compact, ultrasound",""],
+  ["un","un-","pre","","remove, reverse, not","quitar, invertir, no","undo, unpack, unhappy, unable",""],
+  ["under","under-","pre","","less than, beneath","menos que, debajo","undercook, underestimate",""],
+  ["up","up-","pre","","make or move higher","hacer o mover más alto","upgrade, uphill",""],
+  /* ---- noun suffixes (17) ---- */
+  ["n-age","-age","suf","n","","","baggage, village*, postage (franqueo)",""],
+  ["n-al","-al","suf","n","","","arrival, burial (funeral)",""],
+  ["n-ance","-ance / -ence","suf","n","","","reliance (confianza), defence, silence",""],
+  ["n-dom","-dom","suf","n","","","boredom, freedom (libertad), kingdom",""],
+  ["n-ee","-ee","suf","n","","","employee (empleado), payee (pagado), trainee (entrenado), refugee (refugiado)",""],
+  ["n-er","-er / -or","suf","n","","","employer, driver, writer, director",""],
+  ["n-hood","-hood","suf","n","","","brotherhood (hermandad), childhood, neighbourhood",""],
+  ["n-ism","-ism","suf","n","","","capitalism, Marxism, socialism","filosofías"],
+  ["n-ist","-ist","suf","n","","","capitalist, Marxist, socialist","seguidores"],
+  ["n-ity","-ity / -ty","suf","n","","","brutality, equality, cruelty",""],
+  ["n-ment","-ment","suf","n","","","amazement, disappointment, parliament*",""],
+  ["n-ness","-ness","suf","n","","","happiness, kindness, usefulness (muy útil)",""],
+  ["n-ry","-ry","suf","n","","","entry (entrada), ministry, robbery",""],
+  ["n-ship","-ship","suf","n","","","friendship, membership (membresía), championship",""],
+  ["n-tion","-sion / -tion / -xion","suf","n","","","expression, population, complexion",""],
+  ["n-ant","-ant / -ent","suf","n","","","student*, president, assistant, defendant (defensor), accountant (contable), deodorant*",""],
+  ["n-edge","-edge","suf","n","","","knowledge (conocimiento), acknowledge* (reconocimiento)",""],
+  /* ---- adjective suffixes (16) ---- */
+  ["a-ed","-ed","suf","a","","","bored, excited, embarrassed","ESTAR: el que lo siente"],
+  ["a-ing","-ing","suf","a","","","boring, exciting, embarrassing","SER: el que lo provoca"],
+  ["a-able","-able / -ible","suf","a","","","drinkable (bebible), portable*, flexible",""],
+  ["a-al","-al","suf","a","","","brutal, formal",""],
+  ["a-en","-en","suf","a","","","broken, golden, wooden (amaderado)",""],
+  ["a-ese","-ese","suf","a","","","Chinese, Japanese",""],
+  ["a-ful","-ful","suf","a","","","forgetful (olvidadizo), helpful (dispuesto), useful (útil)",""],
+  ["a-less","-less","suf","a","","","homeless (sin casa), hopeless (desesperanzado), useless (inútil)",""],
+  ["a-i","-i","suf","a","","","Iraqi, Pakistani, Yemeni",""],
+  ["a-ic","-ic","suf","a","","","classic, Islamic, poetic",""],
+  ["a-ish","-ish","suf","a","","","British, childish, Spanish, reddish (rojizo)",""],
+  ["a-ive","-ive","suf","a","","","active, passive, productive",""],
+  ["a-ian","-ian / -an","suf","a","","","Canadian, Malaysian, Peruvian",""],
+  ["a-ly","-ly","suf","a","","","daily, monthly, yearly",""],
+  ["a-ous","-ous","suf","a","","","cautious, famous",""],
+  ["a-y","-y","suf","a","","","cloudy, rainy, windy, scary",""],
+  /* ---- verb suffixes (4) ---- */
+  ["v-ate","-ate","suf","v","","","complicate*, dominate*, irritate*",""],
+  ["v-en","-en","suf","v","","","harden, soften, shorten",""],
+  ["v-ify","-ify","suf","v","","","beautify, clarify, identify",""],
+  ["v-ise","-ise / -ize","suf","v","","","economise, realise, industrialize","-ise: inglés británico · -ize: inglés americano"],
+  /* ---- adverb suffixes (3) ---- */
+  ["d-ly","-ly","suf","d","","","calmly, easily, quickly",""],
+  ["d-ward","-ward(s)","suf","d","","","downwards, homeward(s), upwards, backwards",""],
+  ["d-wise","-wise","suf","d","","","anti-clockwise, clockwise",""]
+];
+
+/* affix | base | formed word (as written in the notes) | class | Spanish translation | options
+   options: t=1 -> always show the translation; r=spelling note; acc=other accepted forms (/);
+            sp=how to split the word for display (stem|link|affix); near=wrong forms (word:message / ...) */
+var ITEM_LINES = [
+  /* ---- prefixes ---- */
+  "anti|government|anti-government|a|antigubernamental",
+  "anti|racist|anti-racist|a|antirracista",
+  "anti|war|anti-war|a|contrario a la guerra",
+  "anti|clockwise|anti-clockwise|d|en sentido contrario a las agujas del reloj",
+  "auto|biography|autobiography|n|autobiografía",
+  "auto|mobile|automobile|n|automóvil",
+  "de|classify|de-classify|v|desclasificar",
+  "de|contaminate|decontaminate|v|descontaminar",
+  "de|motivate|demotivate|v|desmotivar",
+  "dis|agree|disagree|v|no estar de acuerdo",
+  "dis|pleasure|displeasure|n|desagrado, disgusto",
+  "dis|qualify|disqualify|v|descalificar",
+  "down|grade|downgrade|v|bajar de categoría, degradar",
+  "extra|ordinary|extraordinary|a|extraordinario",
+  "extra|terrestrial|extraterrestrial|n|ser de otro planeta",
+  "hyper|active|hyperactive|a|hiperactivo",
+  "hyper|tension|hypertension|n|hipertensión",
+  "in|legal|illegal|a|ilegal",
+  "in|possible|impossible|a|imposible",
+  "in|secure|insecure|a|inseguro",
+  "in|regular|irregular|a|irregular",
+  "inter|active|interactive|a|interactivo",
+  "inter|national|international|a|internacional",
+  "mega|byte|megabyte|n|megabyte",
+  "mega|deal|mega-deal|n|un acuerdo enorme",
+  "mega|ton|megaton|n|megatón",
+  "mid|day|midday|n|mediodía",
+  "mid|night|midnight|n|medianoche",
+  "mid|October|mid-October|n|mediados de octubre",
+  "mis|aligned|misaligned|a|mal alineado",
+  "mis|lead|mislead|v|engañar, llevar por mal camino",
+  "mis|spelt|misspelt|a|mal escrito",
+  "non|payment|non-payment|n|impago",
+  "non|smoking|non-smoking|a|para no fumadores",
+  "over|cook|overcook|v|cocinar demasiado",
+  "over|charge|overcharge|v|cobrar de más",
+  "over|rate|overrate|v|sobrevalorar",
+  "out|do|outdo|v|superar a alguien",
+  "out|perform|out-perform|v|rendir más que otro",
+  "out|run|outrun|v|correr más que otro",
+  "post|election|post-election|a|posterior a las elecciones",
+  "post|war|post-war|a|de posguerra",
+  "pre|historic|prehistoric|a|prehistórico",
+  "pre|war|pre-war|a|de antes de la guerra",
+  "pro|communist|pro-communist|a|a favor del comunismo",
+  "pro|democracy|pro-democracy|a|a favor de la democracia",
+  "re|consider|reconsider|v|reconsiderar",
+  "re|do|redo|v|rehacer",
+  "re|write|rewrite|v|reescribir",
+  "semi|circle|semicircle|n|semicírculo",
+  "semi|retired|semi-retired|a|semijubilado",
+  "sub|marine|submarine|n|submarino",
+  "sub|Saharan|sub-Saharan|a|subsahariano",
+  "super|hero|super-hero|n|superhéroe",
+  "super|model|supermodel|n|supermodelo",
+  "tele|vision|television|n|televisión",
+  "trans|Atlantic|transatlantic|a|que cruza el Atlántico",
+  "ultra|compact|ultra-compact|a|ultracompacto",
+  "ultra|sound|ultrasound|n|ultrasonido, ecografía",
+  "un|able|unable|a|incapaz, que no puede",
+  "un|happy|unhappy|a|infeliz",
+  "un|do|undo|v|deshacer",
+  "un|pack|unpack|v|deshacer la maleta",
+  "under|cook|undercook|v|cocinar poco",
+  "under|estimate|underestimate|v|subestimar",
+  "up|grade|upgrade|v|mejorar de categoría",
+  "up|hill|uphill|a|cuesta arriba",
+  /* ---- noun suffixes ---- */
+  "n-age|bag|baggage|n|equipaje|r=se duplica la g;sp=bag|g|age",
+  "n-age|post|postage|n|franqueo (coste de enviar una carta)",
+  "n-al|arrive|arrival|n|llegada|r=se quita la e: arriv(e) + al",
+  "n-al|bury|burial|n|entierro|r=y → i: bur(y) + i + al;sp=bur|i|al",
+  "n-ance|rely|reliance|n|confianza|r=y → i: rel(y) + i + ance;sp=rel|i|ance",
+  "n-ance|defend|defence|n|defensa|t=1;r=defend → defence (la d final pasa a c);sp=defen|c|e;near=defense:Esa es la forma americana: en tus apuntes es defence",
+  "n-ance|silent|silence|n|silencio|r=silent → silence (-nt pasa a -nce);sp=silen|ce",
+  "n-dom|bore|boredom|n|aburrimiento (el nombre)|t=1",
+  "n-dom|free|freedom|n|libertad",
+  "n-dom|king|kingdom|n|reino",
+  "n-ee|employ|employee|n|persona empleada|t=1",
+  "n-ee|pay|payee|n|persona a la que se paga|t=1",
+  "n-ee|train|trainee|n|persona en formación|t=1",
+  "n-ee|refuge|refugee|n|refugiado|t=1;r=refuge + ee: la e final se junta;sp=refug|ee",
+  "n-er|employ|employer|n|el que da trabajo|t=1",
+  "n-er|drive|driver|n|conductor|t=1;r=ya acaba en e: solo se añade r;sp=driv|er",
+  "n-er|write|writer|n|escritor|t=1;r=ya acaba en e: solo se añade r;sp=writ|er",
+  "n-er|direct|director|n|director|t=1",
+  "n-hood|brother|brotherhood|n|hermandad",
+  "n-hood|child|childhood|n|infancia",
+  "n-hood|neighbour|neighbourhood|n|vecindario, barrio|near=neighborhood:Esa es la forma americana: en tus apuntes es neighbourhood",
+  "n-ism|capital|capitalism|n|capitalismo (la doctrina)|t=1",
+  "n-ism|Marx|Marxism|n|marxismo (la doctrina)|t=1",
+  "n-ism|social|socialism|n|socialismo (la doctrina)|t=1",
+  "n-ist|capital|capitalist|n|capitalista (el seguidor)|t=1",
+  "n-ist|Marx|Marxist|n|marxista (el seguidor)|t=1",
+  "n-ist|social|socialist|n|socialista (el seguidor)|t=1",
+  "n-ity|brutal|brutality|n|brutalidad",
+  "n-ity|equal|equality|n|igualdad",
+  "n-ity|cruel|cruelty|n|crueldad",
+  "n-ment|amaze|amazement|n|asombro|r=la e se mantiene: amaze + ment",
+  "n-ment|disappoint|disappointment|n|decepción",
+  "n-ness|happy|happiness|n|felicidad|r=y → i: happ(y) + i + ness;sp=happ|i|ness",
+  "n-ness|kind|kindness|n|amabilidad",
+  "n-ness|useful|usefulness|n|utilidad, cualidad de ser muy útil",
+  "n-ry|enter|entry|n|entrada|r=enter → entry (-er pasa a -ry);sp=ent|ry",
+  "n-ry|minister|ministry|n|ministerio|r=minister → ministry (-er pasa a -ry);sp=minist|ry",
+  "n-ry|rob|robbery|n|robo (el delito)|t=1;r=se duplica la b;sp=rob|b|ery",
+  "n-ship|friend|friendship|n|amistad",
+  "n-ship|member|membership|n|pertenencia, ser miembro",
+  "n-ship|champion|championship|n|campeonato",
+  "n-tion|express|expression|n|expresión|r=express + ion",
+  "n-tion|populate|population|n|población|r=se quita la e: populat(e) + ion;sp=populat|ion",
+  "n-tion|complex|complexion|n|tez, aspecto de la piel|t=1;sp=complex|ion",
+  "n-ant|preside|president|n|presidente|t=1;r=se quita la e: presid(e) + ent",
+  "n-ant|assist|assistant|n|ayudante|t=1",
+  "n-ant|defend|defendant|n|acusado, demandado|t=1",
+  "n-ant|account|accountant|n|contable|t=1",
+  "n-edge|know|knowledge|n|conocimiento|r=know + ledge;sp=know|ledge",
+  /* ---- adjective suffixes ---- */
+  "a-ed|bore|bored|a|aburrido (ESTAR: el que lo siente)|t=1;r=la e se mantiene: bore + d;sp=bore|d",
+  "a-ed|excite|excited|a|emocionado (ESTAR: el que lo siente)|t=1;r=la e se mantiene: excite + d;sp=excite|d",
+  "a-ed|embarrass|embarrassed|a|avergonzado (ESTAR: el que lo siente)|t=1",
+  "a-ing|bore|boring|a|aburrido (SER: el que lo provoca)|t=1;r=se quita la e: bor(e) + ing",
+  "a-ing|excite|exciting|a|emocionante (SER: el que lo provoca)|t=1;r=se quita la e: excit(e) + ing",
+  "a-ing|embarrass|embarrassing|a|vergonzoso (SER: el que lo provoca)|t=1",
+  "a-able|drink|drinkable|a|bebible, potable",
+  "a-able|flex|flexible|a|flexible",
+  "a-al|brute|brutal|a|brutal|r=se quita la e: brut(e) + al",
+  "a-al|form|formal|a|formal",
+  "a-en|break|broken|a|roto|r=forma irregular: break → broken;sp=brok|en",
+  "a-en|gold|golden|a|dorado",
+  "a-en|wood|wooden|a|de madera",
+  "a-ese|China|Chinese|a|chino|r=se quita la a: Chin(a) + ese",
+  "a-ese|Japan|Japanese|a|japonés",
+  "a-ful|forget|forgetful|a|olvidadizo",
+  "a-ful|help|helpful|a|servicial, que ayuda|t=1",
+  "a-ful|use|useful|a|útil|t=1;r=la e se mantiene: use + ful",
+  "a-less|home|homeless|a|sin hogar",
+  "a-less|hope|hopeless|a|sin esperanza|r=la e se mantiene: hope + less",
+  "a-less|use|useless|a|inútil|t=1;r=la e se mantiene: use + less",
+  "a-i|Iraq|Iraqi|a|iraquí",
+  "a-i|Pakistan|Pakistani|a|pakistaní",
+  "a-i|Yemen|Yemeni|a|yemení",
+  "a-ic|class|classic|a|clásico",
+  "a-ic|Islam|Islamic|a|islámico",
+  "a-ic|poet|poetic|a|poético",
+  "a-ish|Britain|British|a|británico|r=Britain → British (cambia el final);sp=Brit|ish",
+  "a-ish|child|childish|a|infantil, de niño",
+  "a-ish|Spain|Spanish|a|español|r=Spain → Spanish (cambia el final);sp=Span|ish",
+  "a-ish|red|reddish|a|rojizo|r=se duplica la d;sp=red|d|ish",
+  "a-ive|act|active|a|activo",
+  "a-ive|pass|passive|a|pasivo",
+  "a-ive|product|productive|a|productivo",
+  "a-ian|Canada|Canadian|a|canadiense|r=se quita la a: Canad(a) + ian",
+  "a-ian|Malaysia|Malaysian|a|malasio|r=solo se añade n: Malaysia + n;sp=Malaysi|an",
+  "a-ian|Peru|Peruvian|a|peruano|r=Peru → Peruvian (se añade -v-);sp=Peruv|ian",
+  "a-ly|day|daily|a|diario|r=y → i: da(y) + i + ly;sp=da|i|ly",
+  "a-ly|month|monthly|a|mensual",
+  "a-ly|year|yearly|a|anual",
+  "a-ous|caution|cautious|a|cauteloso, prudente|r=se quita -on: cauti + ous;sp=cauti|ous",
+  "a-ous|fame|famous|a|famoso|r=se quita la e: fam(e) + ous",
+  "a-y|cloud|cloudy|a|nublado",
+  "a-y|rain|rainy|a|lluvioso",
+  "a-y|wind|windy|a|ventoso",
+  "a-y|scare|scary|a|que da miedo|r=se quita la e: scar(e) + y",
+  /* ---- verb suffixes ---- */
+  "v-en|hard|harden|v|endurecer",
+  "v-en|soft|soften|v|ablandar",
+  "v-en|short|shorten|v|acortar",
+  "v-ify|beauty|beautify|v|embellecer|r=la y se pierde: beaut(y) + ify;sp=beaut|ify",
+  "v-ify|clear|clarify|v|aclarar|r=clear → clarify (cambia la raíz);sp=clar|ify",
+  "v-ify|identity|identify|v|identificar|r=identity → identify (-ity pasa a -ify);sp=ident|ify",
+  "v-ise|economy|economise|v|economizar, ahorrar|acc=economize;r=la y se pierde: econom(y) + ise (-ize en inglés americano);sp=econom|ise",
+  "v-ise|real|realise|v|darse cuenta, realizar|acc=realize;r=-ise (británico) o -ize (americano);sp=real|ise",
+  "v-ise|industrial|industrialize|v|industrializar|acc=industrialise;r=-ise (británico) o -ize (americano);sp=industrial|ize",
+  /* ---- adverb suffixes ---- */
+  "d-ly|calm|calmly|d|con calma",
+  "d-ly|easy|easily|d|fácilmente|r=y → i: eas(y) + i + ly;sp=eas|i|ly",
+  "d-ly|quick|quickly|d|rápidamente",
+  "d-ward|down|downwards|d|hacia abajo|acc=downward",
+  "d-ward|home|homewards|d|hacia casa|acc=homeward",
+  "d-ward|up|upwards|d|hacia arriba|acc=upward",
+  "d-ward|back|backwards|d|hacia atrás|acc=backward",
+  "d-wise|clock|clockwise|d|en el sentido de las agujas del reloj"
+];
+
+/* ---- levels: grouped by meaning (prefixes) or by word class (suffixes) ---- */
+var UNITS = [
+  {title:"Prefijos", sub:"al principio de la palabra", kind:"pre"},
+  {title:"Sufijos de sustantivo", sub:"al final · forman sustantivos", kind:"suf"},
+  {title:"Sufijos de adjetivo", sub:"al final · forman adjetivos", kind:"suf"},
+  {title:"Verbos y adverbios", sub:"al final · forman verbos y adverbios", kind:"suf"}
+];
+var LEVEL_ROWS = [
+  [0,"Negar",["un","in","non"],"Estos tres prefijos significan «no» o invierten la palabra: un-, in- y non-. Con in-, mira la letra siguiente: il- ante l, im- ante p, ir- ante r."],
+  [0,"Deshacer y hacerlo mal",["dis","de","mis"],"dis- y de- invierten o quitan (agree → disagree). mis- significa «mal» o «de forma incorrecta»."],
+  [0,"Tiempo y repetición",["pre","post","mid","re"],"pre- = antes · post- = después · mid- = en medio · re- = otra vez."],
+  [0,"Demasiado, poco, a medias",["over","under","semi"],"over- = demasiado · under- = menos de lo debido · semi- = a medias."],
+  [0,"Enorme y extremo",["hyper","mega","ultra","super"],"hyper- y ultra- = extremo · mega- = muy grande · super- = por encima."],
+  [0,"Arriba, abajo, fuera",["up","down","out","sub"],"up- = más alto · down- = más bajo · out- = ir más allá, superar · sub- = debajo."],
+  [0,"Entre y a través",["trans","inter","extra","tele"],"trans- = a través · inter- = entre · extra- = más allá · tele- = a distancia."],
+  [0,"A favor, en contra, uno mismo",["pro","anti","auto"],"pro- = a favor · anti- = en contra · auto- = uno mismo."],
+  [1,"Quién lo hace, quién lo recibe",["n-er","n-ee"],"-er / -or = quien hace la acción (employer). -ee = quien la recibe (employee)."],
+  [1,"Profesiones e ideas",["n-ant","n-ism","n-ist"],"-ant / -ent forma personas (assistant). -ism es la doctrina y -ist su seguidor: capitalism → capitalist."],
+  [1,"Estados y grupos",["n-dom","n-hood","n-ship"],"-dom, -hood y -ship forman estados, etapas o grupos: freedom, childhood, friendship."],
+  [1,"Cualidades y cosas",["n-ness","n-ity","n-age","n-ry"],"-ness y -ity / -ty convierten adjetivos en cualidades (happy → happiness). -age y -ry forman cosas o actividades."],
+  [1,"De verbo a sustantivo",["n-al","n-ance","n-ment","n-tion","n-edge"],"Estos sufijos suelen convertir un verbo en sustantivo: arrive → arrival, amaze → amazement."],
+  [2,"Sentir o provocar",["a-ed","a-ing"],"-ed describe cómo se siente alguien (ESTAR). -ing describe lo que lo provoca (SER): bored / boring."],
+  [2,"Con, sin y capaz de",["a-ful","a-less","a-able","a-y"],"-ful = con · -less = sin · -able / -ible = que se puede · -y = con mucho de (cloudy)."],
+  [2,"Países y nacionalidades",["a-ese","a-i","a-ian","a-ish"],"-ese, -i, -ian / -an y -ish forman nacionalidades. Pero -ish también es «algo así» (reddish) o «como un niño» (childish)."],
+  [2,"Materiales y estilos",["a-en","a-ic","a-al"],"-en indica material (golden, wooden). -ic y -al forman adjetivos de tipo o estilo."],
+  [2,"Carácter y frecuencia",["a-ive","a-ous","a-ly"],"-ive y -ous describen el carácter. -ly con palabras de tiempo da la frecuencia: daily, monthly, yearly."],
+  [3,"Crear verbos",["v-en","v-ify","v-ise"],"-en, -ify y -ise / -ize convierten adjetivos y sustantivos en verbos: hard → harden, beauty → beautify."],
+  [3,"Crear adverbios",["d-ly","d-ward","d-wise"],"-ly dice cómo · -ward(s) dice hacia dónde · -wise = en el sentido de."]
+];
+
+/* ---- build the structures ---- */
+function normW(s){
+  return String(s == null ? "" : s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[\s\-'’._]/g,"");
+}
+var AFFIXES = [], AFF = {};
+AFFIX_ROWS.forEach(function(r){
+  var ex = r[6].split(/,\s*(?![^(]*\))/).map(function(w){
+    var m = w.trim().match(/^([^\s*(]+)(\*?)\s*(?:\((.*)\))?$/);
+    if(!m) return {w:w.trim(), nobase:false, gloss:""};
+    var o = {w:m[1], nobase:!!m[2], gloss:m[3] || ""};
+    if(o.gloss === "s"){ o.w += "(s)"; o.gloss = ""; }
+    return o;
+  });
+  var a = {id:r[0], label:r[1], kind:r[2], cls:r[3], en:r[4], es:r[5], ex:ex, note:r[7], items:[]};
+  AFFIXES.push(a); AFF[a.id] = a;
+});
+
+var ITEMS = [], ITEM = {};
+ITEM_LINES.forEach(function(line){
+  var p = line.split("|");
+  var aff = AFF[p[0]];
+  if(!aff) throw new Error("Unknown affix in line: " + line);
+  var rest = p.slice(5).join("|");
+  var opt = {};
+  if(rest){
+    rest.split(";").forEach(function(kv){
+      var i = kv.indexOf("=");
+      if(i > 0) opt[kv.slice(0, i).trim()] = kv.slice(i + 1).trim();
+    });
+  }
+  var it = {
+    id: normW(p[1]) + ">" + normW(p[2]),
+    aff: aff.id, kind: aff.kind, base: p[1], ans: p[2], cls: p[3], tr: p[4],
+    needTr: aff.kind === "pre" || opt.t === "1",
+    rule: opt.r || "", sp: opt.sp || "",
+    accepted: [normW(p[2])],
+    near: {}
+  };
+  if(opt.acc) opt.acc.split("/").forEach(function(a){ it.accepted.push(normW(a)); });
+  if(opt.near){
+    opt.near.split("/").forEach(function(kv){
+      var i = kv.indexOf(":");
+      if(i > 0) it.near[normW(kv.slice(0, i))] = kv.slice(i + 1).trim();
+    });
+  }
+  if(ITEM[it.id]) throw new Error("Duplicate item: " + it.id);
+  ITEMS.push(it); ITEM[it.id] = it; aff.items.push(it.id);
+});
+
+var LEVELS = LEVEL_ROWS.map(function(r, i){
+  var ids = [];
+  r[2].forEach(function(aid){
+    if(!AFF[aid]) throw new Error("Unknown affix in level: " + aid);
+    ids = ids.concat(AFF[aid].items);
+  });
+  return {i:i, unit:r[0], title:r[1], affs:r[2], rule:r[3], ids:ids};
+});
+var LEVEL_OF_AFF = {};
+LEVELS.forEach(function(L){ L.affs.forEach(function(a){ LEVEL_OF_AFF[a] = L.i; }); });
+
+var DATA = {CLS:CLS, AFFIXES:AFFIXES, AFF:AFF, ITEMS:ITEMS, ITEM:ITEM, LEVELS:LEVELS, UNITS:UNITS, LEVEL_OF_AFF:LEVEL_OF_AFF, normW:normW};
+if(typeof module !== "undefined" && module.exports) module.exports = DATA;
+
+/* ================= CORE: grading, splitting words for display, spaced repetition ================= */
+function lev(a, b){
+  var m = a.length, n = b.length, i, j, prev = [], cur = [];
+  for(j = 0; j <= n; j++) prev[j] = j;
+  for(i = 1; i <= m; i++){
+    cur = [i];
+    for(j = 1; j <= n; j++){
+      cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + (a.charAt(i-1) === b.charAt(j-1) ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+/* typed answer vs item. Hyphens, spaces and capitals do not matter ("pre-war" = "prewar"). */
+function grade(item, typed){
+  var t = normW(typed);
+  if(!t) return {ok:false, why:"empty", msg:""};
+  if(item.accepted.indexOf(t) >= 0) return {ok:true, why:"ok", msg:""};
+  if(item.near[t]) return {ok:false, why:"variant", msg:item.near[t]};
+  if(t === normW(item.base)) return {ok:false, why:"base", msg:"Has repetido la palabra base. Falta añadir el prefijo o el sufijo."};
+  var best = 99;
+  item.accepted.forEach(function(a){ best = Math.min(best, lev(t, a)); });
+  if(best <= 2 && t.length >= 4) return {ok:false, why:"spelling", msg:"Muy cerca: revisa la ortografía."};
+  if(t.indexOf(normW(item.base)) >= 0) return {ok:false, why:"affix", msg:"Tienes bien la base, pero el prefijo o sufijo no es el que se pide."};
+  return {ok:false, why:"wrong", msg:""};
+}
+
+/* how to draw the formed word as tiles: stem + (link letters) + affix */
+function splitParts(item){
+  var ans = item.ans, pre = item.kind === "pre", stem = "", link = "", affix = "";
+  if(item.sp){
+    var p = item.sp.split("|");
+    if(p.length === 2){ stem = p[0]; affix = p[1]; }
+    else if(p.length === 3){ stem = p[0]; link = p[1]; affix = p[2]; }
+  }
+  if(!stem && !affix){
+    if(pre){
+      var idx = ans.toLowerCase().lastIndexOf(item.base.toLowerCase());
+      if(idx > 0 && idx + item.base.length === ans.length){ affix = ans.slice(0, idx); stem = ans.slice(idx); }
+    } else {
+      var a = ans.toLowerCase(), b = item.base.toLowerCase(), k = 0;
+      while(k < a.length && k < b.length && a.charAt(k) === b.charAt(k)) k++;
+      if(k > 0 && k < a.length){ stem = ans.slice(0, k); affix = ans.slice(k); }
+    }
+  }
+  if(!stem && !affix){ stem = ans; }
+  /* the join between tiles replaces the hyphen */
+  if(pre) affix = affix.replace(/-+$/, "");
+  stem = stem.replace(/^-+/, "");
+  return {pre:pre, stem:stem, link:link, affix:affix};
+}
+
+/* ---------- spaced repetition (Leitner boxes) ---------- */
+var BOX_WAIT = [0, 5*60e3, 3600e3, 86400e3, 3*86400e3, 7*86400e3];
+function newStat(){ return {seen:0, ok:0, ko:0, hint:0, box:0, due:0, streak:0, last:-1}; }
+function applyResult(stat, ok, hinted, now){
+  stat.seen++;
+  if(ok){
+    stat.ok++;
+    if(hinted){ stat.hint++; }
+    else { stat.streak++; stat.box = Math.min(5, stat.box + 1); }
+  } else {
+    stat.ko++; stat.streak = 0; stat.box = 0;
+  }
+  stat.last = ok ? 1 : 0;
+  stat.due = now + BOX_WAIT[stat.box];
+  return stat;
+}
+function isMastered(stat){ return !!stat && stat.streak >= 3; }
+function shuffleArr(a){ for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+/* "Repaso inteligente": what is due first, then what you fail, then what you never saw */
+function pickSmart(items, stats, n, now){
+  var scored = items.map(function(it){
+    var s = stats[it.id], p;
+    if(!s || !s.seen) p = 40 + Math.random() * 10;
+    else if(s.due <= now) p = 100 + (5 - s.box) * 10 + Math.min(s.ko, 5) * 3 + Math.random() * 6;
+    else p = Math.random() * 10;
+    return {it:it, p:p};
+  });
+  scored.sort(function(a, b){ return b.p - a.p; });
+  return shuffleArr(scored.slice(0, n).map(function(x){ return x.it; }));
+}
+
+function tierFor(ok, n, hinted){
+  if(ok >= n && !hinted) return 3;
+  if(ok >= Math.ceil(n * 0.8 - 1e-9)) return 2;
+  if(ok >= Math.ceil(n * 0.6 - 1e-9)) return 1;
+  return 0;
+}
+
+var CORE = {lev:lev, grade:grade, splitParts:splitParts, BOX_WAIT:BOX_WAIT, newStat:newStat, applyResult:applyResult,
+            isMastered:isMastered, pickSmart:pickSmart, tierFor:tierFor, shuffleArr:shuffleArr};
+
+/* ================= APP ================= */
+var KEY = "afijomat_v1";
+var TABS = [["map","Mapa"],["practice","Practicar"],["exam","Examen"],["notes","Apuntes"],["progress","Progreso"]];
+var TIER_CLASS = {1:"m-bronze", 2:"m-silver", 3:"m-gold"};
+var TIER_NAME = {1:"bronce", 2:"plata", 3:"oro"};
+var CLS_PLURAL = {n:"sustantivos", a:"adjetivos", v:"verbos", d:"adverbios"};
+var SCOPE_NAME = {all:"Todo", pre:"Solo prefijos", suf:"Solo sufijos"};
+
+/* ---------- state ---------- */
+function defaultState(){
+  return {v:1, muted:false, trMode:"auto", daily:{count:0, last:null}, bestRun:0, stats:{}, levels:{}, tricks:{}, exams:[]};
+}
+var state = defaultState();
+var storageOK = (function(){
+  try{ var k = "__afijomat_t"; localStorage.setItem(k, "1"); var ok = localStorage.getItem(k) === "1"; localStorage.removeItem(k); return ok; }
+  catch(e){ return false; }
+})();
+function migrate(o){
+  var s = defaultState();
+  if(!o || typeof o !== "object") return s;
+  if(typeof o.muted === "boolean") s.muted = o.muted;
+  if(o.trMode === "always") s.trMode = "always";
+  if(o.daily && typeof o.daily === "object") s.daily = {count:o.daily.count|0, last:typeof o.daily.last === "string" ? o.daily.last : null};
+  s.bestRun = o.bestRun|0;
+  if(o.stats && typeof o.stats === "object"){
+    Object.keys(o.stats).forEach(function(id){
+      if(!ITEM[id]) return;
+      var x = o.stats[id] || {};
+      s.stats[id] = {seen:x.seen|0, ok:x.ok|0, ko:x.ko|0, hint:x.hint|0, box:Math.max(0, Math.min(5, x.box|0)), due:+x.due || 0, streak:x.streak|0, last:(x.last === 0 || x.last === 1) ? x.last : -1};
+    });
+  }
+  if(o.levels && typeof o.levels === "object"){
+    Object.keys(o.levels).forEach(function(k){
+      var i = Number(k); if(!(i >= 0 && i < LEVELS.length)) return;
+      var x = o.levels[k] || {};
+      s.levels[i] = {best:Math.max(0, Math.min(3, x.best|0)), plays:x.plays|0};
+    });
+  }
+  if(o.tricks && typeof o.tricks === "object"){
+    Object.keys(o.tricks).forEach(function(id){ if(AFF[id] && typeof o.tricks[id] === "string" && o.tricks[id].trim()) s.tricks[id] = o.tricks[id]; });
+  }
+  if(Array.isArray(o.exams)){
+    s.exams = o.exams.slice(0, 10).filter(function(e){ return e && typeof e === "object"; }).map(function(e){
+      return {t:+e.t || 0, n:e.n|0, ok:e.ok|0, scope:SCOPE_NAME[e.scope] ? e.scope : "all"};
+    });
+  }
+  return s;
+}
+function load(){
+  if(!storageOK) return;
+  try{ var raw = localStorage.getItem(KEY); if(raw) state = migrate(JSON.parse(raw)); }catch(e){}
+}
+function save(){
+  if(!storageOK) return;
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+}
+
+/* ---------- sound (synthesized, no audio files) ---------- */
+var AC = null;
+function ac(){
+  if(AC === null){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = false; } }
+  if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
+  return AC || null;
+}
+function tone(c, freq, t0, dur, o){
+  o = o || {};
+  var osc = c.createOscillator(), gain = c.createGain();
+  osc.type = o.type || "square";
+  osc.frequency.setValueAtTime(freq, t0);
+  if(o.slideTo) osc.frequency.exponentialRampToValueAtTime(o.slideTo, t0 + dur);
+  var peak = o.vol == null ? 0.14 : o.vol;
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + Math.min(0.012, dur * 0.3));
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain); gain.connect(c.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.03);
+}
+function playSnap(run){
+  if(state.muted) return;
+  var c = ac(); if(!c) return;
+  var t = c.currentTime, base = 520 + Math.min(run, 8) * 30;
+  tone(c, 1400, t, 0.03, {type:"square", vol:.09});
+  tone(c, base, t + 0.04, 0.09, {type:"square", vol:.12});
+  tone(c, base * 1.5, t + 0.1, 0.12, {type:"square", vol:.09});
+  if(run > 0 && run % 5 === 0){ [0, 1, 2].forEach(function(i){ tone(c, base * 1.5 + i * 150, t + 0.2 + i * 0.08, 0.13, {type:"triangle", vol:.11}); }); }
+}
+function playWrong(){
+  if(state.muted) return;
+  var c = ac(); if(!c) return;
+  tone(c, 190, c.currentTime, 0.17, {type:"sawtooth", vol:.08, slideTo:105});
+}
+function playRecord(){
+  if(state.muted) return;
+  var c = ac(); if(!c) return;
+  var t = c.currentTime;
+  [523.25, 659.25, 783.99, 1046.50].forEach(function(f, i){ tone(c, f, t + i * 0.09, 0.16, {type:"square", vol:.12}); });
+}
+var MEDAL_SEQ = {1:[392.00, 523.25], 2:[392.00, 523.25, 659.25], 3:[392.00, 523.25, 659.25, 783.99, 1046.50]};
+function playMedal(tier){
+  if(state.muted || !tier) return;
+  var c = ac(); if(!c) return;
+  var t = c.currentTime, seq = MEDAL_SEQ[tier];
+  seq.forEach(function(f, i){ tone(c, f, t + i * 0.1, 0.22, {type:"triangle", vol:.14}); });
+  if(tier === 3) tone(c, 1318.51, t + seq.length * 0.1 + 0.04, 0.36, {type:"triangle", vol:.13});
+}
+var ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17.2 8.8a5 5 0 0 1 0 6.4"/><path d="M19.8 6.2a9 9 0 0 1 0 11.6"/></svg>';
+var ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9.5l5.5 5"/><path d="M22 9.5l-5.5 5"/></svg>';
+var ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+
+/* ---------- helpers ---------- */
+function $(sel, root){ return (root || document).querySelector(sel); }
+function $$(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function ymd(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function todayStr(){ return ymd(new Date()); }
+function addDays(s, n){ var d = new Date(s + "T00:00:00"); d.setDate(d.getDate() + n); return ymd(d); }
+function pct(a, b){ return b ? Math.round(a / b * 100) : 0; }
+function plural(n, one, many){ return n === 1 ? one : many; }
+function scrollTop(){ try{ window.scrollTo(0, 0); }catch(e){} }
+var MONTHS = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+function fmtDate(t){ var d = new Date(t); return d.getDate() + " " + MONTHS[d.getMonth()]; }
+var CLS_SHORT = {n:"sust.", a:"adj.", v:"verbo", d:"adv."};
+function affTag(a){
+  return '<span class="tile affix ' + a.kind + ' xs">' + esc(a.label) + '</span>' + (a.kind === "suf" ? '<small class="ctag">' + CLS_SHORT[a.cls] + '</small>' : "");
+}
+function fmtNota(ok, n){ return (Math.round(ok / n * 100) / 10).toString().replace(".", ","); }
+function statOf(id){ return state.stats[id] || null; }
+function dotClass(s){ if(!s || !s.seen) return "d-none"; if(s.streak >= 3) return "d-ok"; if(s.streak >= 1) return "d-mid"; return "d-bad"; }
+function masteredCount(list){ return (list || ITEMS).filter(function(it){ return isMastered(statOf(it.id)); }).length; }
+function bumpDaily(){
+  var t = todayStr();
+  if(state.daily.last === t) return;
+  state.daily.count = state.daily.last === addDays(t, -1) ? state.daily.count + 1 : 1;
+  state.daily.last = t;
+}
+function levelRec(i){ return state.levels[i] || {best:0, plays:0}; }
+function needsTr(it){ return it.needTr || state.trMode === "always"; }
+function trick(affId){ return (state.tricks[affId] || "").trim(); }
+var toastTimer = null;
+function toast(msg){
+  var t = $("#toast"); if(!t) return;
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+function armConfirm(btn, label, armedLabel, fn){
+  var armed = false, tm = null;
+  btn.textContent = label;
+  btn.addEventListener("click", function(){
+    if(!armed){ armed = true; btn.textContent = armedLabel; btn.classList.add("danger"); tm = setTimeout(function(){ armed = false; btn.textContent = label; btn.classList.remove("danger"); }, 4000); return; }
+    clearTimeout(tm); fn();
+  });
+}
+function copyText(text, done){
+  function fallback(){
+    var ta = $("#exportText");
+    if(ta){ ta.focus(); ta.select(); try{ document.execCommand("copy"); done(true); return; }catch(e){} }
+    done(false);
+  }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){ done(true); }, fallback); }
+    else fallback();
+  }catch(e){ fallback(); }
+}
+
+/* ---------- tiles (the memorable bit: affix snaps onto the stem) ---------- */
+function tilesHTML(P, anim){
+  var n = (P.stem + P.link + P.affix).length;
+  var stemInner = esc(P.stem) + (P.link ? '<i class="lk">' + esc(P.link) + '</i>' : "");
+  var stem = '<span class="tile stem">' + stemInner + '</span>';
+  var aff = '<span class="tile affix ' + (P.pre ? "pre" : "suf") + (anim ? " snap" : "") + '">' + esc(P.affix) + '</span>';
+  return '<div class="tiles' + (P.pre ? " is-pre" : " is-suf") + '" style="--n:' + n + '">' + (P.pre ? aff + stem : stem + aff) + '</div>';
+}
+function baseTileHTML(it){
+  return '<div class="tiles single" style="--n:' + it.base.length + '"><span class="tile stem">' + esc(it.base) + '</span></div>';
+}
+function chipsHTML(it, withReveal, shown){
+  var out = '<span class="chip cls">' + CLS[it.cls] + '</span>';
+  if(needsTr(it) || shown) out += '<span class="chip tr">«' + esc(it.tr) + '»</span>';
+  else if(withReveal) out += '<button type="button" class="chip btnchip" data-act="reveal">Ver traducción</button>';
+  return out;
+}
+
+/* ---------- UI state ---------- */
+var ui = {tab:"map", screen:"map", level:0, sess:null, sum:null, exam:null, notesKind:"pre", notesQ:"", cfg:{scope:"all", n:15}, xcfg:{scope:"all", n:20}};
+var $screen = null;
+
+function renderShell(){
+  var tabs = TABS.map(function(t, i){
+    return '<button type="button" class="tab' + (ui.tab === t[0] ? " active" : "") + '" data-tab="' + t[0] + '" aria-current="' + (ui.tab === t[0] ? "page" : "false") + '"><span>' + t[1] + '</span><span class="k" aria-hidden="true">' + (i + 1) + '</span></button>';
+  }).join("");
+  $("#tabbar").innerHTML = tabs + '<div class="kbd-help">1–5 cambian de sección<br>Enter comprueba y sigue<br>Esc sale del ejercicio</div>';
+  var done = state.daily.last === todayStr();
+  $("#dayBadge").className = "daybadge" + (done ? "" : " pending");
+  $("#dayBadge").innerHTML = (state.daily.count ? 'racha <b>' + state.daily.count + '</b> ' + plural(state.daily.count, "día", "días") : 'sin racha') + (done ? "" : ' · hoy sin estudiar');
+  updateMuteBtn();
+}
+function updateMuteBtn(){
+  var b = $("#muteBtn"); if(!b) return;
+  b.innerHTML = state.muted ? ICON_OFF : ICON_ON;
+  b.setAttribute("aria-label", state.muted ? "Sonido desactivado, activar" : "Sonido activado, desactivar");
+  b.setAttribute("aria-pressed", state.muted ? "true" : "false");
+}
+function go(tab){
+  ui.tab = tab; ui.screen = tab; ui.sess = null; render();
+}
+function render(){
+  renderShell();
+  var f = SCREENS[ui.screen] || SCREENS.map;
+  f();
+  scrollTop();
+}
+
+/* ================= MAP ================= */
+function nextLevelIndex(){
+  for(var i = 0; i < LEVELS.length; i++) if(!levelRec(i).best) return i;
+  for(var j = 0; j < LEVELS.length; j++) if(levelRec(j).best < 3) return j;
+  return -1;
+}
+function medalsCount(){ var n = 0; LEVELS.forEach(function(L){ if(levelRec(L.i).best) n++; }); return n; }
+var OFFS = [0, 38, 58, 38, 0, -38, -58, -38];
+function screenMap(){
+  var m = masteredCount(), nx = nextLevelIndex();
+  var html = '<div class="hero"><div class="eyebrow">Prefijos y sufijos · 1.º Bachillerato</div>' +
+    '<h1 class="h2">Forma la palabra con el prefijo o el sufijo que toca</h1>' +
+    '<p class="intro">Te damos la palabra base y la pista (clase de palabra o traducción). Tú escribes la palabra completa. Cada nivel agrupa afijos que se parecen.</p></div>';
+  html += '<div class="stat-strip">' +
+    '<div class="stat"><span class="n">' + m + '<small>/' + ITEMS.length + '</small></span><span class="l">ejercicios dominados</span></div>' +
+    '<div class="stat"><span class="n">' + medalsCount() + '<small>/' + LEVELS.length + '</small></span><span class="l">niveles con medalla</span></div>' +
+    '<div class="stat"><span class="n">' + state.daily.count + '</span><span class="l">' + plural(state.daily.count, "día seguido", "días seguidos") + '</span></div>' +
+    '<div class="stat"><span class="n">' + state.bestRun + '</span><span class="l">récord de racha</span></div></div>';
+  if(nx >= 0){
+    var L = LEVELS[nx], started = levelRec(nx).plays > 0;
+    html += '<button type="button" class="last-card" data-act="lv" data-lv="' + nx + '"><span class="lc-main">' + (started ? "Sigue con" : "Empieza por") + ' el nivel <b>' + (nx + 1) + '</b>: ' + esc(L.title) + '</span><span class="lc-link">Abrir nivel</span></button>';
+  } else {
+    html += '<div class="route-done">Los 20 niveles están en oro. Repasa con «Practicar» para que no se te olviden.</div>';
+  }
+  UNITS.forEach(function(U, ui_){
+    var lv = LEVELS.filter(function(L){ return L.unit === ui_; });
+    var got = lv.filter(function(L){ return levelRec(L.i).best; }).length;
+    html += '<section class="unit"><div class="unit-band ' + U.kind + '"><div><div class="u-t">' + U.title + '</div><div class="u-s">' + U.sub + '</div></div><div class="u-c">' + got + '/' + lv.length + '</div></div><div class="path">';
+    lv.forEach(function(L, k){
+      var rec = levelRec(L.i), cur = L.i === nx;
+      var cls = rec.best ? "medal " + TIER_CLASS[rec.best] : (cur ? "is-current" : "plain");
+      html += '<div class="node-wrap' + (cur ? " has-bubble" : "") + '" style="--x:' + OFFS[k % OFFS.length] + 'px">' +
+        (cur ? '<span class="bubble">' + (rec.plays ? "SIGUE" : "EMPIEZA") + '</span>' : "") +
+        '<button type="button" class="node ' + U.kind + " " + cls + '" data-act="lv" data-lv="' + L.i + '" aria-label="Nivel ' + (L.i + 1) + ", " + esc(L.title) + (rec.best ? ", medalla de " + TIER_NAME[rec.best] : "") + '">' + (L.i + 1) + '</button>' +
+        '<span class="node-label">' + esc(L.title) + '</span><span class="node-sub">' + L.ids.length + ' ejercicios</span></div>';
+    });
+    html += '</div></section>';
+  });
+  $screen.innerHTML = html;
+}
+
+/* ================= LEVEL INTRO ================= */
+function screenIntro(){
+  var L = LEVELS[ui.level], rec = levelRec(L.i), n = L.ids.length;
+  var need = function(r){ return Math.ceil(n * r - 1e-9); };
+  var html = '<div class="lv-intro"><div class="lv-badge ' + (rec.best ? "medal " + TIER_CLASS[rec.best] : "plain") + '">' + (L.i + 1) + '</div><div><div class="eyebrow">' + UNITS[L.unit].title + '</div><h1 class="h2">' + esc(L.title) + '</h1>' +
+    '<p class="rule">' + esc(L.rule) + '</p></div></div>';
+  html += '<div class="aff-list">' + L.affs.map(function(aid){
+    var a = AFF[aid];
+    return '<div class="aff-row"><span class="tile affix ' + a.kind + ' sm">' + esc(a.label) + '</span><span class="aff-ex">' +
+      a.ex.map(function(e){ return '<span class="' + (e.nobase ? "nb" : "") + '">' + esc(e.w) + '</span>'; }).join(" · ") + '</span></div>';
+  }).join("") + '</div>';
+  html += '<div class="btn-col"><button type="button" class="btn btn-primary btn-block" data-act="start-level" data-lv="' + L.i + '">' + (rec.plays ? "Jugar otra vez" : "Empezar") + ' · ' + n + ' ejercicios</button>' +
+    '<button type="button" class="btn btn-ghost btn-block" data-act="to-map">Volver al mapa</button></div>';
+  html += '<div class="thresholds">Bronce: ' + need(.6) + ' o más aciertos · Plata: ' + need(.8) + ' o más · Oro: ' + n + ' de ' + n + ' sin usar pistas</div>';
+  $screen.innerHTML = html;
+}
+
+/* ================= SESSIONS (map levels, smart review, redo) ================= */
+function scopeItems(scope){ return scope === "all" ? ITEMS : ITEMS.filter(function(it){ return it.kind === scope; }); }
+function startSession(o){
+  var items = o.items.slice();
+  if(!items.length) return;
+  ui.sess = {kind:o.kind, title:o.title, level:o.level == null ? null : o.level, back:o.back || "map", items:items, idx:0, res:[], run:0, maxRun:0, checked:false, shown:false, truco:false};
+  ui.screen = "quiz";
+  render();
+}
+function screenQuiz(){
+  var s = ui.sess, it = s.items[s.idx];
+  var p = (s.idx / s.items.length * 100).toFixed(1);
+  var html = '<div class="quizhead"><button type="button" class="linkbtn" data-act="quit" aria-label="Salir del ejercicio">‹ Salir</button>' +
+    '<span class="qtitle">' + esc(s.title) + ' · <b>' + (s.idx + 1) + '</b>/' + s.items.length + '</span>' +
+    '<span class="runbox' + (s.run >= 10 ? " hot" : "") + '" id="runbox">racha <b id="runN">' + s.run + '</b> · récord ' + state.bestRun + '</span></div>' +
+    '<div class="pbar" aria-hidden="true"><i style="width:' + p + '%"></i></div>' +
+    '<div class="stage" id="stage">' +
+      '<div class="ask">Escribe la palabra formada</div>' +
+      '<div id="tileBox">' + baseTileHTML(it) + '</div>' +
+      '<div class="chips" id="chips">' + chipsHTML(it, true, false) + (trick(it.aff) ? '<button type="button" class="chip btnchip" data-act="truco">Mi truco</button>' : "") + '</div>' +
+      '<div class="trickshow" id="trickShow" hidden>' + esc(trick(it.aff)) + '</div>' +
+      '<input type="text" id="ans" class="answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="30" placeholder="escribe aquí" aria-label="Palabra formada a partir de ' + esc(it.base) + '">' +
+      '<div id="fb" class="fb" hidden></div>' +
+      '<button type="button" class="btn btn-primary" id="qBtn" data-act="check">Comprobar</button>' +
+    '</div>';
+  $screen.innerHTML = html;
+  setTimeout(function(){ var a = $("#ans"); if(a) a.focus(); }, 30);
+}
+function fbHTML(it, g, typed){
+  var P = splitParts(it), A = AFF[it.aff], ok = g.ok;
+  var head = ok ? "Correcto" : (g.why === "spelling" ? "Casi" : "No era esa");
+  var line = it.kind === "pre"
+    ? 'Prefijo <span class="tile affix pre xs">' + esc(A.label) + '</span> significa <em>' + esc(A.es) + '</em> <small>(' + esc(A.en) + ')</small>'
+    : 'Sufijo <span class="tile affix suf xs">' + esc(A.label) + '</span> forma ' + CLS_PLURAL[A.cls] + (A.note ? ' <small>(' + esc(A.note) + ')</small>' : "");
+  var h = '<div class="fb-head ' + (ok ? "good" : "bad") + '">' + head + '</div>' + tilesHTML(P, true) + '<div class="fb-aff">' + line + '</div>';
+  if(!ok){
+    h += '<div class="fb-yours">Tú escribiste: <s>' + esc(typed.trim()) + '</s>' + (g.msg ? ' <span class="fb-msg">' + esc(g.msg) + '</span>' : "") + '</div>';
+  }
+  if(it.ans.indexOf("-") >= 0) h += '<div class="fb-form">En tus apuntes se escribe <b>' + esc(it.ans) + '</b> (con o sin guion vale)</div>';
+  if(it.rule) h += '<div class="fb-rule"><b>Ortografía</b> ' + esc(it.rule) + '</div>';
+  var tk = trick(it.aff);
+  if(tk) h += '<div class="fb-truco"><b>Tu truco</b> ' + esc(tk) + '</div>';
+  return h;
+}
+function recordResult(it, ok, hinted){
+  var st = state.stats[it.id] || (state.stats[it.id] = newStat());
+  applyResult(st, ok, hinted, Date.now());
+}
+function checkAnswer(){
+  var s = ui.sess; if(!s) return;
+  if(s.checked){ nextQuestion(); return; }
+  var inp = $("#ans"), typed = inp.value, it = s.items[s.idx];
+  if(!typed.trim()){ inp.classList.remove("shake"); void inp.offsetWidth; inp.classList.add("shake"); inp.focus(); return; }
+  var g = grade(it, typed), hinted = s.shown;
+  s.checked = true;
+  recordResult(it, g.ok, hinted);
+  s.res.push({id:it.id, ok:g.ok, typed:typed.trim(), hinted:hinted, why:g.why});
+  var record = false;
+  if(g.ok){
+    s.run++; if(s.run > s.maxRun) s.maxRun = s.run;
+    if(s.run > state.bestRun){ state.bestRun = s.run; record = s.run > 3; }
+  } else { s.run = 0; }
+  bumpDaily(); save();
+  inp.readOnly = true; inp.classList.add(g.ok ? "ok" : "ko");
+  $("#tileBox").innerHTML = "";
+  var fb = $("#fb"); fb.innerHTML = fbHTML(it, g, typed); fb.hidden = false; fb.className = "fb " + (g.ok ? "ok" : "ko");
+  $("#chips").hidden = true; $("#trickShow").hidden = true; $(".ask").hidden = true;
+  var rb = $("#runbox"); $("#runN").textContent = s.run;
+  rb.classList.toggle("hot", s.run >= 10);
+  if(g.ok){ rb.classList.remove("bump"); void rb.offsetWidth; rb.classList.add("bump"); }
+  var btn = $("#qBtn"); btn.dataset.act = "next";
+  btn.textContent = s.idx + 1 >= s.items.length ? "Ver resultado" : "Siguiente";
+  if(g.ok){ playSnap(s.run); if(record) setTimeout(playRecord, 330); } else playWrong();
+  btn.focus({preventScroll:true});
+  setTimeout(function(){ try{ fb.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){} }, 60);
+}
+function nextQuestion(){
+  var s = ui.sess; if(!s) return;
+  s.idx++; s.checked = false; s.shown = false;
+  if(s.idx >= s.items.length){ finishSession(); return; }
+  screenQuiz();
+}
+function finishSession(){
+  var s = ui.sess;
+  var ok = s.res.filter(function(r){ return r.ok; }).length, n = s.res.length;
+  var hinted = s.res.some(function(r){ return r.hinted; });
+  var tier = tierFor(ok, n, hinted), newTier = 0;
+  if(s.kind === "level"){
+    var rec = state.levels[s.level] || (state.levels[s.level] = {best:0, plays:0});
+    rec.plays++;
+    if(tier > rec.best){ rec.best = tier; newTier = tier; }
+  }
+  save();
+  var failed = s.res.filter(function(r){ return !r.ok; });
+  var byAff = {};
+  s.res.forEach(function(r){ var a = ITEM[r.id].aff; var x = byAff[a] || (byAff[a] = {aff:a, wrong:0, total:0}); x.total++; if(!r.ok) x.wrong++; });
+  var affFail = Object.keys(byAff).map(function(k){ return byAff[k]; }).filter(function(x){ return x.wrong > 0; }).sort(function(a, b){ return b.wrong / b.total - a.wrong / a.total || b.wrong - a.wrong; });
+  ui.sum = {kind:s.kind, title:s.title, level:s.level, back:s.back, n:n, ok:ok, hinted:s.res.filter(function(r){ return r.hinted; }).length, maxRun:s.maxRun, tier:tier, newTier:newTier, failed:failed, affFail:affFail};
+  ui.sess = null; ui.screen = "summary";
+  render();
+  if(newTier) setTimeout(function(){ playMedal(newTier); }, 300);
+}
+function screenSummary(){
+  var S = ui.sum, p = pct(S.ok, S.n);
+  var html = '<div class="sum-hero"><div class="eyebrow">' + esc(S.title) + '</div><div class="sum-score">' + S.ok + '<small>/' + S.n + '</small></div><div class="pct-chip">' + p + ' %</div></div>';
+  if(S.kind === "level"){
+    if(S.tier){
+      html += '<div class="medal-stage"><div class="hole"></div><div class="medal ' + TIER_CLASS[S.tier] + (S.newTier ? " drop" : "") + '">' + (S.level + 1) + '</div></div>' +
+        '<p class="note">' + (S.newTier ? "Nueva medalla de " : "Medalla de ") + '<b>' + TIER_NAME[S.tier] + '</b>' + (S.tier < 3 ? '. Para el oro: todo bien y sin pistas.' : '. Nivel perfecto.') + '</p>';
+    } else {
+      html += '<p class="note">Sin medalla todavía: la de bronce empieza en el 60 %. Vuelve a intentarlo.</p>';
+    }
+  }
+  html += '<div class="kpis"><div class="stat"><span class="n">' + S.ok + '</span><span class="l">aciertos</span></div><div class="stat"><span class="n">' + S.maxRun + '</span><span class="l">mejor racha</span></div><div class="stat"><span class="n">' + S.hinted + '</span><span class="l">pistas usadas</span></div></div>';
+  if(!S.failed.length){
+    html += '<div class="perfect-note">Ni un fallo. Así se aprende.</div>';
+  } else {
+    if(S.affFail.length){
+      html += '<div class="section-h">Dónde fallas<small>por prefijo o sufijo</small></div><div class="colbars">' + S.affFail.slice(0, 6).map(function(x, i){
+        var a = AFF[x.aff];
+        return '<div class="cb-row' + (i === 0 ? " worst" : "") + '"><span class="cb-label">' + affTag(a) + '</span><span class="cb-track"><i style="width:' + pct(x.wrong, x.total) + '%"></i></span><span class="cb-val">' + x.wrong + '<small>/' + x.total + '</small></span></div>';
+      }).join("") + '</div>';
+    }
+    html += '<div class="section-h">Palabras falladas<small>' + S.failed.length + '</small></div><div class="fail-list">' + S.failed.map(function(r){
+      var it = ITEM[r.id];
+      return '<div class="fail-item"><span class="fi-base">' + esc(it.base) + '</span><span class="fi-arrow">→</span><b class="fi-ans">' + esc(it.ans) + '</b><span class="fi-yours">' + (r.typed ? '<s>' + esc(r.typed) + '</s>' : "") + '</span></div>';
+    }).join("") + '</div>';
+  }
+  html += '<div class="btn-col">';
+  if(S.failed.length) html += '<button type="button" class="btn btn-primary btn-block" data-act="redo">Repetir las ' + S.failed.length + ' falladas</button>';
+  if(S.kind === "level" && S.level + 1 < LEVELS.length) html += '<button type="button" class="btn ' + (S.failed.length ? "btn-ghost" : "btn-primary") + ' btn-block" data-act="lv" data-lv="' + (S.level + 1) + '">Siguiente nivel</button>';
+  if(S.kind === "level") html += '<button type="button" class="btn btn-ghost btn-block" data-act="start-level" data-lv="' + S.level + '">Jugar este nivel otra vez</button>';
+  html += '<button type="button" class="btn btn-ghost btn-block" data-act="back">' + (S.back === "practice" ? "Volver a Practicar" : "Volver al mapa") + '</button></div>';
+  $screen.innerHTML = html;
+}
+
+/* ================= PRACTICE ================= */
+function failedItems(scope){
+  return scopeItems(scope).filter(function(it){ var s = statOf(it.id); return s && s.seen && (s.last === 0 || (s.ko > 0 && s.streak < 2)); })
+    .sort(function(a, b){ return statOf(b.id).ko - statOf(a.id).ko; });
+}
+function dueCount(scope){ var now = Date.now(); return scopeItems(scope).filter(function(it){ var s = statOf(it.id); return !s || !s.seen || s.due <= now; }).length; }
+function segHTML(name, opts, cur){
+  return '<div class="seg" role="radiogroup">' + opts.map(function(o){
+    return '<button type="button" role="radio" aria-checked="' + (String(o[0]) === String(cur)) + '" class="' + (String(o[0]) === String(cur) ? "active" : "") + '" data-seg="' + name + '" data-val="' + o[0] + '">' + o[1] + '</button>';
+  }).join("") + '</div>';
+}
+function screenPractice(){
+  var c = ui.cfg, fails = failedItems(c.scope), due = dueCount(c.scope);
+  var html = '<div class="hero"><div class="eyebrow">Repaso inteligente</div><h1 class="h2">Practica lo que más te falta</h1>' +
+    '<p class="intro">Primero salen las palabras que tocan repasar y las que has fallado, y después las que aún no has visto. Cuanto más aciertas una, más tarde vuelve. Si usas «Ver traducción», esa palabra no cuenta para dominarla.</p></div>' +
+    '<div class="box"><div class="h">Qué quieres practicar</div>' + segHTML("scope", [["all","Todo"],["pre","Prefijos"],["suf","Sufijos"]], c.scope) +
+    '<div class="h" style="margin-top:6px">Cuántas palabras</div>' + segHTML("n", [[10,"10"],[15,"15"],[25,"25"]], c.n) + '</div>' +
+    '<div class="mode-grid"><button type="button" class="mode-btn" data-act="start-smart"><div class="mb-top"><span class="tag">Recomendado</span><span class="badge">' + due + ' por repasar</span></div><div class="title">Repaso inteligente</div><div class="desc">Mezcla lo pendiente, lo fallado y lo nuevo. ' + c.n + ' palabras.</div></button>' +
+    '<button type="button" class="mode-btn' + (fails.length ? "" : " off") + '" data-act="start-fails"' + (fails.length ? "" : " disabled") + '><div class="mb-top"><span class="tag">Tus fallos</span><span class="badge">' + fails.length + '</span></div><div class="title">Solo las que fallo</div><div class="desc">' + (fails.length ? "Las palabras en las que más fallas, hasta " + Math.min(c.n, fails.length) + " a la vez." : "Aún no has fallado ninguna. Practica un poco y aparecerán aquí.") + '</div></button></div>';
+  $screen.innerHTML = html;
+}
+
+/* ================= EXAM (a worksheet, like the real one) ================= */
+function screenExam(){
+  var c = ui.xcfg, last = state.exams[0];
+  var html = '<div class="hero"><div class="eyebrow">Simulacro</div><h1 class="h2">Examen en hoja</h1>' +
+    '<p class="intro">Una hoja con todos los ejercicios a la vez, como en el examen. Rellénalos y corrige al final. Solo ves la traducción cuando la clase de palabra no basta' + (state.trMode === "always" ? " (ahora la tienes siempre activada en Ajustes)" : "") + '.</p></div>' +
+    '<div class="box"><div class="h">Qué entra</div>' + segHTML("xscope", [["all","Todo"],["pre","Prefijos"],["suf","Sufijos"]], c.scope) +
+    '<div class="h" style="margin-top:6px">Cuántos ejercicios</div>' + segHTML("xn", [[10,"10"],[20,"20"],[30,"30"]], c.n) + '</div>' +
+    '<button type="button" class="btn btn-primary btn-block" data-act="start-exam">Empezar examen</button>';
+  if(last) html += '<div class="note">Último examen: ' + last.ok + '/' + last.n + ' · nota ' + fmtNota(last.ok, last.n) + ' · ' + fmtDate(last.t) + '</div>';
+  $screen.innerHTML = html;
+}
+function buildExam(){
+  var c = ui.xcfg, pool = shuffleArr(scopeItems(c.scope).slice()).slice(0, c.n);
+  ui.exam = {items:pool, answers:pool.map(function(){ return ""; }), graded:false, results:null, scope:c.scope};
+  ui.screen = "examSheet"; ui.tab = "exam"; render();
+}
+function examRowHTML(i){
+  var X = ui.exam, it = X.items[i], r = X.results ? X.results[i] : null;
+  var inp = '<input type="text" class="xin' + (r ? (r.ok ? " ok" : " ko") : "") + '" id="xin-' + i + '" data-i="' + i + '" value="' + esc(X.answers[i]) + '" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="30"' + (X.graded ? " readonly" : "") + ' aria-label="Palabra formada a partir de ' + esc(it.base) + '">';
+  var chips = '<span class="chip cls">' + CLS[it.cls] + '</span>' + (needsTr(it) ? '<span class="chip tr">«' + esc(it.tr) + '»</span>' : "");
+  var fb = "";
+  if(r){
+    fb = r.ok ? '<div class="xfb good">Correcto</div>' : '<div class="xfb bad">Era <b>' + esc(it.ans) + '</b>' + (r.msg ? ' · ' + esc(r.msg) : "") + '</div>';
+  }
+  return '<li class="xrow' + (r ? (r.ok ? " is-ok" : " is-ko") : "") + '"><span class="xn">' + (i + 1) + '</span><div class="xbody"><div class="xmain"><span class="tile stem sm">' + esc(it.base) + '</span><span class="xarrow" aria-hidden="true">→</span>' + inp + '</div><div class="chips">' + chips + '</div>' + fb + '</div></li>';
+}
+function screenExamSheet(){
+  var X = ui.exam, html = '';
+  if(X.graded){
+    var ok = X.results.filter(function(r){ return r.ok; }).length, n = X.items.length;
+    html += '<div class="sum-hero"><div class="eyebrow">Examen corregido</div><div class="sum-score">' + ok + '<small>/' + n + '</small></div><div class="pct-chip">nota ' + fmtNota(ok, n) + ' sobre 10</div></div>';
+    var failed = X.items.filter(function(it, i){ return !X.results[i].ok; });
+    var byAff = {};
+    X.items.forEach(function(it, i){ var x = byAff[it.aff] || (byAff[it.aff] = {aff:it.aff, wrong:0, total:0}); x.total++; if(!X.results[i].ok) x.wrong++; });
+    var af = Object.keys(byAff).map(function(k){ return byAff[k]; }).filter(function(x){ return x.wrong; }).sort(function(a, b){ return b.wrong - a.wrong; }).slice(0, 5);
+    if(af.length) html += '<div class="section-h">Repasa estos afijos</div><div class="colbars">' + af.map(function(x){ var a = AFF[x.aff]; return '<div class="cb-row"><span class="cb-label">' + affTag(a) + '</span><span class="cb-track"><i style="width:' + pct(x.wrong, x.total) + '%"></i></span><span class="cb-val">' + x.wrong + '<small>/' + x.total + '</small></span></div>'; }).join("") + '</div>';
+    html += '<div class="btn-col">' + (failed.length ? '<button type="button" class="btn btn-primary btn-block" data-act="exam-redo">Practicar las ' + failed.length + ' falladas</button>' : '<div class="perfect-note">Examen perfecto.</div>') +
+      '<button type="button" class="btn btn-ghost btn-block" data-act="exam-new">Otro examen</button></div>';
+  } else {
+    html += '<div class="quizhead"><button type="button" class="linkbtn" data-act="exam-quit">‹ Salir</button><span class="qtitle">Examen · ' + X.items.length + ' ejercicios</span><span class="runbox" id="xcount">0/' + X.items.length + '</span></div>' +
+      '<p class="intro">Escribe cada palabra formada. Enter pasa a la siguiente casilla, y borrar en una casilla vacía vuelve a la anterior.</p>';
+  }
+  html += '<ol class="xlist">' + X.items.map(function(_, i){ return examRowHTML(i); }).join("") + '</ol>';
+  if(!X.graded) html += '<button type="button" class="btn btn-primary btn-block" id="gradeBtn" data-act="grade-exam">Corregir examen</button>';
+  $screen.innerHTML = html;
+  if(!X.graded){ var f = $("#xin-0"); if(f) f.focus({preventScroll:true}); }
+}
+function gradeExam(){
+  var X = ui.exam;
+  X.answers = X.items.map(function(_, i){ var e = $("#xin-" + i); return e ? e.value : X.answers[i]; });
+  X.results = X.items.map(function(it, i){
+    var g = grade(it, X.answers[i]);
+    recordResult(it, g.ok, false);
+    return {ok:g.ok, msg:g.why === "empty" ? "" : g.msg};
+  });
+  X.graded = true;
+  var ok = X.results.filter(function(r){ return r.ok; }).length;
+  state.exams.unshift({t:Date.now(), n:X.items.length, ok:ok, scope:X.scope});
+  state.exams = state.exams.slice(0, 10);
+  bumpDaily(); save();
+  render();
+  setTimeout(function(){ if(ok === X.items.length) playMedal(3); else if(ok / X.items.length >= .6) playMedal(1); }, 250);
+}
+
+/* ================= NOTES (the sheets + your own tricks) ================= */
+function norm2(s){ return normW(s); }
+function affixMatches(a, q){
+  if(!q) return true;
+  var n = norm2(q);
+  if(norm2(a.label).indexOf(n) >= 0 || norm2(a.en).indexOf(n) >= 0 || norm2(a.es).indexOf(n) >= 0) return true;
+  return a.ex.some(function(e){ return norm2(e.w).indexOf(n) >= 0 || norm2(e.gloss).indexOf(n) >= 0; });
+}
+function affixCardHTML(a){
+  var st = a.items.map(function(id){ return statOf(id); });
+  var m = st.filter(isMastered).length;
+  var meaning = a.kind === "pre" ? '<div class="ac-mean"><b>' + esc(a.en) + '</b> · ' + esc(a.es) + '</div>' : (a.note ? '<div class="ac-mean">' + esc(a.note) + '</div>' : "");
+  return '<article class="affix-card" id="aff-' + a.id + '"><header><span class="tile affix ' + a.kind + ' sm">' + esc(a.label) + '</span>' +
+    (a.items.length ? '<span class="ac-prog">' + m + '/' + a.items.length + ' dominadas</span>' : '<span class="ac-prog">solo apuntes</span>') + '</header>' + meaning +
+    '<ul class="ac-ex">' + a.ex.map(function(e){ return '<li class="' + (e.nobase ? "nb" : "") + '">' + esc(e.w) + (e.gloss ? ' <small>' + esc(e.gloss) + '</small>' : "") + '</li>'; }).join("") + '</ul>' +
+    '<label class="ac-trick"><span>Tu truco</span><textarea data-trick="' + a.id + '" id="trick-' + a.id + '" rows="1" placeholder="Escribe aquí cómo te acuerdas de este afijo">' + esc(state.tricks[a.id] || "") + '</textarea></label></article>';
+}
+function notesListHTML(){
+  var q = ui.notesQ.trim(), searching = !!q;
+  var list = AFFIXES.filter(function(a){ return (searching || a.kind === ui.notesKind) && affixMatches(a, q); });
+  if(!list.length) return '<div class="empty"><p>No hay ningún afijo ni palabra que coincida con «' + esc(q) + '».</p></div>';
+  var out = "";
+  var pre = list.filter(function(a){ return a.kind === "pre"; });
+  if(pre.length) out += (searching ? '<div class="section-h">Prefijos<small>' + pre.length + '</small></div>' : "") + '<div class="ac-grid">' + pre.map(affixCardHTML).join("") + '</div>';
+  ["n","a","v","d"].forEach(function(c){
+    var g = list.filter(function(a){ return a.kind === "suf" && a.cls === c; });
+    if(!g.length) return;
+    var total = AFFIXES.filter(function(a){ return a.kind === "suf" && a.cls === c; }).length;
+    out += '<div class="section-h">Sufijos de ' + CLS_PLURAL[c].replace(/s$/, "") + '<small>' + total + ' en tus apuntes</small></div><div class="ac-grid">' + g.map(affixCardHTML).join("") + '</div>';
+  });
+  return out;
+}
+function screenNotes(){
+  var html = '<div class="hero"><div class="eyebrow">Tus hojas</div><h1 class="h2">Apuntes de prefijos y sufijos</h1>' +
+    '<p class="intro">' + (ui.notesKind === "pre" ? "Los prefijos son letras que se añaden al principio de una palabra para formar otra con un significado distinto." : "Un sufijo es una letra o grupo de letras que se añade al final de una palabra y forma una palabra nueva, casi siempre de otra clase.") + ' Las palabras subrayadas no tienen una base clara y no salen en los ejercicios.</p></div>' +
+    segHTML("nk", [["pre","Prefijos (28)"],["suf","Sufijos (40)"]], ui.notesKind) +
+    '<div class="searchbox" role="search">' + ICON_SEARCH + '<input type="search" id="notesQ" placeholder="Busca un afijo, una palabra o un significado" autocomplete="off" aria-label="Buscar en los apuntes" value="' + esc(ui.notesQ) + '"></div>' +
+    '<div id="notesList">' + notesListHTML() + '</div>';
+  $screen.innerHTML = html;
+  $$("textarea[data-trick]").forEach(autoGrow);
+}
+function autoGrow(t){ t.style.height = "auto"; t.style.height = Math.max(40, t.scrollHeight) + "px"; }
+var trickTimer = null;
+function onTrickInput(t){
+  var id = t.dataset.trick, v = t.value;
+  if(v.trim()) state.tricks[id] = v; else delete state.tricks[id];
+  autoGrow(t);
+  clearTimeout(trickTimer);
+  trickTimer = setTimeout(function(){ save(); toast("Truco guardado"); }, 450);
+}
+
+/* ================= PROGRESS ================= */
+function screenProgress(){
+  var seen = ITEMS.filter(function(it){ return statOf(it.id) && statOf(it.id).seen; }).length;
+  var ok = 0, tot = 0; Object.keys(state.stats).forEach(function(k){ ok += state.stats[k].ok; tot += state.stats[k].seen; });
+  var rows = AFFIXES.filter(function(a){ return a.items.length; }).map(function(a){
+    var st = a.items.map(statOf), m = st.filter(isMastered).length, sn = st.filter(function(s){ return s && s.seen; }).length;
+    var o = 0, t = 0; st.forEach(function(s){ if(s){ o += s.ok; t += s.seen; } });
+    return {a:a, m:m, n:a.items.length, seen:sn, acc:t ? o / t : -1};
+  });
+  rows.sort(function(x, y){ return (x.m / x.n) - (y.m / y.n) || x.a.label.localeCompare(y.a.label); });
+  function affRow(r){
+    return '<div class="pr-row"><span class="pr-label">' + affTag(r.a) + '</span><span class="pr-track"><i class="' + (r.m === r.n ? "full" : "") + '" style="width:' + pct(r.m, r.n) + '%"></i></span><span class="pr-val">' + r.m + '<small>/' + r.n + '</small></span></div>';
+  }
+  var lvRows = LEVELS.map(function(L){
+    var m = masteredCount(L.ids.map(function(id){ return ITEM[id]; })), rec = levelRec(L.i);
+    return '<div class="lr"><div class="lr-top"><span class="lr-n">' + (L.i + 1) + '</span><span class="lr-t">' + esc(L.title) + '</span>' + (rec.best ? '<span class="lr-medal ' + TIER_CLASS[rec.best] + '" title="Medalla de ' + TIER_NAME[rec.best] + '"></span>' : "") + '<span class="pr-val">' + m + '<small>/' + L.ids.length + '</small></span></div><div class="pr-track"><i class="' + (m === L.ids.length ? "full" : "") + '" style="width:' + pct(m, L.ids.length) + '%"></i></div></div>';
+  }).join("");
+  var html = '<div class="hero"><div class="eyebrow">Tu progreso</div><h1 class="h2">Qué tienes dominado y qué no</h1></div>' +
+    '<div class="stat-strip"><div class="stat"><span class="n">' + masteredCount() + '<small>/' + ITEMS.length + '</small></span><span class="l">dominados (3 aciertos seguidos)</span></div>' +
+    '<div class="stat"><span class="n">' + seen + '<small>/' + ITEMS.length + '</small></span><span class="l">vistos alguna vez</span></div>' +
+    '<div class="stat"><span class="n">' + (tot ? pct(ok, tot) : 0) + '<small> %</small></span><span class="l">aciertos en total</span></div>' +
+    '<div class="stat"><span class="n">' + state.bestRun + '</span><span class="l">récord de racha</span></div></div>';
+  html += '<div class="section-h">Por nivel<small>ejercicios dominados</small></div><div class="colbars lrs">' + lvRows + '</div>';
+  html += '<details class="aff-details"><summary>Ver el detalle por afijo</summary>' +
+    '<div class="section-h">Prefijos<small>de menos a más dominado</small></div><div class="colbars prog">' + rows.filter(function(r){ return r.a.kind === "pre"; }).map(affRow).join("") + '</div>' +
+    '<div class="section-h">Sufijos<small>de menos a más dominado</small></div><div class="colbars prog">' + rows.filter(function(r){ return r.a.kind === "suf"; }).map(affRow).join("") + '</div></details>';
+  var worst = ITEMS.filter(function(it){ var s = statOf(it.id); return s && s.ko > 0; }).sort(function(a, b){ return statOf(b.id).ko - statOf(a.id).ko; }).slice(0, 8);
+  if(worst.length){
+    html += '<div class="section-h">Las que más fallas</div><div class="fail-list">' + worst.map(function(it){ return '<div class="fail-item"><span class="fi-base">' + esc(it.base) + '</span><span class="fi-arrow">→</span><b class="fi-ans">' + esc(it.ans) + '</b><span class="fi-yours">' + statOf(it.id).ko + ' ' + plural(statOf(it.id).ko, "fallo", "fallos") + '</span></div>'; }).join("") + '</div>';
+  }
+  if(state.exams.length){
+    html += '<div class="section-h">Exámenes<small>los últimos ' + state.exams.length + '</small></div><div class="fail-list">' + state.exams.map(function(e){ return '<div class="fail-item"><span class="fi-base">' + fmtDate(e.t) + '</span><span class="fi-arrow">·</span><b class="fi-ans">' + e.ok + '/' + e.n + '</b><span class="fi-yours">nota ' + fmtNota(e.ok, e.n) + ' · ' + SCOPE_NAME[e.scope].toLowerCase() + '</span></div>'; }).join("") + '</div>';
+  }
+  html += '<div class="section-h">Ajustes</div><div class="box"><div class="h">Traducción en las pistas</div>' + segHTML("tr", [["auto","Solo cuando hace falta"],["always","Siempre"]], state.trMode) +
+    '<p class="small dim">«Solo cuando hace falta» deja la clase de palabra como pista normal y añade la traducción donde la clase no basta (por ejemplo employee y employer).</p></div>';
+  html += '<div class="section-h">Copia de seguridad</div>' +
+    (storageOK ? "" : '<div class="warn">Este navegador no deja guardar datos de la página. Copia tu código al terminar para no perder el progreso.</div>') +
+    '<p class="small dim">Tu progreso se guarda en este navegador. Para pasarlo a otro dispositivo, copia el código aquí y pégalo allí.</p>' +
+    '<div class="sync-row"><button type="button" class="btn btn-ghost" data-act="export">Copiar código de progreso</button><button type="button" class="btn btn-ghost" data-act="import-open">Restaurar desde un código</button></div>' +
+    '<div class="box" id="exportBox" hidden></div><div class="box" id="importBox" hidden></div>' +
+    '<button type="button" class="linkbtn faintlink" id="resetBtn"></button>';
+  $screen.innerHTML = html;
+  armConfirm($("#resetBtn"), "Restablecer progreso (tus trucos se conservan)", "¿Seguro? Toca otra vez para borrar estadísticas y medallas", function(){
+    var keep = state.tricks, mu = state.muted, tm = state.trMode;
+    state = defaultState(); state.tricks = keep; state.muted = mu; state.trMode = tm; save(); render();
+  });
+}
+function exportCode(){
+  try{ return btoa(unescape(encodeURIComponent(JSON.stringify(state)))); }catch(e){ return ""; }
+}
+function importFromCode(code){
+  try{
+    var obj = JSON.parse(decodeURIComponent(escape(atob(code.replace(/\s+/g, "")))));
+    if(!obj || typeof obj !== "object") return false;
+    var inc = migrate(obj);
+    Object.keys(state.tricks).forEach(function(id){ if(!inc.tricks[id]) inc.tricks[id] = state.tricks[id]; });
+    state = inc; save(); return true;
+  }catch(e){ return false; }
+}
+
+/* ================= EVENTS ================= */
+var SCREENS = {map:screenMap, intro:screenIntro, quiz:screenQuiz, summary:screenSummary, practice:screenPractice, exam:screenExam, examSheet:screenExamSheet, notes:screenNotes, progress:screenProgress};
+
+function onClick(e){
+  ac();
+  var tab = e.target.closest("[data-tab]");
+  if(tab){ go(tab.dataset.tab); return; }
+  var seg = e.target.closest("[data-seg]");
+  if(seg){
+    var k = seg.dataset.seg, v = seg.dataset.val;
+    if(k === "scope") ui.cfg.scope = v; else if(k === "n") ui.cfg.n = Number(v);
+    else if(k === "xscope") ui.xcfg.scope = v; else if(k === "xn") ui.xcfg.n = Number(v);
+    else if(k === "nk"){ ui.notesKind = v; ui.notesQ = ""; }
+    else if(k === "tr"){ state.trMode = v; save(); }
+    render(); return;
+  }
+  var el = e.target.closest("[data-act]"); if(!el) return;
+  var act = el.dataset.act;
+  if(act === "lv"){ ui.level = Number(el.dataset.lv); ui.screen = "intro"; ui.tab = "map"; render(); }
+  else if(act === "to-map"){ go("map"); }
+  else if(act === "start-level"){
+    var L = LEVELS[Number(el.dataset.lv)];
+    ui.tab = "map";
+    startSession({kind:"level", title:"Nivel " + (L.i + 1), level:L.i, back:"map", items:shuffleArr(L.ids.map(function(id){ return ITEM[id]; }))});
+  }
+  else if(act === "start-smart"){
+    ui.tab = "practice";
+    startSession({kind:"smart", title:"Repaso", back:"practice", items:pickSmart(scopeItems(ui.cfg.scope), state.stats, ui.cfg.n, Date.now())});
+  }
+  else if(act === "start-fails"){
+    ui.tab = "practice";
+    startSession({kind:"fails", title:"Fallos", back:"practice", items:shuffleArr(failedItems(ui.cfg.scope).slice(0, ui.cfg.n))});
+  }
+  else if(act === "check" || act === "next"){ checkAnswer(); }
+  else if(act === "reveal"){ if(ui.sess){ ui.sess.shown = true; var it = ui.sess.items[ui.sess.idx]; $("#chips").innerHTML = chipsHTML(it, false, true) + (trick(it.aff) ? '<button type="button" class="chip btnchip" data-act="truco">Mi truco</button>' : ""); var a = $("#ans"); if(a) a.focus(); } }
+  else if(act === "truco"){ var ts = $("#trickShow"); if(ts) ts.hidden = !ts.hidden; var a2 = $("#ans"); if(a2) a2.focus(); }
+  else if(act === "quit" || act === "back"){
+    var to = ui.sess ? ui.sess.back : (ui.sum ? ui.sum.back : "map");
+    ui.sess = null; ui.tab = to === "practice" ? "practice" : "map"; ui.screen = ui.tab; render();
+  }
+  else if(act === "redo"){
+    var S = ui.sum;
+    startSession({kind:"redo", title:"Repaso de fallos", back:S.back, level:null, items:shuffleArr(S.failed.map(function(r){ return ITEM[r.id]; }))});
+  }
+  else if(act === "start-exam"){ buildExam(); }
+  else if(act === "exam-quit"){ ui.exam = null; go("exam"); }
+  else if(act === "exam-new"){ ui.exam = null; go("exam"); }
+  else if(act === "grade-exam"){ gradeExam(); }
+  else if(act === "exam-redo"){
+    var X = ui.exam, items = X.items.filter(function(it, i){ return !X.results[i].ok; });
+    ui.tab = "exam"; startSession({kind:"redo", title:"Repaso del examen", back:"exam", items:shuffleArr(items)});
+  }
+  else if(act === "export"){
+    var code = exportCode(), box = $("#exportBox");
+    box.hidden = false; $("#importBox").hidden = true;
+    box.innerHTML = '<div class="h">Tu código de progreso</div><textarea id="exportText" readonly></textarea><div class="small" id="exportMsg" style="min-height:16px"></div>';
+    $("#exportText").value = code;
+    copyText(code, function(ok){ $("#exportMsg").textContent = ok ? "Copiado. Pégalo en el otro dispositivo." : "Selecciona el texto y cópialo a mano."; if(!ok){ var t = $("#exportText"); t.focus(); t.select(); } });
+  }
+  else if(act === "import-open"){
+    var ib = $("#importBox"); ib.hidden = false; $("#exportBox").hidden = true;
+    ib.innerHTML = '<div class="h">Pega aquí el código</div><textarea id="importText" placeholder="Pega el código copiado en el otro dispositivo…"></textarea><button type="button" class="btn btn-ghost" data-act="import-go" style="align-self:flex-start">Restaurar progreso</button><div id="importMsg" class="small" style="min-height:16px"></div>';
+  }
+  else if(act === "import-go"){
+    var txt = $("#importText").value, msg = $("#importMsg");
+    if(!txt.trim()){ msg.textContent = "Pega antes un código."; return; }
+    if(importFromCode(txt)){ msg.textContent = "Progreso restaurado."; setTimeout(function(){ render(); }, 600); }
+    else msg.textContent = "Ese código no es válido. Cópialo entero otra vez.";
+  }
+}
+function onKeydown(e){
+  var t = e.target, isField = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA");
+  if(t && t.id === "ans" && e.key === "Enter" && !e.isComposing){ e.preventDefault(); checkAnswer(); return; }
+  if(t && t.classList && t.classList.contains("xin")){
+    var i = Number(t.dataset.i), X = ui.exam;
+    if(e.key === "Enter" && !e.isComposing){
+      e.preventDefault();
+      var nx = $("#xin-" + (i + 1)); if(nx) nx.focus(); else { var gb = $("#gradeBtn"); if(gb) gb.focus(); }
+      return;
+    }
+    if((e.key === "Backspace") && t.value === "" && i > 0){
+      e.preventDefault();
+      var pv = $("#xin-" + (i - 1)); if(pv){ pv.focus(); try{ pv.setSelectionRange(pv.value.length, pv.value.length); }catch(err){} }
+      return;
+    }
+  }
+  if(e.key === "Escape"){
+    if(ui.sess){ var to = ui.sess.back; ui.sess = null; ui.tab = to === "practice" ? "practice" : "map"; ui.screen = ui.tab; render(); }
+    else if(ui.screen === "intro" || ui.screen === "summary"){ go("map"); }
+    return;
+  }
+  if(isField || e.ctrlKey || e.metaKey || e.altKey) return;
+  if(ui.screen === "quiz") return;
+  var n = Number(e.key);
+  if(n >= 1 && n <= TABS.length){ go(TABS[n - 1][0]); }
+}
+function onInput(e){
+  var t = e.target;
+  if(t.id === "notesQ"){
+    ui.notesQ = t.value; $("#notesList").innerHTML = notesListHTML(); $$("textarea[data-trick]").forEach(autoGrow); return;
+  }
+  if(t.dataset && t.dataset.trick){ onTrickInput(t); return; }
+  if(t.classList && t.classList.contains("xin")){
+    var X = ui.exam; if(X){ X.answers[Number(t.dataset.i)] = t.value; var c = X.answers.filter(function(a){ return a.trim(); }).length; var xc = $("#xcount"); if(xc) xc.textContent = c + "/" + X.items.length; }
+  }
+}
+
+function boot(){
+  $screen = $("#screen");
+  load();
+  $("#muteBtn").addEventListener("click", function(){
+    state.muted = !state.muted; save(); updateMuteBtn();
+    if(!state.muted){ var c = ac(); if(c) tone(c, 700, c.currentTime, 0.07, {type:"square", vol:.1}); }
+  });
+  document.addEventListener("click", onClick);
+  document.addEventListener("keydown", onKeydown);
+  document.addEventListener("input", onInput);
+  render();
+}
+boot();
+
+})();
+</script>
+
+<a href="../" class="b1-back" title="Volver a 1 BACH">← 1 BACH</a><span class="b1-claude">Claude</span>
+<style>.b1-back{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:700 13px/1 system-ui,sans-serif;text-decoration:none;color:#141a2e;background:#fff;border-radius:999px;padding:9px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.b1-claude{position:fixed;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:600 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #d97757;color:#d97757;border-radius:999px;background:rgba(255,255,255,.92)}
+@media (min-width:1024px){.b1-back,.b1-claude{bottom:18px}}</style>
+<script type="module">
+import { alCambiarSesion, guardarProgreso } from "../shared/fb.js";
+const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
+function resumen(){ const st=lee("afijomat_v1");if(!st||!st.stats)return null;const ok=Object.values(st.stats).filter(x=>(x.streak|0)>=3).length;return [ok,179]; }
+let ult="";
+function enviar(){let r=null;try{r=resumen()}catch(e){}if(!r)return;const k=r.join("/");if(k===ult)return;ult=k;guardarProgreso("afijos",r[0],r[1])}
+let t=null;alCambiarSesion(u=>{clearInterval(t);if(u){ult="";enviar();t=setInterval(enviar,8000)}});
+addEventListener("visibilitychange",enviar);addEventListener("pagehide",enviar);
+</script>
+</body></html>
