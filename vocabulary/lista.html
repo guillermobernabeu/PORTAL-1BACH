@@ -16,6 +16,12 @@ h1 sup{font-size:.5em}
 .tabla{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #111;border-left:1px solid #111}
 .c{position:relative;border-right:1px solid #111;border-bottom:1px solid #111;padding:2px 5px;text-align:center;min-height:22px;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center}
 .c.en{background:#c9c9c9}
+.c.n-dom{background:#9fe0a8}.c.en.n-dom{background:#6fcf7d}
+.c.n-ctrl{background:#fff1b3}.c.en.n-ctrl{background:#f3dc7a}
+.leyenda{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:-18px 0 18px;font:600 13px system-ui,sans-serif;color:#333}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}.k{width:14px;height:14px;border:1px solid #111;display:inline-block}.k.dom{background:#6fcf7d}.k.ctrl{background:#f3dc7a}.k.nada{background:#c9c9c9}
+.bar select{font:600 14px system-ui,sans-serif;padding:7px 10px;border:1.5px solid #bbb;border-radius:999px;background:#fff}
+@media print{.c,.k{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .c small{font-size:.8em;color:#333;margin-left:4px;white-space:nowrap}
 .c.pocas{font-size:.86em}
 .autor{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;overflow:hidden;background:#111;color:#fff;font:800 10px/20px system-ui,sans-serif;text-align:center;border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);z-index:2}
@@ -25,9 +31,9 @@ h1 sup{font-size:.5em}
 @media (max-width:640px){.hoja{padding:26px 10px 34px;width:100%;margin:0}h1{font-size:22px;margin-bottom:20px}.tabla{grid-template-columns:repeat(2,minmax(0,1fr))}.c{font-size:14px}}
 @media print{.bar,.marca{display:none}html,body{background:#fff}.hoja{box-shadow:none;margin:0;width:100%;padding:0}.autor{display:none}@page{size:A4;margin:16mm}}
 </style></head><body>
-<div class="bar"><a href="./" id="volver">← Volver</a><input id="q" type="search" placeholder="Buscar palabra…" aria-label="Buscar palabra"><span class="n" id="n"></span><button type="button" onclick="print()">Imprimir</button></div>
+<div class="bar"><a href="./" id="volver">← Volver</a><input id="q" type="search" placeholder="Buscar palabra…" aria-label="Buscar palabra"><select id="orden" aria-label="Ordenar"><option value="lista">Orden de la lista</option><option value="nose">Primero las que no sé</option><option value="se">Primero las que domino</option></select><span class="n" id="n"></span><button type="button" onclick="print()">Imprimir</button></div>
 <span class="marca" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
-<main class="hoja"><h1>VOCABULARY 1<sup>ST</sup> TERM</h1><div class="tabla" id="tabla"></div>
+<main class="hoja"><h1>VOCABULARY 1<sup>ST</sup> TERM</h1><div class="leyenda" id="leyenda"></div><div class="tabla" id="tabla"></div>
 <p class="pie">Lista de la clase. Las palabras con un circulito las ha añadido un compañero desde la app.</p></main>
 <script src="palabras.js"></script>
 <script>
@@ -36,19 +42,25 @@ const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 function autor(w){if(!w.por||w.por==="lista")return"";const u=S.users[w.por]||{},n=u.nombre||u.nombreGoogle||w.porNombre||"?",f=u.fotoPropia||u.fotoGoogle||"";
   return `<span class="autor" title="Añadida por ${esc(n)}">${f?`<img src="${esc(f)}" alt="" referrerpolicy="no-referrer">`:esc(n.charAt(0).toUpperCase())}</span>`}
-function pinta(){const q=norm(document.getElementById("q").value);
-  const ws=S.words.filter(w=>!q||norm(w.en+" "+w.es+" "+(w.plural||"")).includes(q));
+let ST={};try{ST=JSON.parse(localStorage.getItem("vocabStats")||"{}")||{}}catch(e){}
+function nivel(id){const t=ST[id];if(!t||!t.a)return "nada";return t.r>=3?"dom":"ctrl"}
+const PESO={nada:0,ctrl:1,dom:2};
+function pinta(){const q=norm(document.getElementById("q").value),ord=document.getElementById("orden").value;
+  let ws=S.words.filter(w=>!q||norm(w.en+" "+w.es+" "+(w.plural||"")).includes(q));
+  if(ord!=="lista")ws=ws.map((w,i)=>({w,i})).sort((a,b)=>(ord==="nose"?1:-1)*(PESO[nivel(a.w.id)]-PESO[nivel(b.w.id)])||a.i-b.i).map(x=>x.w);
+  const c={dom:0,ctrl:0,nada:0};S.words.forEach(w=>c[nivel(w.id)]++);
+  document.getElementById("leyenda").innerHTML=`<span><i class="k dom"></i>Dominadas <b>${c.dom}</b></span><span><i class="k ctrl"></i>Controlando <b>${c.ctrl}</b></span><span><i class="k nada"></i>Sin saber <b>${c.nada}</b></span>`;
   document.getElementById("n").textContent=ws.length+" palabras";
   const T=document.getElementById("tabla");
   if(!ws.length){T.innerHTML='<div class="vacio">No hay ninguna palabra así.</div>';return}
   T.innerHTML=ws.map(w=>{const en=esc(w.en)+(w.plural&&w.plural!==w.en?` <small>(pl. ${esc(w.plural)})</small>`:w.plural?` <small>(pl. igual)</small>`:"");const larga=(w.en+w.es).length>34;
-    return `<div class="c en${larga?" pocas":""}">${en}${autor(w)}</div><div class="c${larga?" pocas":""}">${esc(w.es)}</div>`}).join("")}
+    const nv=nivel(w.id);return `<div class="c en n-${nv}${larga?" pocas":""}" title="${nv==="dom"?"Dominada":nv==="ctrl"?"Controlando":"Sin saber"}">${en}${autor(w)}</div><div class="c n-${nv}${larga?" pocas":""}">${esc(w.es)}</div>`}).join("")}
 const BASE=window.SEED.map(w=>({...w,por:"lista"}));
 let remotas=[];
 function juntar(){const m=new Map(BASE.map(w=>[w.id,w]));for(const w of remotas)m.set(w.id,{...(m.get(w.id)||{}),...w});
   S.words=[...m.values()].filter(w=>w.en).sort((a,b)=>(a.orden??999)-(b.orden??999)||(a.creado||0)-(b.creado||0));pinta()}
 juntar();
-document.getElementById("q").oninput=pinta;
+document.getElementById("q").oninput=pinta;document.getElementById("orden").onchange=pinta;
 document.getElementById("volver").onclick=e=>{try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}};
 </script>
 <script type="module">
@@ -56,6 +68,9 @@ import { db, fs, alCambiarSesion, alCambiarClase, exigirCuenta } from "../shared
 exigirCuenta();
 fs.onSnapshot(fs.collection(db, "vocabulary_palabras"), snap => { remotas = snap.docs.map(d => ({ id: d.id, ...d.data() })); juntar(); }, () => {});
 let quitar = null;
-alCambiarSesion(user => { if (quitar) { quitar(); quitar = null; } if (user) quitar = alCambiarClase(us => { S.users = us; pinta(); }); });
+alCambiarSesion(user => { if (quitar) { quitar(); quitar = null; } if (!user) return;
+  quitar = alCambiarClase(us => { S.users = us; pinta(); });
+  fs.getDoc(fs.doc(db, "progreso", user.uid)).then(snap => { const rem = (snap.exists() && snap.data().vocabStats) || {};
+    for (const id in rem) { const r = rem[id], l = ST[id]; if (r && (!l || (r.a + r.f) > (l.a + l.f))) ST[id] = r; } pinta(); }).catch(() => {}); });
 </script>
 </body></html>
