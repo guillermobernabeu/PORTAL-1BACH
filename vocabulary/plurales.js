@@ -1,0 +1,18 @@
+// Plurales irregulares de los apuntes (singular, plural/es válidos, traducción, regla)
+window.PLURALES=[
+["boy",["boys"],"chico","Vocal + y → +s"],
+["church",["churches"],"iglesia","-ch, -x, -s, -sh → +es"],["box",["boxes"],"caja","-ch, -x, -s, -sh → +es"],["ash",["ashes"],"ceniza","-ch, -x, -s, -sh → +es"],
+["tomato",["tomatoes"],"tomate","-o → +es"],["hero",["heroes"],"héroe","-o → +es"],["volcano",["volcanoes","volcanos"],"volcán","-o → +es"],["potato",["potatoes"],"patata","-o → +es"],
+["wolf",["wolves"],"lobo","-f / -fe → -ves"],["life",["lives"],"vida","-f / -fe → -ves"],["thief",["thieves"],"ladrón","-f / -fe → -ves"],["knife",["knives"],"cuchillo","-f / -fe → -ves"],["shelf",["shelves"],"estantería","-f / -fe → -ves"],
+["child",["children"],"niño/a","→ -en"],["woman",["women"],"mujer","→ -en"],["man",["men"],"hombre","→ -en"],["ox",["oxen"],"buey","→ -en"],
+["foot",["feet"],"pie","-oo- → -ee-"],["goose",["geese"],"ganso, oca","-oo- → -ee-"],["tooth",["teeth"],"diente","-oo- → -ee-"],
+["mouse",["mice"],"ratón","-ouse → -ice"],["louse",["lice"],"piojo","-ouse → -ice"],
+["species",["species"],"especie","Igual en singular y en plural"],["deer",["deer"],"ciervo","Igual en singular y en plural"],["salmon",["salmon"],"salmón","Igual en singular y en plural"],["series",["series"],"serie","Igual en singular y en plural"],["offspring",["offspring"],"descendencia","Igual en singular y en plural"],["means",["means"],"medio (de transporte, de comunicación)","Igual en singular y en plural"],["moose",["moose"],"alce","Igual en singular y en plural"],["trout",["trout"],"trucha","Igual en singular y en plural"],["cod",["cod"],"bacalao","Igual en singular y en plural"],["squid",["squid"],"calamar","Igual en singular y en plural"],["monkfish",["monkfish"],"rape","Igual en singular y en plural"],["sheep",["sheep"],"oveja","Igual en singular y en plural"],["fish",["fish"],"pez, pescado","Igual en singular y en plural"],
+["alumnus",["alumni"],"antiguo alumno","Latinos: -us → -i"],["stimulus",["stimuli"],"estímulo","Latinos: -us → -i"],["nucleus",["nuclei"],"núcleo","Latinos: -us → -i"],
+["basis",["bases"],"base","Latinos: -is → -es"],["crisis",["crises"],"crisis","Latinos: -is → -es"],["parenthesis",["parentheses"],"paréntesis","Latinos: -is → -es"],["thesis",["theses"],"tesis","Latinos: -is → -es"],
+["appendix",["appendices","appendixes"],"apéndice","Latinos: -ix → -ices"],["index",["indices","indexes"],"índice","Latinos: -ix → -ices"],["matrix",["matrices","matrixes"],"matriz","Latinos: -ix → -ices"],
+["bacterium",["bacteria"],"bacteria","Latinos: -um / -on → -a"],["curriculum",["curricula","curriculums"],"plan de estudios, currículo","Latinos: -um / -on → -a"],["medium",["media"],"medio (de comunicación)","Latinos: -um / -on → -a"],["phenomenon",["phenomena"],"fenómeno","Latinos: -um / -on → -a"],["criterion",["criteria"],"criterio","Latinos: -um / -on → -a"],
+["antenna",["antennae","antennas"],"antena","Latinos: -a → -ae"],["formula",["formulae","formulas"],"fórmula","Latinos: -a → -ae"],["vita",["vitae"],"vida (curriculum vitae)","Latinos: -a → -ae"],["vertebra",["vertebrae"],"vértebra","Latinos: -a → -ae"],["nebula",["nebulae"],"nebulosa","Latinos: -a → -ae"],
+["beau",["beaux"],"pretendiente","Franceses: -eau → -eaux"],["bureau",["bureaux","bureaus"],"oficina, agencia","Franceses: -eau → -eaux"],["tableau",["tableaux","tableaus"],"cuadro, escena","Franceses: -eau → -eaux"],
+["person",["people"],"persona / personas, gente","Otras irregularidades"],["penny",["pence"],"penique","Otras irregularidades"],["die",["dice"],"dado / dados","Otras irregularidades"]
+];

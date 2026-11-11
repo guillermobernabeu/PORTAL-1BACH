@@ -98,6 +98,19 @@
    "app": "vocab"
   },
   {
+   "id": "p-plur",
+   "asig": "ingles",
+   "tri": 1,
+   "tema": "i7",
+   "tipo": "app",
+   "cat": "App",
+   "claude": true,
+   "titulo": "Plurales irregulares",
+   "nota": "Singular ↔ plural, con traducción",
+   "url": "vocabulary/#plurales",
+   "app": "plur"
+  },
+  {
    "id": "p-vocablista",
    "asig": "ingles",
    "tri": 1,

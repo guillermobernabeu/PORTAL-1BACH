@@ -74,6 +74,12 @@ main{min-height:60vh}
 .salir-r{border:1px solid var(--rule);background:none;color:var(--ink2);border-radius:999px;padding:3px 10px;font:600 12px system-ui;cursor:pointer}
 .nota-dom{margin:0 0 8px;font-size:12.5px;color:var(--ink2)}
 .fin-r{display:flex;flex-direction:column;gap:10px}.fin-b{flex-wrap:wrap;gap:8px;justify-content:flex-start}
+#app[data-tab=pl] .filt,#app[data-tab=pl] #dominio,#app[data-tab=pl] #stats{display:none}
+.pl-cab{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;padding:14px 16px}
+.pl-st{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:14px}.pl-pts{margin-left:auto;background:var(--ink);color:var(--bg);border-radius:999px;padding:4px 12px}
+.pl-dir{display:flex;gap:6px;flex-wrap:wrap}
+.pl-tabla{margin-top:14px}.pl-tabla summary{cursor:pointer;font-weight:700;color:var(--acc);margin-bottom:8px}
+.row.n-dom{border-color:var(--ok);background:var(--okbg)}.row.n-ctrl{border-color:#e0a800}
 .lista-link{display:inline-block;margin-top:8px;font-weight:700;color:var(--acc);text-decoration:none}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
@@ -85,6 +91,7 @@ main{min-height:60vh}
  <button data-t="dw" aria-pressed="true">Definición → palabra</button>
  <button data-t="wd" aria-pressed="false">Palabra → definición</button>
  <button data-t="es" aria-pressed="false">Español → inglés</button>
+ <button data-t="pl" aria-pressed="false">Plurales irregulares</button>
  <button data-t="list" aria-pressed="false">Lista</button>
  <button data-t="add" aria-pressed="false">+ Añadir palabra</button>
 </nav>
@@ -94,7 +101,7 @@ main{min-height:60vh}
 <div class="stats" id="stats"></div>
 <main id="main"><div class="card"><p class="empty">Cargando palabras…</p></div></main>
 </div>
-<script src="palabras.js"></script>
+<script src="palabras.js"></script><script src="plurales.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
@@ -142,6 +149,43 @@ function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;
 function apunta(w,bien){if(S.ronda&&S.ronda.ids[S.ronda.i]===w.id&&!S.ronda.hecha){S.ronda.hecha=true;(bien?S.ronda.ok:S.ronda.ko).push(w.id)}const antes=nivel(w.id),t=ST[w.id]=ST[w.id]||{a:0,f:0,r:0};if(bien){t.a++;t.r++}else{t.f++;t.r=0}saveST();S.cambio=antes!==nivel(w.id)?nivel(w.id):null;if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats();window.trasApuntar&&window.trasApuntar(w,bien)}
 // ---------- vistas ----------
 const main=$("#main");
+
+// ---------- Plurales irregulares: singular ↔ plural, con traducción ----------
+let PST={};try{PST=JSON.parse(localStorage.getItem("pluralStats")||"{}")||{}}catch(e){}
+const savePST=()=>{try{localStorage.setItem("pluralStats",JSON.stringify(PST))}catch(e){}};
+const PDOM=2;
+const pid=p=>"pl:"+p[0];
+function pnivel(p){const t=PST[pid(p)];if(!t||!t.a)return "nada";return t.r>=PDOM?"dom":"ctrl"}
+function pcuenta(){const c={dom:0,ctrl:0,nada:0};for(const p of PLURALES)c[pnivel(p)]++;return c}
+window.pcuenta=pcuenta;
+S.pdir=S.pdir||"mix";let PREC=[];
+function ppick(){let L=PLURALES.slice();const nd=L.filter(p=>pnivel(p)!=="dom");if(nd.length)L=nd;
+ const w=L.map(p=>{const t=PST[pid(p)];let k=!t||!(t.a+t.f)?6:!t.a?9:t.r===0?8:3;const i=PREC.indexOf(p[0]);if(i>=0)k*=0.02*(i+1);return k});
+ let x=Math.random()*w.reduce((a,b)=>a+b,0),r=L[L.length-1];for(let i=0;i<L.length;i++){x-=w[i];if(x<=0){r=L[i];break}}
+ PREC.unshift(r[0]);PREC.length=Math.min(PREC.length,10);return r}
+function plurales(){const c0=pcuenta(),n=PLURALES.length;
+ const cab=el("div","card pl-cab");cab.innerHTML=`<div class="pl-st"><span>✅ <b>${c0.dom}</b> dominados</span><span>🟡 <b>${c0.ctrl}</b> controlando</span><span>⭕ <b>${c0.nada}</b> sin saber</span><span class="pl-pts"><b>${Math.round(100*(c0.dom+c0.ctrl*0.5)/n)}</b> pts</span></div><div class="pl-dir">${[["sp","Singular → plural"],["ps","Plural → singular"],["mix","Mezcla"]].map(([k,t])=>`<button class="chip" data-pdir="${k}" aria-pressed="${S.pdir===k}">${t}</button>`).join("")}</div>`;
+ main.append(cab);cab.querySelectorAll("[data-pdir]").forEach(b=>b.onclick=()=>{S.pdir=b.dataset.pdir;nueva()});
+ const p=S.pq=ppick(),dir=S.pdir==="mix"?(Math.random()<.5?"sp":"ps"):S.pdir;
+ const c=el("div","card");main.append(c);c.append(el("span","tag",p[3]));
+ c.append(el("p","ask",dir==="sp"?"Escribe el plural de…":"Escribe el singular de…"));
+ c.append(el("p","prompt big",dir==="sp"?p[0]:p[1][0]));
+ const box=el("div","inp"),inp=el("input");inp.autocomplete="off";inp.setAttribute("autocapitalize","off");inp.spellcheck=false;inp.placeholder=dir==="sp"?"plural":"singular";
+ const b=el("button","btn","Comprobar");box.append(inp,b);c.append(box);
+ const h=el("button","hint");h.append(el("span","dot"),document.createTextNode("Pista"));h.onclick=()=>{h.textContent="Regla: "+p[3]+" · significa «"+p[2]+"»"};c.append(h);
+ const fb=el("div");c.append(fb);inp.focus({preventScroll:true});let hecho=false;
+ const go=()=>{if(hecho)return nueva();hecho=true;const a=norm(inp.value),buenas=dir==="sp"?p[1]:[p[0]];const bien=buenas.some(x=>norm(x)===a);
+  const t=PST[pid(p)]=PST[pid(p)]||{a:0,f:0,r:0},antes=pnivel(p);if(bien){t.a++;t.r++}else{t.f++;t.r=0}savePST();const ahora=pnivel(p);
+  inp.readOnly=true;inp.classList.add(bien?"ok":"ko");
+  const f=el("div","fb "+(bien?"ok":"ko"));f.append(el("div","h",bien?"¡Correcto!":inp.value.trim()?"No es así":"Solución"));
+  f.append(el("div","sol",p[0]+" → "+p[1].join(" / ")));
+  if(antes!==ahora&&ahora!=="nada")f.append(el("div","sube-n",ahora==="dom"?"🏆 ¡Plural dominado!":"🟡 Ya lo vas controlando"));
+  f.append(el("div","es","🇪🇸 "+p[2]+" · "+p[3]));fb.append(f);
+  const nv=el("div","nav"),nx=el("button","btn","Siguiente →");nx.onclick=nueva;nv.append(nx);fb.append(nv);b.textContent="Siguiente";nx.focus({preventScroll:true});
+  window.trasPlural&&window.trasPlural()};
+ b.onclick=go;inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go()}};
+ const tb=el("details","pl-tabla");tb.innerHTML=`<summary>Ver la tabla completa (${n})</summary><div class="list">${PLURALES.map(q=>`<div class="row n-${pnivel(q)}"><span class="en">${esc0(q[0])} → ${esc0(q[1].join(" / "))}</span><span class="es">${esc0(q[2])}</span><span class="by">${esc0(q[3])}</span></div>`).join("")}</div>`;main.append(tb)}
+function esc0(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c])}
 // Las dominadas no salen en la práctica normal hasta que estén dominadas todas (se repasan con el botón «Dominadas»)
 function practicables(p){S.ocultaDom=false;if(S.nivel)return p;const nd=p.filter(w=>nivel(w.id)!=="dom");if(nd.length&&nd.length<p.length){S.ocultaDom=true;return nd}return p}
 // Ronda de 20 palabras al azar de toda la lista
@@ -166,7 +210,8 @@ function pick(p){if(p.length===1)return p[0];
  const ws=p.map(w=>{let k=peso(w);const i=RECIENTES.indexOf(w.id);if(i>=0)k*=0.02*(i+1);return k});
  let x=Math.random()*ws.reduce((a,b)=>a+b,0),w=p[p.length-1];for(let i=0;i<p.length;i++){x-=ws[i];if(x<=0){w=p[i];break}}
  RECIENTES.unshift(w.id);RECIENTES.length=Math.min(RECIENTES.length,Math.min(8,Math.floor(p.length/2)));return w}
-function nueva(){if(S.ronda&&S.ronda.hecha){S.ronda.i++;S.ronda.hecha=false}stats();S.done=false;main.textContent="";
+function nueva(){if(S.ronda&&S.ronda.hecha){S.ronda.i++;S.ronda.hecha=false}$("#app").dataset.tab=S.tab;stats();S.done=false;main.textContent="";
+ if(S.tab==="pl")return plurales();
  if(S.tab==="list")return lista();if(S.tab==="clase")return clase();if(S.tab==="add")return anadir();
  if(S.ronda&&S.ronda.i>=S.ronda.ids.length)return finRonda();
  const p=S.ronda?S.words:pool();if(!p.length){const c=el("div","card");c.append(el("p","empty",S.words.length?(S.soloF?"No tienes fallos guardados en estos bloques.":"No hay palabras en los bloques elegidos."):"Todavía no hay palabras."));main.append(c);return}
@@ -238,6 +283,7 @@ function anadir(w){S.tab="add";document.querySelectorAll("#tabs button").forEach
   bt.disabled=false}}
 const abrir=()=>{$("#start").hidden=true;$("#app").hidden=false;removeEventListener("keydown",k);if(S.words.length)nueva()};
 const k=e=>{if(e.code==="Space"){e.preventDefault();abrir()}};
+if(location.hash==="#plurales"){S.tab="pl";document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.t==="pl")))}
 $("#go").onclick=abrir;addEventListener("keydown",k);
 </script>
 <script type="module">
@@ -270,6 +316,10 @@ S.owner = modoAdmin();
 document.addEventListener("admin1b", e => { S.owner = !!e.detail; if (!document.getElementById("app").hidden) nueva(); });
 gbtn.onclick = () => entrar().catch(e => who.textContent = "No se pudo entrar (" + e.code + ").");
 let quitar = [];
+let tPl = null;
+window.trasPlural = () => { clearTimeout(tPl); tPl = setTimeout(() => { if (!S.me) return; const c = pcuenta();
+  guardarProgreso("plur", c.dom + c.ctrl * 0.5, PLURALES.length).catch(() => {});
+  fs.setDoc(fs.doc(db, "progreso", S.me), { plStats: PST }, { merge: true }).catch(() => {}); }, 1200); };
 function enviarVocab() {
   if (!S.me) return; const c = cuenta();
   guardarProgreso("vocab", c.dom + c.ctrl * 0.5, S.words.length || 1).catch(() => {});
@@ -286,7 +336,9 @@ alCambiarSesion(user => {
   fs.getDoc(fs.doc(db, "progreso", user.uid)).then(snap => {
     const rem = (snap.exists() && snap.data().vocabStats) || {};
     for (const id in rem) { const r = rem[id], l = ST[id]; if (r && (!l || (r.a + r.f) > (l.a + l.f))) ST[id] = r; }
-    saveST(); stats(); enviarVocab();
+    const remP = (snap.exists() && snap.data().plStats) || {};
+    for (const id in remP) { const r = remP[id], l = PST[id]; if (r && (!l || (r.a + r.f) > (l.a + l.f))) PST[id] = r; }
+    savePST(); saveST(); stats(); enviarVocab(); if (Object.keys(PST).length) window.trasPlural();
   }).catch(() => enviarVocab());
   let firmaU = "";
   quitar.push(alCambiarClase(us => { S.users = {}; for (const k in us) S.users[k] = { ...us[k], nombre: nombreDe(us[k]) };

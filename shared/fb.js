@@ -126,7 +126,7 @@ function avisar(html, ir, dura = 7000) {
   document.body.append(d); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("ver")));
   setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, dura);
 }
-const APPS_R = ["vocab", "verbos", "afijos", "wf"];
+const APPS_R = ["vocab", "plur", "verbos", "afijos", "wf"];
 export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;
@@ -211,7 +211,7 @@ function sha256js(m) {
   }
   return H.map(x => (x >>> 0).toString(16).padStart(8, "0")).join("");
 }
-const ADMIN_H = "567368fac0b19f0df9590340c50247491ee14e5df1325c518877acbdeabcb98a";
+const ADMIN_HS = ["567368fac0b19f0df9590340c50247491ee14e5df1325c518877acbdeabcb98a", "3f2d11649c13eec8cba8a9851c96d40eb6e2b2d2f139939ed667a5001d2c3bb7", "0ae3100b6386404bc796d8a829ec4de9537464551200084507056c389ce17e90"];
 let soyAdmin = false;
 export const esAdmin = () => soyAdmin;
 export const modoAdmin = () => { try { return soyAdmin && localStorage.getItem("modoAdmin") === "1"; } catch (e) { return false; } };
@@ -224,7 +224,7 @@ onAuthStateChanged(auth, async (u) => {
   const correo = String((u && u.email) || "").trim().toLowerCase();
   let h = ""; try { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(correo)); h = [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, "0")).join(""); } catch (e) { h = sha256js(correo); }
   if (!h) h = sha256js(correo);
-  soyAdmin = !!u && h === ADMIN_H;
+  soyAdmin = !!u && ADMIN_HS.includes(h);
   // por si el correo no coincide: si Firebase te deja escribir en clase/ (regla admin()), eres administrador
   if (u && !soyAdmin) {
     let ok = false; try { ok = sessionStorage.getItem("admPing_" + u.uid) === "1"; } catch (e) {}

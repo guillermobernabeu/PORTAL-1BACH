@@ -184,7 +184,7 @@ mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding
   <header>
     <div class="modes" role="group" aria-label="Apartado" hidden style="display:none">
       <button class="mode" id="mode-wf" data-mode="wf">Word Formation<small>prefijos y sufijos</small></button>
-      <button class="mode" id="mode-ut" data-mode="ut">Used to<small>solía · acostumbrarse</small></button>
+      <button class="mode" id="mode-ut" data-mode="ut" hidden></button>
     </div>
     <div class="brand">
       <h1 id="h1">Word <em>Formation</em></h1>
@@ -226,69 +226,7 @@ mark{background:var(--accent-soft);color:var(--accent);border-radius:4px;padding
   </main>
 
   <main id="view-trucos" hidden>
-    <div class="tricks" id="tricks-ut" hidden>
-      <section class="trick">
-        <h2>Las 3 estructuras</h2>
-        <p>Primero decide cuál de las tres es. El español te lo dice.</p>
-        <div class="struct">
-          <div><b class="f">used to + infinitivo</b><p><b>Solía</b>: algo del pasado que ya no pasa.</p><p><i>I used to play football.</i></p></div>
-          <div><b class="f">be used to + -ing</b><p><b>Estar acostumbrado</b>: un estado. Cambia de tiempo el verbo be.</p><p><i>They are used to working under pressure.</i></p></div>
-          <div><b class="f">get used to + -ing</b><p><b>Acostumbrarse</b>: un proceso. Cambia de tiempo el verbo get.</p><p><i>I'm getting used to the cold weather.</i></p></div>
-        </div>
-      </section>
-      <section class="trick">
-        <h2>Truco: me, te, se, nos, os = get</h2>
-        <p>Si en español el verbo lleva <b>me / te / se / nos / os</b> (me acostumbro, se está acostumbrando), es <b>get used to</b>. Si dice <b>estoy / está acostumbrado</b>, es <b>be used to</b>.</p>
-      </section>
-      <section class="trick">
-        <h2>Used o use: la -d</h2>
-        <div class="tablewrap"><table>
-          <tbody>
-            <tr><td>Afirmativa</td><td><i>I <b>used</b> to play.</i></td></tr>
-            <tr><td>Negativa con didn't</td><td><i>I didn't <b>use</b> to play.</i></td></tr>
-            <tr><td>Pregunta con did</td><td><i>Did you <b>use</b> to play?</i></td></tr>
-            <tr><td>be / get used to</td><td><i>I'm <b>used</b> to it · get <b>used</b> to it</i> (siempre con -d)</td></tr>
-          </tbody>
-        </table></div>
-        <p>Igual que <i>did you play</i>, no <i>did you played</i>.</p>
-      </section>
-      <section class="trick">
-        <h2>Los tiempos de get</h2>
-        <div class="tablewrap"><table>
-          <thead><tr><th>Español</th><th>Inglés</th></tr></thead>
-          <tbody>
-            <tr><td>me acostumbro</td><td><i>I get used to</i></td></tr>
-            <tr><td>se acostumbra</td><td><i>he gets used to</i></td></tr>
-            <tr><td>me estoy acostumbrando</td><td><i>I'm getting used to</i></td></tr>
-            <tr><td>me acostumbré</td><td><i>I got used to</i></td></tr>
-            <tr><td>me he acostumbrado</td><td><i>I've got used to</i></td></tr>
-            <tr><td>me acostumbraré</td><td><i>I'll get used to</i></td></tr>
-            <tr><td>no me acostumbro</td><td><i>I can't get used to</i></td></tr>
-          </tbody>
-        </table></div>
-      </section>
-      <section class="trick">
-        <h2>Después de be / get used to: -ing</h2>
-        <p>Ahí <i>to</i> es una preposición, así que detrás va <b>-ing</b> o un sustantivo, nunca el infinitivo.</p>
-        <div class="pairs">
-          <div><span class="trap">used to drive</span> → used to driving</div>
-          <div><span class="trap">used to study</span> → used to studying</div>
-          <div>used to <b>the cold</b> (sustantivo)</div>
-        </div>
-      </section>
-      <section class="trick">
-        <h2>Tus fallos de los apuntes</h2>
-        <div class="pairs">
-          <div><span class="trap">get use to</span> → get used to</div>
-          <div><span class="trap">Did you used to</span> → Did you use to</div>
-          <div><span class="trap">Juan get used to</span> → Juan is getting used to</div>
-          <div><span class="trap">before live</span> → before moving</div>
-          <div><span class="trap">every sundays</span> → every Sunday</div>
-          <div><span class="trap">take dinner</span> → have dinner</div>
-          <div><span class="trap">writting</span> → writing</div>
-        </div>
-      </section>
-    </div>
+    <div class="tricks" id="tricks-ut" hidden></div>
     <div class="tricks" id="tricks-wf">
       <section class="trick">
         <div class="step">Paso 1</div>
@@ -767,62 +705,7 @@ var RAW = [
 "___, the shop is closed on Sundays.|LUCK|Unluckily/Unfortunately|D|un- -ly|",
 ];
 
-/* es | traducciones válidas (/) | estructura clave (/ = o, & = y) | tipo S B G | nota */
-var UTRAW = [
-/* ---------- SOLÍA: used to + infinitivo ---------- */
-"Cuando era niño, solía jugar al fútbol con mis amigos en el parque.|When I was a child, I used to play football with my friends in the park./When I was a kid, I used to play football with my friends in the park./When I was a child, I used to play soccer with my friends in the park./When I was little, I used to play football with my friends in the park.|used to play|S|",
-"¿Ella solía vivir en Madrid antes de mudarse a Londres?|Did she use to live in Madrid before moving to London?/Did she use to live in Madrid before she moved to London?/Did she use to live in Madrid before moving to London|did she use to live|S|Detrás de before va -ing: before moving, no before live.",
-"Nosotros solíamos cenar juntos todos los domingos.|We used to have dinner together every Sunday./We used to eat dinner together every Sunday./We used to have dinner together on Sundays./We used to dine together every Sunday.|used to have/used to eat/used to dine|S|Cenar = have dinner (no take dinner). Every va con singular: every Sunday.",
-"Antes no solía comer verduras, pero ahora me encantan.|I didn't use to eat vegetables, but now I love them./Before, I didn't use to eat vegetables, but now I love them./I never used to eat vegetables, but now I love them./Before, I never used to eat vegetables, but now I love them.|did not use to eat/never used to eat|S|Me encantan (las verduras) = I love them, en plural.",
-"¿Tus abuelos solían viajar mucho cuando eran jóvenes?|Did your grandparents use to travel a lot when they were young?/Did your grandparents use to travel much when they were young?/Did your grandparents use to travel a lot when they were younger?|did your grandparents use to travel|S|",
-"¿Solías beber café por las noches?|Did you use to drink coffee at night?/Did you use to drink coffee in the evenings?/Did you use to drink coffee at nights?|did you use to drink|S|Por las noches = at night.",
-"Solíamos coser nuestra propia ropa.|We used to sew our own clothes.|used to sew|S|",
-"Yo solía tocar el piano cuando tenía cinco años.|I used to play the piano when I was five./I used to play piano when I was five./I used to play the piano when I was five years old./I used to play piano when I was five years old.|used to play|S|",
-"¿Solía yo tocar el piano cuando tenía cinco años?|Did I use to play the piano when I was five?/Did I use to play piano when I was five?/Did I use to play the piano when I was five years old?|did i use to play|S|",
-"Yo no solía tocar el piano cuando tenía cinco años.|I didn't use to play the piano when I was five./I didn't use to play piano when I was five./I didn't use to play the piano when I was five years old.|did not use to play|S|",
-"Nosotros no solíamos salir por la noche.|We didn't use to go out at night./We never used to go out at night.|did not use to go out/never used to go out|S|",
-"Mi padre solía fumar, pero lo dejó hace años.|My father used to smoke, but he stopped years ago./My dad used to smoke, but he stopped years ago./My father used to smoke, but he quit years ago./My dad used to smoke, but he quit years ago./My father used to smoke, but he gave up years ago./My dad used to smoke, but he gave up years ago.|used to smoke|S|",
-"¿Dónde solías vivir antes?|Where did you use to live before?|did you use to live|S|",
-"Él solía tener el pelo largo.|He used to have long hair.|used to have|S|",
-"Mi hermana no solía estudiar mucho.|My sister didn't use to study much./My sister didn't use to study a lot./My sister didn't use to study very much./My sister never used to study much.|did not use to study/never used to study|S|",
-"Solía haber un cine en esta calle.|There used to be a cinema in this street./There used to be a cinema on this street.|there used to be|S|Solía haber = there used to be.",
-
-/* ---------- ESTAR ACOSTUMBRADO: be used to + -ing ---------- */
-"Ellos están acostumbrados a trabajar bajo presión.|They are used to working under pressure.|are used to working|B|",
-"Estoy acostumbrado a jugar al tenis.|I am used to playing tennis.|am used to playing|B|",
-"Ella está acostumbrada a soñar.|She is used to dreaming.|is used to dreaming|B|",
-"He estado acostumbrado a verte.|I have been used to seeing you.|have been used to seeing|B|He estado = have been. Después, -ing: seeing.",
-"¿Estás acostumbrado a vivir solo?|Are you used to living alone?/Are you used to living on your own?/Are you used to living by yourself?|are you used to living|B|",
-"No estoy acostumbrado a levantarme tan temprano.|I am not used to getting up so early./I am not used to waking up so early./I am not used to getting up this early./I am not used to waking up this early.|am not used to getting/am not used to waking|B|",
-"Mi abuela no está acostumbrada al frío.|My grandmother isn't used to the cold./My grandma isn't used to the cold./My granny isn't used to the cold./My grandmother isn't used to cold weather.|is not used to|B|Detrás de used to también puede ir un sustantivo: the cold.",
-"Él está acostumbrado a conducir por la izquierda.|He is used to driving on the left.|is used to driving|B|Por la izquierda = on the left.",
-"No estaba acostumbrado a tanto ruido.|I wasn't used to so much noise./I wasn't used to that much noise./I was not used to so much noise.|was not used to|B|Estaba: be en pasado → was.",
-"Estamos acostumbrados a hablar inglés en clase.|We are used to speaking English in class.|are used to speaking|B|",
-
-/* ---------- ACOSTUMBRARSE: get used to + -ing ---------- */
-"No me he acostumbrado a levantarme tan temprano.|I haven't got used to getting up so early./I haven't got used to waking up so early./I haven't got used to getting up this early./I haven't got used to waking up this early.|have not got used to getting/have not got used to waking|G|No me he acostumbrado: present perfect → haven't got used to.",
-"Poco a poco, me estoy acostumbrando al clima frío.|Little by little, I am getting used to the cold weather./Little by little, I am getting used to the cold climate./Bit by bit, I am getting used to the cold weather./Gradually, I am getting used to the cold weather.|am getting used to|G|Poco a poco = little by little. Weather se escribe w-e-a-t-h-e-r.",
-"¿Tú te acostumbras a conducir por la izquierda?|Do you get used to driving on the left?/Are you getting used to driving on the left?|do you get used to driving/are you getting used to driving|G|Te acostumbras: presente → Do you get used to…?",
-"Juan se está acostumbrando a su nuevo trabajo.|Juan is getting used to his new job.|is getting used to|G|Se está acostumbrando: is getting, no get.",
-"No me acostumbro a hacer dinero.|I can't get used to making money./I don't get used to making money.|can not get used to making/do not get used to making|G|Lo más natural es I can't get used to.",
-"¿Te has acostumbrado a estudiar francés?|Have you got used to studying French?|have you got used to studying|G|Te has acostumbrado: present perfect. study → studying.",
-"Ella se acostumbrará a escribir mejor.|She will get used to writing better.|will get used to writing|G|writing se escribe con una sola t.",
-"Esos amigos se están acostumbrando a enviar cartas.|Those friends are getting used to sending letters.|are getting used to sending|G|",
-"Me acostumbro a cantar rap.|I get used to singing rap.|get used to singing|G|",
-"¿Me acostumbro a cantar rap?|Do I get used to singing rap?|do i get used to singing|G|",
-"No me acostumbro a cantar rap.|I don't get used to singing rap./I can't get used to singing rap.|do not get used to singing/can not get used to singing|G|",
-"¿Te acostumbrarás a comer aquí?|Will you get used to eating here?|will you get used to eating|G|",
-"Sam se está acostumbrando a vivir allí.|Sam is getting used to living there.|is getting used to living|G|",
-"Me acostumbré a la comida muy rápido.|I got used to the food very quickly./I got used to the food really quickly./I got used to the food very fast.|got used to the food|G|Me acostumbré: get en pasado → got.",
-"Nunca me acostumbraré a madrugar.|I will never get used to getting up early./I will never get used to waking up early.|never get used to getting/never get used to waking|G|",
-"Tienes que acostumbrarte a hablar en público.|You have to get used to speaking in public.|get used to speaking|G|Detrás de have to, get va en infinitivo.",
-"Mi hermano se está acostumbrando a vivir solo.|My brother is getting used to living alone./My brother is getting used to living on his own./My brother is getting used to living by himself.|is getting used to living|G|",
-
-/* ---------- MEZCLADAS ---------- */
-"Solía vivir en el campo, así que no estoy acostumbrado al tráfico.|I used to live in the country, so I am not used to traffic./I used to live in the country, so I am not used to the traffic./I used to live in the countryside, so I am not used to traffic./I used to live in the countryside, so I am not used to the traffic.|used to live&am not used to|B|Dos estructuras: solía (used to live) y no estoy acostumbrado (am not used to).",
-"Solía trabajar de noche, así que estoy acostumbrado a dormir de día.|I used to work at night, so I am used to sleeping during the day./I used to work at night, so I am used to sleeping in the day.|used to work&am used to sleeping|B|",
-"Solíamos vivir en Irlanda, pero nunca nos acostumbramos a la lluvia.|We used to live in Ireland, but we never got used to the rain.|used to live&never got used to|G|"
-];
+var UTRAW = []; // Used to quitado: no entra en este examen
 
 
 /* drop items whose answer equals the base (sanity) */

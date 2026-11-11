@@ -449,7 +449,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .yo-fila{border-color:var(--accent)!important;box-shadow:0 0 0 1px var(--accent) inset}
 .rk .pos{font-family:var(--f-display);font-weight:800;font-size:18px;text-align:center}
 .rk-n{min-width:0;display:flex;flex-direction:column;gap:2px}.rk-n>span{font-size:12px;color:var(--ink-2)}.rk-n>span.on{color:var(--ok);font-weight:700}
-.rk-apps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 8px;margin-top:4px}
+.rk-apps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px 8px;margin-top:4px}
 .rk-apps span{position:relative;height:18px;border-radius:4px;background:var(--st-sin);overflow:hidden}
 .rk-apps i{position:absolute;inset:0 auto 0 0;background:color-mix(in oklab,var(--accent) 45%,transparent)}
 .rk-apps em{position:relative;font-style:normal;font-size:10.5px;padding-left:6px;line-height:18px;white-space:nowrap}
@@ -722,7 +722,7 @@ function link(r){const x=link0(r);return S.canWrite?`<span class="rw" data-rid="
 function link0(r){const pg=(r.paginas||[]).filter(esDoc);
   if(pg.length)return `<button class="r ${r.claude?"hc":""}" data-doc="${esc(r.id)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span></button>`;
   if(r.examen)return `<button class="r ${r.claude?"hc":""}" data-exam="${esc(r.examen)}" title="${esc(r.nota||r.titulo)}">${r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':""}<span class="k">${esc(r.cat||"Examen")}</span><span class="n">${esc(r.titulo)}</span></button>`;
-  const interno=/^[a-z0-9-]+\/([a-z0-9-]+\.html)?$/.test(r.url||"");const safe=/^https:\/\//.test(r.url||"")||esDoc(r.url)||interno?r.url:null;
+  const interno=/^[a-z0-9-]+\/([a-z0-9-]+\.html)?(#[a-z0-9-]+)?$/.test(r.url||"");const safe=/^https:\/\//.test(r.url||"")||esDoc(r.url)||interno?r.url:null;
   const inner=`<span class="k">${esc(r.cat||TIPO[r.tipo]||r.tipo)}</span><span class="n">${esc(r.titulo)}</span>`;
   const cb=r.claude?'<span class="cb" title="Hecho por Bernabéu">Bernabéu</span>':"",hc=r.claude?" hc":"";
   return safe?`<a class="r${hc}" href="${esc(safe)}" ${interno?"":`target="_blank" rel="noopener"`} title="${esc(r.nota||r.titulo)}">${cb}${inner}</a>`:`<span class="r${hc}" title="${esc(r.nota||"")}">${cb}${inner}</span>`}
@@ -952,7 +952,7 @@ function renderResumen(){
   return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}${renderLider()}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntos((S.rank||{})[S.uid])} pts</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav>${renderRecos()}<div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
-const APPS=[["vocab","Vocabulary"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
+const APPS=[["vocab","Vocabulary"],["plur","Plurales"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
 const enLinea=u=>!!u&&Date.now()-(u.visto||0)<150000;
 function pctApp(p,k){const a=p&&p.apps&&p.apps[k];return a&&a.total?Math.min(1,a.ok/a.total):0}
 function hoyStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
@@ -1088,7 +1088,7 @@ function renderAmigos(){const lista=clasificacion();
     <span class="pts">${x.pts}<small>pts</small>${puntosHoy(x.p)?`<em class="hoy-p">+${puntosHoy(x.p)} hoy</em>`:""}</span></div>`).join("");
   return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button>
    <section class="sheet"><header><h2>Amigos y ranking</h2><span class="note">${lista.length} en la clase · ${lista.filter(x=>enLinea(x.u)).length} conectados ahora</span></header>
-   <p class="note" style="margin:0">Los puntos salen de lo que tienes dominado en cada app de Inglés: 100 por app, máximo 400. Iremos afinando el sistema.</p>
+   <p class="note" style="margin:0">Los puntos salen de lo que tienes dominado en cada app de Inglés: 100 por app, máximo 500. Iremos afinando el sistema.</p>
    <div class="ranking">${filas||'<div class="empty">Todavía no ha entrado nadie.</div>'}</div></section></div>`}
 function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id===S.uid),p=(S.rank||{})[S.uid]||{},pts=puntos(p);
   const u=(S.amigos||{})[S.uid]||{};
@@ -1098,11 +1098,11 @@ function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id=
      <div class="pf-datos"><div class="eyebrow">Tu perfil</div><h2>${esc(nombreDe(S.uid)||"Sin nombre")}</h2>
        <div class="pf-big"><span><b>${pts}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>de ${lista.length} en la clase</small></span></div></div></div>
      <div class="pf-acc"><button class="btn-p" data-foto style="--cf:var(--accent)">Subir foto de mi galería</button>${u.fotoPropia?'<button class="btn-sec" data-quitafoto>Volver a la foto de Google</button>':""}</div>
-     <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.${S.email&&/guille/i.test(S.email)?` · Administrador: <b>${window.__esAdmin1b?"sí ✅":"no ❌"}</b>`:""}</p>
+     <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.${S.email&&/guille|bernab/i.test(S.email)?` · Administrador: <b>${window.__esAdmin1b?"sí ✅":"no ❌"}</b>`:""}</p>
      ${window.__esAdmin1b?`<button class="btn-p" data-admtoggle style="--cf:${S.admin?"#d4231c":"#141a2e"};align-self:flex-start">🛠 Modo administrador: ${S.admin?"ACTIVADO · pulsa para volver a jugador":"desactivado · pulsa para activarlo"}</button>`:""}
      <div class="pf-nom"><label for="nomIn">Nombre que ven los demás</label><div><input id="nomIn" maxlength="30" value="${esc(nombreDe(S.uid))}"><button class="btn-sec" data-guardanombre>Guardar</button></div></div>
    </section>
-   <section class="sheet"><header><h2>Tus puntos por app</h2><span class="note">100 por app · máximo 400</span></header>
+   <section class="sheet"><header><h2>Tus puntos por app</h2><span class="note">100 por app · máximo 500</span></header>
      <div class="pf-apps">${APPS.map(([k,t])=>{const a=p.apps&&p.apps[k],v=Math.round(pctApp(p,k)*100);
        return `<div class="pf-app"><div><b>${t}</b><span>${a?a.ok+" de "+a.total+" dominados":"Sin empezar"}</span></div><div class="barra"><i style="width:${v}%"></i></div><b class="mono">${v} pts</b></div>`}).join("")}</div>
    </section>
@@ -1341,7 +1341,7 @@ function mezclar(base, cb) {
 fs.onSnapshot(fs.doc(fdb, "clase", "cambios"), snap => { cambios = (snap.exists() && snap.data()) || {}; aplicar(); }, () => {});
 window.guardarCambio = (tipo, id, campos) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: { [id]: campos } }, { merge: true });
 S.admin = modoAdmin();
-document.addEventListener("admin1b", e => { S.admin = !!e.detail; render(); if (!$("#ficha").hidden) admDecorar(); });
+document.addEventListener("admin1b", e => { S.admin = !!e.detail; S.esAdmin = !!window.__esAdmin1b; render(); if (!$("#ficha").hidden) admDecorar(); });
 function aplicar() {
   if (!datos) return;
   const pt = prog.temas || {}, pp = prog.practica || {}, oc = prog.ocultos || {};
@@ -1394,7 +1394,7 @@ alCambiarSesion(async user => {
   }
   S.uid = user.uid; S.canWrite = true;
   S.nombreCompleto = user.displayName || ""; S.email = user.email || ""; S.nombre = primerNombre(); S.foto = user.photoURL || "";
-  try { S.esAdmin = (await sha(String(user.email || "").toLowerCase())) === ADMIN; } catch (e) { S.esAdmin = false; }
+  S.esAdmin = !!window.__esAdmin1b;
   db = adaptador(user.uid);
   listo();
   quitar.push(fs.onSnapshot(fs.doc(fdb, "progreso", user.uid), snap => { prog = snap.data() || {}; aplicar(); }, () => aplicar()));
