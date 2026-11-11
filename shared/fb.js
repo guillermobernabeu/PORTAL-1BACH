@@ -66,8 +66,10 @@ export async function guardarProgreso(app, ok, total) {
     if (prev && ["verbos", "afijos", "wf"].includes(app) && (prev.ok || 0) > ok) ok = prev.ok;
     const ok0 = prev && prev.dia === hoy ? (prev.ok0 ?? 0) : (prev ? prev.ok || 0 : (["verbos", "afijos", "wf"].includes(app) ? ok : 0));
     const nuevo = { ok, total, t: Date.now(), dia: hoy, ok0: Math.min(ok0, ok) }, datos = snap.exists() ? snap.data() : {};
-    const hoyPts = ptsHoyDe({ apps: { ...(datos.apps || {}), [app]: nuevo }, dias: datos.dias }, hoy);
-    await fs.setDoc(ref, { apps: { [app]: nuevo }, dias: { [hoy]: hoyPts } }, { merge: true });
+    const hoyPts = ptsHoyDe({ apps: { ...(datos.apps || {}), [app]: nuevo }, dias: datos.dias }, hoy), dias = { [hoy]: hoyPts };
+    // antes de empezar un día nuevo en esta app, se apuntan los puntos que hiciste el último día que la usaste
+    if (prev && prev.dia && prev.dia !== hoy) { const v = ptsHoyDe(datos, prev.dia); if (v > 0) dias[prev.dia] = v; }
+    await fs.setDoc(ref, { apps: { [app]: nuevo }, dias }, { merge: true });
   } catch (e) {}
 }
 // Páginas que solo se ven con cuenta: si no has entrado, te manda a la portada para entrar con Google
@@ -135,7 +137,7 @@ export const ptsHoyDe = (p, hoy = hoyISO()) => Math.max(ganadoHoy(p, hoy), Numbe
 const lunes = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
 const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 export const diasSemana = (atras = 0) => { const l = lunes(new Date()); l.setDate(l.getDate() - 7 * atras); return Array.from({ length: 7 }, (_, i) => { const d = new Date(l); d.setDate(l.getDate() + i); return iso(d); }); };
-export const ptsSemanaDe = (p, atras = 0) => { const hoy = hoyISO(); return diasSemana(atras).reduce((s, f) => s + (f === hoy ? ptsHoyDe(p, hoy) : (Number(((p && p.dias) || {})[f]) || 0)), 0); };
+export const ptsSemanaDe = (p, atras = 0) => diasSemana(atras).reduce((s, d) => s + ptsHoyDe(p, d), 0);
 export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;
