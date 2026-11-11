@@ -69,6 +69,11 @@ main{min-height:60vh}
 .admbar button{font:700 13px system-ui;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
 .admbar button:last-child{border-color:#e5231b;color:#c3132b}
 .borradas{margin-top:18px;display:flex;flex-direction:column;gap:6px;padding:12px;border:1.5px dashed #e5231b;border-radius:14px}
+.ronda-t{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:14px}.ronda-t span{color:var(--ink2);font-weight:700}
+.ronda-t .rb{flex:1;min-width:80px;height:6px;border-radius:3px;background:var(--rule);overflow:hidden}.ronda-t .rb i{display:block;height:100%;background:var(--acc)}
+.salir-r{border:1px solid var(--rule);background:none;color:var(--ink2);border-radius:999px;padding:3px 10px;font:600 12px system-ui;cursor:pointer}
+.nota-dom{margin:0 0 8px;font-size:12.5px;color:var(--ink2)}
+.fin-r{display:flex;flex-direction:column;gap:10px}.fin-b{flex-wrap:wrap;gap:8px;justify-content:flex-start}
 .lista-link{display:inline-block;margin-top:8px;font-weight:700;color:var(--acc);text-decoration:none}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
@@ -84,7 +89,7 @@ main{min-height:60vh}
  <button data-t="add" aria-pressed="false">+ Añadir palabra</button>
 </nav>
 <div class="filt" id="filt"><span class="lb">Bloques</span></div>
-<div class="filt"><span class="lb">Repaso</span><button class="chip" id="fallosB" aria-pressed="false">Solo mis fallos</button></div>
+<div class="filt"><span class="lb">Repaso</span><button class="chip" id="fallosB" aria-pressed="false">Solo mis fallos</button><button class="chip" id="rondaB" aria-pressed="false">🎲 20 aleatorias</button></div>
 <div class="dominio" id="dominio"></div>
 <div class="stats" id="stats"></div>
 <main id="main"><div class="card"><p class="empty">Cargando palabras…</p></div></main>
@@ -116,6 +121,7 @@ const saveF=()=>{try{localStorage.setItem("vocabFallos",JSON.stringify(FALLOS))}
 // ---------- filtros ----------
 const filt=$("#filt");
 for(const b of BLOQUES){const c=el("button","chip",b);c.setAttribute("aria-pressed","true");c.onclick=()=>{S.blq.has(b)?S.blq.delete(b):S.blq.add(b);c.setAttribute("aria-pressed",String(S.blq.has(b)));nueva()};filt.append(c)}
+$("#rondaB").onclick=function(){if(S.ronda){S.ronda=null;this.setAttribute("aria-pressed","false");nueva();return}empezarRonda(mezcla(S.words.map(w=>w.id)).slice(0,20),"ronda")};
 $("#fallosB").onclick=function(){S.soloF=!S.soloF;this.setAttribute("aria-pressed",String(S.soloF));nueva()};
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));nueva()});
 function pool(){let p=S.words.filter(w=>S.blq.has(BLOQUES.includes(w.bloque)?w.bloque:"Otras"));if(S.soloF)p=p.filter(w=>FALLOS.includes(w.id));if(S.nivel)p=p.filter(w=>nivel(w.id)===S.nivel);return p}
@@ -133,9 +139,21 @@ function corrige(ans,w){S.altUsada=null;const a=norm(ans);if(!a)return 0;if(vari
  // un despiste de una letra
  for(const v of [...variantes(w.en),...(w.ok||[]).flatMap(variantes)]){if(Math.abs(v.length-a.length)<=1&&lev(v,a)<=1&&v.length>4)return 1}return 0}
 function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=m[0];m[0]=i;for(let j=1;j<=b.length;j++){const t=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return m[b.length]}
-function apunta(w,bien){const antes=nivel(w.id),t=ST[w.id]=ST[w.id]||{a:0,f:0,r:0};if(bien){t.a++;t.r++}else{t.f++;t.r=0}saveST();S.cambio=antes!==nivel(w.id)?nivel(w.id):null;if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats();window.trasApuntar&&window.trasApuntar(w,bien)}
+function apunta(w,bien){if(S.ronda&&S.ronda.ids[S.ronda.i]===w.id&&!S.ronda.hecha){S.ronda.hecha=true;(bien?S.ronda.ok:S.ronda.ko).push(w.id)}const antes=nivel(w.id),t=ST[w.id]=ST[w.id]||{a:0,f:0,r:0};if(bien){t.a++;t.r++}else{t.f++;t.r=0}saveST();S.cambio=antes!==nivel(w.id)?nivel(w.id):null;if(bien){S.ok++;S.ra++;FALLOS=FALLOS.filter(x=>x!==w.id)}else{S.ko++;S.ra=0;if(!FALLOS.includes(w.id))FALLOS.push(w.id)}saveF();stats();window.trasApuntar&&window.trasApuntar(w,bien)}
 // ---------- vistas ----------
 const main=$("#main");
+// Las dominadas no salen en la práctica normal hasta que estén dominadas todas (se repasan con el botón «Dominadas»)
+function practicables(p){S.ocultaDom=false;if(S.nivel)return p;const nd=p.filter(w=>nivel(w.id)!=="dom");if(nd.length&&nd.length<p.length){S.ocultaDom=true;return nd}return p}
+// Ronda de 20 palabras al azar de toda la lista
+function mezcla(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function empezarRonda(ids,tipo){S.ronda={ids,i:0,ok:[],ko:[],hecha:false,tipo};$("#rondaB").setAttribute("aria-pressed","true");if(S.tab==="list"||S.tab==="add"){S.tab="dw";document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.t==="dw")))}nueva()}
+function finRonda(){const r=S.ronda,c=el("div","card fin-r");main.append(c);const n=r.ids.length,ok=r.ok.length;
+ c.append(el("p","prompt",(ok===n?"🏆 ¡Perfecto! ":ok>=n*0.7?"👏 ¡Bien! ":"💪 ")+ok+" de "+n+" bien"));
+ if(r.ko.length){c.append(el("p","ask","Las que has fallado:"));const L=el("div","list");for(const id of r.ko){const w=S.words.find(x=>x.id===id);if(!w)continue;const row=el("div","row");row.append(el("span","en",w.en));row.append(el("span","es",w.es));row.append(el("span","de",w.def));L.append(row)}c.append(L)}
+ const nav=el("div","nav fin-b");
+ if(r.ko.length){const a=el("button","btn","🔁 Repetir las falladas ("+r.ko.length+")");a.onclick=()=>empezarRonda(mezcla(r.ko),"fallos");nav.append(a)}
+ const b=el("button","btn"+(r.ko.length?" sec":""),"🎲 Otras 20 aleatorias");b.onclick=()=>empezarRonda(mezcla(S.words.map(w=>w.id)).slice(0,20),"ronda");nav.append(b);
+ const s=el("button","btn sec","Volver a la práctica normal");s.onclick=()=>{S.ronda=null;$("#rondaB").setAttribute("aria-pressed","false");nueva()};nav.append(s);c.append(nav)}
 // Cuanto menos trabajada, más sale: peso según lo que llevas de cada palabra
 function peso(w){const t=ST[w.id];
  if(!t||!(t.a+t.f))return 6;            // nunca vista
@@ -148,10 +166,14 @@ function pick(p){if(p.length===1)return p[0];
  const ws=p.map(w=>{let k=peso(w);const i=RECIENTES.indexOf(w.id);if(i>=0)k*=0.02*(i+1);return k});
  let x=Math.random()*ws.reduce((a,b)=>a+b,0),w=p[p.length-1];for(let i=0;i<p.length;i++){x-=ws[i];if(x<=0){w=p[i];break}}
  RECIENTES.unshift(w.id);RECIENTES.length=Math.min(RECIENTES.length,Math.min(8,Math.floor(p.length/2)));return w}
-function nueva(){stats();S.done=false;main.textContent="";
+function nueva(){if(S.ronda&&S.ronda.hecha){S.ronda.i++;S.ronda.hecha=false}stats();S.done=false;main.textContent="";
  if(S.tab==="list")return lista();if(S.tab==="clase")return clase();if(S.tab==="add")return anadir();
- const p=pool();if(!p.length){const c=el("div","card");c.append(el("p","empty",S.words.length?(S.soloF?"No tienes fallos guardados en estos bloques.":"No hay palabras en los bloques elegidos."):"Todavía no hay palabras."));main.append(c);return}
- const w=S.q=pick(p);const c=el("div","card");main.append(c);autor(c,w);admBar(c,w);c.append(el("span","tag",w.bloque||"Otras"));
+ if(S.ronda&&S.ronda.i>=S.ronda.ids.length)return finRonda();
+ const p=S.ronda?S.words:pool();if(!p.length){const c=el("div","card");c.append(el("p","empty",S.words.length?(S.soloF?"No tienes fallos guardados en estos bloques.":"No hay palabras en los bloques elegidos."):"Todavía no hay palabras."));main.append(c);return}
+ const w=S.q=S.ronda?(S.words.find(x=>x.id===S.ronda.ids[S.ronda.i])||pick(p)):pick(practicables(p));const c=el("div","card");main.append(c);autor(c,w);admBar(c,w);
+ if(S.ronda){const rt=el("div","ronda-t");rt.innerHTML=`<b>🎲 ${S.ronda.tipo==="fallos"?"Repaso de falladas":"Ronda de 20"}</b><span>${S.ronda.i+1} / ${S.ronda.ids.length}</span><span class="rb"><i style="width:${S.ronda.i/S.ronda.ids.length*100}%"></i></span>`;const sx=el("button","salir-r","Salir");sx.onclick=()=>{S.ronda=null;$("#rondaB").setAttribute("aria-pressed","false");nueva()};rt.append(sx);c.append(rt)}
+ else if(!S.nivel&&S.ocultaDom)c.append(el("p","nota-dom","Las ✅ dominadas no salen hasta que las domines todas. Para repasarlas, toca «Dominadas» arriba."));
+ c.append(el("span","tag",w.bloque||"Otras"));
  if(S.tab==="wd")return tipoTest(c,w,p);
  const dw=S.tab==="dw";
  c.append(el("p","ask",dw?"¿Qué palabra es?":"¿Cómo se dice en inglés?"));

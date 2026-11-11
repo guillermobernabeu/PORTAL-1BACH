@@ -6,10 +6,12 @@ const RAIZ = new URL("../", import.meta.url).href;
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 const CSS = `
-.lat-d,.lat-i{display:none}
+.lat-d{display:none}
+.lat-i{position:fixed;top:8px;right:8px;display:flex;flex-direction:row;gap:6px;z-index:96;align-items:center}
+@media (max-width:1239px){.lat-i .lat-conc,.lat-i .adm-1b{padding:5px 8px 5px 6px;font-size:0;gap:5px}.lat-i .lat-conc::after{content:"🎯";font-size:14px}.lat-i .adm-1b .t1{font-size:0}.lat-i .adm-1b .t1::before{content:"🛠";font-size:14px}}
 @media (min-width:1240px){
   .lat-d{position:fixed;top:22px;right:22px;bottom:22px;width:min(300px,calc((100vw - 800px)/2 - 30px));display:flex;flex-direction:column;gap:14px;z-index:40;overflow-y:auto;scrollbar-width:none}
-  .lat-i{position:fixed;top:78px;left:22px;display:flex;flex-direction:column;gap:12px;z-index:96;align-items:flex-start}
+  .lat-i{top:78px;left:22px;right:auto;flex-direction:column;gap:12px;align-items:flex-start}
   html.con-lateral .casa-1b{top:18px;left:22px;width:52px;height:52px}
   html.con-lateral .casa-1b svg{width:26px;height:26px}
   html.con-lateral .claude{left:86px;top:32px}

@@ -223,6 +223,12 @@ onAuthStateChanged(auth, async (u) => {
   let h = ""; try { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(correo)); h = [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, "0")).join(""); } catch (e) { h = sha256js(correo); }
   if (!h) h = sha256js(correo);
   soyAdmin = !!u && h === ADMIN_H;
+  // por si el correo no coincide: si Firebase te deja escribir en clase/ (regla admin()), eres administrador
+  if (u && !soyAdmin) {
+    let ok = false; try { ok = sessionStorage.getItem("admPing_" + u.uid) === "1"; } catch (e) {}
+    if (!ok) ok = await fs.setDoc(fs.doc(db, "clase", "ping"), { t: Date.now() }, { merge: true }).then(() => true).catch(() => false);
+    if (ok) { soyAdmin = true; try { sessionStorage.setItem("admPing_" + u.uid, "1"); } catch (e) {} }
+  }
   let b = document.querySelector(".adm-1b");
   if (soyAdmin && !b) {
     const st = document.createElement("style");
