@@ -1098,7 +1098,7 @@ function renderPerfil(){const lista=clasificacion(),pos=lista.findIndex(x=>x.id=
      <div class="pf-datos"><div class="eyebrow">Tu perfil</div><h2>${esc(nombreDe(S.uid)||"Sin nombre")}</h2>
        <div class="pf-big"><span><b>${pts}</b><small>puntos</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>de ${lista.length} en la clase</small></span></div></div></div>
      <div class="pf-acc"><button class="btn-p" data-foto style="--cf:var(--accent)">Subir foto de mi galería</button>${u.fotoPropia?'<button class="btn-sec" data-quitafoto>Volver a la foto de Google</button>':""}</div>
-     <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.</p>
+     <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.${S.email&&/guille/i.test(S.email)?` · Administrador: <b>${window.__esAdmin1b?"sí ✅":"no ❌"}</b>`:""}</p>
      ${window.__esAdmin1b?`<button class="btn-p" data-admtoggle style="--cf:${S.admin?"#d4231c":"#141a2e"};align-self:flex-start">🛠 Modo administrador: ${S.admin?"ACTIVADO · pulsa para volver a jugador":"desactivado · pulsa para activarlo"}</button>`:""}
      <div class="pf-nom"><label for="nomIn">Nombre que ven los demás</label><div><input id="nomIn" maxlength="30" value="${esc(nombreDe(S.uid))}"><button class="btn-sec" data-guardanombre>Guardar</button></div></div>
    </section>
