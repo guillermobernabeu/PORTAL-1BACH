@@ -78,7 +78,8 @@ export function exigirCuenta() {
   const html = document.documentElement; html.style.visibility = "hidden";
   const raiz = new URL("../", import.meta.url);
   const ir = () => location.replace(raiz.href + "?volver=" + encodeURIComponent(location.pathname + location.search + location.hash));
-  const t = setTimeout(ir, 8000);
+  // si la sesión tarda en responder (móvil o red lenta), se enseña la página en vez de dejarla en blanco o mandarte a la portada
+  const t = setTimeout(() => { html.style.visibility = ""; }, 4000);
   onAuthStateChanged(auth, (u) => { clearTimeout(t); if (u) html.style.visibility = ""; else ir(); });
 }
 // Se actualiza sola: cuando se publica una versión nueva (version.json cambia), la página se recarga
