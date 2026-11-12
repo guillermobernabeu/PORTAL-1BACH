@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apuntes · 1 BACH</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#1d2233;color:#14182b}
+body{font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 16px 10px 58px;background:#fff;border-bottom:1px solid #d8dbe6}
+.bar a,.bar button{font:700 14px system-ui,sans-serif;color:#14182b;text-decoration:none;background:#fff;border:1.5px solid #14182b;border-radius:999px;padding:7px 14px;cursor:pointer}
+.bar .t{flex:1;min-width:0;display:flex;flex-direction:column}
+.bar .t b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar .t span{font-size:13px;color:#5b6177}
+.marca{position:fixed;right:12px;bottom:12px;z-index:9;font:700 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #c3132b;color:#c3132b;border-radius:999px;background:rgba(255,255,255,.95)}
+main{display:flex;flex-direction:column;align-items:center;gap:16px;padding:18px 12px 70px}
+main.zoom figure{width:min(1400px,100%)}
+figure{margin:0;width:min(860px,100%);display:flex;flex-direction:column;gap:6px}
+figure img{width:100%;display:block;background:#fff;border-radius:4px;box-shadow:0 4px 18px rgba(0,0,0,.35);min-height:120px}
+figcaption{color:#c9cede;font-size:13px;text-align:center}
+.msg{color:#fff;background:rgba(255,255,255,.08);border-radius:14px;padding:22px;max-width:520px;text-align:center}
+</style></head><body>
+<div class="bar"><a href="../" id="volver">← Volver</a><div class="t"><b id="tit">Apuntes</b><span id="meta">Cargando…</span></div><button type="button" id="zoom">Ampliar</button></div>
+<span class="marca" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<main id="pags"><div class="msg">Cargando…</div></main>
+<script type="module">
+import { db, fs, alCambiarSesion, exigirCuenta } from "../shared/fb.js?v=1794511315";
+exigirCuenta();
+const $ = s => document.querySelector(s), H = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const b64d = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+async function pagina(p) {
+  const r = await fetch("../" + p.f), u = new Uint8Array(await r.arrayBuffer());
+  const k = await crypto.subtle.importKey("raw", b64d(p.k), "AES-GCM", false, ["decrypt"]);
+  return URL.createObjectURL(new Blob([await crypto.subtle.decrypt({ name: "AES-GCM", iv: u.slice(0, 12) }, k, u.slice(12))], { type: "image/jpeg" }));
+}
+const ASIG = { filosofia: "Filosofía", lengua: "Lengua y Literatura", fyq: "Física y Química", mates: "Matemáticas", economia: "Economía", ingles: "Inglés", bio: "Biología y Geología", ef: "Educación Física", tic: "TIC" };
+let hecho = false;
+alCambiarSesion(async user => {
+  if (!user || hecho) return; hecho = true;
+  const id = location.hash.slice(1);
+  if (!/^[A-Za-z0-9_-]+$/.test(id)) { $("#pags").innerHTML = '<div class="msg">Este enlace no es válido.</div>'; return; }
+  try {
+    const s = await fs.getDoc(fs.doc(db, "compartidos", id));
+    if (!s.exists()) { $("#meta").textContent = ""; $("#pags").innerHTML = '<div class="msg">Este documento ya no está compartido.</div>'; return; }
+    const d = s.data(), P = d.paginas || [];
+    document.title = d.titulo + " · 1 BACH"; $("#tit").textContent = d.titulo;
+    $("#meta").textContent = [ASIG[d.asig] || d.asig, d.cat, P.length + (P.length === 1 ? " página" : " páginas")].filter(Boolean).join(" · ");
+    $("#pags").innerHTML = P.map((_, i) => `<figure><img alt="Página ${i + 1}" data-i="${i}"><figcaption>${i + 1} de ${P.length}</figcaption></figure>`).join("");
+    const imgs = [...document.querySelectorAll("img[data-i]")];
+    // se cargan de 3 en 3 para que no se atasque el móvil
+    for (let i = 0; i < P.length; i += 3) await Promise.all(P.slice(i, i + 3).map((p, j) => pagina(p).then(u => { imgs[i + j].src = u; }).catch(() => { imgs[i + j].alt = "No se ha podido cargar esta página"; })));
+  } catch (e) { $("#pags").innerHTML = `<div class="msg">No se ha podido abrir (${H(e.code || e.message)}).</div>`; }
+});
+$("#zoom").onclick = () => { const z = $("#pags").classList.toggle("zoom"); $("#zoom").textContent = z ? "Ajustar" : "Ampliar"; };
+$("#volver").onclick = e => { try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} };
+</script>
+</body></html>

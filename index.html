@@ -665,6 +665,32 @@ button.pts{background:none;border:0;cursor:pointer;padding:4px 6px;border-radius
 .bloq-op{display:flex;gap:10px;align-items:center;font-weight:700;font-size:15px;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;cursor:pointer}
 .bloq-op input{width:18px;height:18px}
 #bloqForm{display:flex;flex-direction:column;gap:10px}
+
+.admtabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.admtabs a{text-decoration:none;font-weight:800;font-size:14px;padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.88);color:#141a2e;border:1px solid rgba(20,26,46,.15)}
+.admtabs a[aria-current=true]{background:#141a2e;color:#fff;border-color:#141a2e}
+.mp-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mp-it{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--rule);border-radius:12px;padding:10px 12px;background:var(--paper)}
+.mp-it.mp-oc{opacity:.65}
+.mp-t{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 260px}.mp-t span{font-size:13px;color:var(--ink-2)}.mp-t small{font-size:12.5px;color:var(--ink-2)}
+.mp-a{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.mp-b{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;text-decoration:none}
+.mp-b1{background:var(--accent);border-color:var(--accent);color:#fff}
+.mp-pub{font-size:12.5px;font-weight:800;color:#167a3a;background:rgba(22,122,58,.1);border-radius:999px;padding:5px 10px}
+.mp-priv{font-size:12.5px;color:var(--ink-2)}
+.mp-fallos{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.mp-clave form{display:flex;gap:8px;flex-wrap:wrap}.mp-clave input{flex:1;min-width:200px;font:inherit;padding:9px 12px;border:1px solid var(--rule);border-radius:10px}
+.mp-err{color:#b3261e;font-weight:700}
+.mp-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}.mp-tiles .tile{text-decoration:none}
+.mp-form{display:flex;flex-direction:column;gap:10px}.mp-form input{font:inherit;font-size:15px;padding:9px 11px;border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:var(--ink)}
+.co-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.co-it{display:flex;gap:12px;align-items:center;padding:8px 10px;border:1px solid var(--rule);border-radius:12px;cursor:pointer;background:var(--paper)}
+.co-t{flex:1;min-width:0;display:flex;flex-direction:column}.co-t span{font-size:12.5px;color:var(--ink-2)}.co-t span.on{color:#167a3a;font-weight:700}.co-m{color:#b3261e!important;font-weight:700}
+.co-p{display:flex;flex-direction:column;align-items:center;min-width:48px}.co-p b{font-size:18px}.co-p small{font-size:11px;color:var(--ink-2)}
+.nov-l{display:flex;flex-direction:column;gap:8px}
+.nov{position:relative;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--accent);border-radius:12px;padding:10px 34px 10px 12px}
+.nov-c{font-size:12px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.03em}.nov-d{font-size:13px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nov-go{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-weight:800}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -764,7 +790,7 @@ const hojas=e=>(e.paginas||[]).filter(esDoc);
 function progreso(list){if(!list.length)return null;return list.reduce((s,t)=>s+pTema(t),0)/list.length}
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,2200)}
 
-function route(){const h=location.hash.slice(1);return AN[h]||h==="amigos"||h==="perfil"||h==="chat"||h==="privados"||/^privado-[A-Za-z0-9]+$/.test(h)||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
+function route(){const h=location.hash.slice(1);return AN[h]||h==="mipanel"||/^mipanel-[a-z]+$/.test(h)||h==="companeros"||h==="amigos"||h==="perfil"||h==="chat"||h==="privados"||/^privado-[A-Za-z0-9]+$/.test(h)||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
 
 
 function limite(e){const d=parseF(e.fecha);return d?new Date(d.getFullYear(),d.getMonth(),d.getDate()-1,23,59,59):null}
@@ -962,6 +988,23 @@ function cerrarFicha(pop){if(pop!==true&&!$("#ficha").hidden&&history.state&&his
 let enfocar=null;
 
 
+
+// ---------- portal del administrador: Mi panel · Clase · Compañeros ----------
+function cargarMiPanel(){if(!S.esAdmin||window.__mpCargando)return;window.__mpCargando=1;import("./shared/mipanel.js?v=1794511315").then(()=>render()).catch(()=>{window.__mpCargando=0;toast("No se ha podido abrir tu panel.")})}
+function admTabs(r){document.querySelector(".admtabs")?.remove();if(!S.esAdmin||!S.uid)return;const v=$("#view"),a=r.startsWith("mipanel")?"mp":r==="companeros"?"co":"cl";
+  v.insertAdjacentHTML("afterbegin",`<nav class="admtabs" aria-label="Portal del administrador"><a href="#mipanel" aria-current="${a==="mp"}">🗂 Mi panel</a><a href="#" data-go="resumen" aria-current="${a==="cl"}">👥 Clase</a><a href="#companeros" aria-current="${a==="co"}">🧑‍🤝‍🧑 Compañeros</a></nav>`)}
+function renderCompaneros(){if(!S.esAdmin)return `<div class="sheet"><b>Esto es solo para el administrador.</b></div>`;
+  const us=S.amigos||{},bl=S.bloqueos||{},L=Object.keys(us).filter(id=>id!==S.uid).sort((a,b)=>(us[b].visto||0)-(us[a].visto||0));
+  return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button><section class="sheet"><header><h2>🧑‍🤝‍🧑 Compañeros</h2><span class="note">${L.length} en la clase · ${L.filter(id=>enLinea(us[id])).length} conectados ahora</span></header>
+   <ul class="co-l">${L.map(id=>{const u=us[id],p=(S.rank||{})[id]||{},b=bl[id]||{},marcas=[u.baneado?"🚫 Expulsado":"",b.chat?"🔇 Sin chat":"",b.privados?"🔇 Sin privados":""].filter(Boolean);
+     return `<li class="co-it" data-perfil="${esc(id)}" role="button" tabindex="0">${avatar(id,44)}<div class="co-t"><b>${esc(nombreDe(id)||"Sin nombre")}</b><span class="${enLinea(u)?"on":""}">${enLinea(u)?"● conectado ahora":"última vez "+new Date(u.visto||0).toLocaleDateString("es-ES")}</span>${marcas.length?`<span class="co-m">${marcas.join(" · ")}</span>`:""}</div><div class="co-p"><b>${puntosHoy(p)}</b><small>hoy</small></div><div class="co-p"><b>${puntosSemana(p)}</b><small>semana</small></div></li>`}).join("")||'<li class="empty">Todavía no ha entrado nadie.</li>'}</ul>
+   <p class="note" style="margin:0">Toca a alguien para ver su perfil, escribirle, bloquearle acciones o expulsarle.</p></section></div>`}
+function renderNovedades(){if(!S.uid)return "";const lim=Date.now()-14*864e5;
+  const L=[...S.recursos.map(x=>["recursos",x]),...S.examenes.map(x=>["examenes",x]),...S.temas.map(x=>["temas",x])].filter(([,x])=>x.pub&&x.pub>lim).sort((a,b)=>b[1].pub-a[1].pub).slice(0,6);
+  if(!L.length)return "";
+  return `<section class="recos novs" aria-label="Novedades"><h2 class="recos-t">📌 Novedades de la clase</h2><div class="nov-l">${L.map(([t,x])=>{const que=t==="recursos"?(x.url&&x.url.startsWith("apuntes/")?"Apuntes":"Material"):t==="examenes"?"Examen":"Tema";
+    const href=t==="recursos"?x.url:t==="examenes"?"#"+x.asig:"#"+x.asig;
+    return `<a class="nov" href="${esc(href||"#"+x.asig)}"><span class="nov-c">${que} · ${esc(NOM[x.asig]||x.asig)}${t==="examenes"&&x.fecha?" · "+fechaSem(x.fecha):""}</span><b>${esc(x.titulo)}</b>${x.nota||x.alcance?`<span class="nov-d">${esc(x.nota||x.alcance)}</span>`:""}<span class="nov-go" aria-hidden="true">→</span></a>`}).join("")}</div></section>`}
 function renderRecos(){if(!S.uid)return "";
   const ex=S.examenes.filter(e=>!e.hecho&&e.fecha&&dias(e.fecha)>=0&&dias(e.fecha)<=7&&e.asig!=="global").sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(0,3);
   if(!ex.length)return "";const mio=(S.rank||{})[S.uid]||{};
@@ -982,7 +1025,7 @@ function renderResumen(){
     const sub=pe?(dias(pe.fecha)===0?"Examen hoy":dias(pe.fecha)===1?"Examen mañana":`Examen en ${dias(pe.fecha)} días`):`${t.length} tema${t.length===1?"":"s"}`;
     const urg=pe&&dias(pe.fecha)<5;
     return `<button class="tile ${urg?"urge":""}" data-a="${a.id}" data-go="${a.id}"><b>${esc(a.n)}</b><span class="cuando">${sub}</span><span class="tb" aria-hidden="true"><i style="width:${p==null?0:Math.round(p*100)}%"></i></span></button>`}).join("");
-  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}${renderLider()}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.mencNuevas?`<span class="badge-m" title="Te han mencionado">@</span>`:""}${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntosHoy((S.rank||{})[S.uid])} pts hoy</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav>${renderRecos()}<div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
+  return `<div class="home">${S.uid?"":`<div class="aviso-cuenta"><span>🔒 Estás viendo 1 BACH sin cuenta. <b>Para acceder a los contenidos, inicia sesión con Google.</b></span><button class="btn-p" data-login style="--cf:var(--accent)">Entrar con Google</button></div>`}<div class="amibar"><div class="amis"><button class="amigos-btn" data-go="amigos">👥 Amigos y ranking${S.conectados?` · <b>${S.conectados}</b> conectado${S.conectados===1?"":"s"}`:""}${renderLider()}</button><button class="amigos-btn chat-btn" data-go="chat" aria-label="Chat${S.sinLeer?`, ${S.sinLeer} mensajes nuevos`:""}">💬 Chat${S.mencNuevas?`<span class="badge-m" title="Te han mencionado">@</span>`:""}${(S.sinLeer||0)+(S.sinLeerPriv||0)?`<span class="badge">${(S.sinLeer||0)+(S.sinLeerPriv||0)>99?"99+":(S.sinLeer||0)+(S.sinLeerPriv||0)}</span>`:""}</button></div>${S.uid?`<button class="yo" data-go="perfil" title="Tu perfil">${avatar(S.uid,34)}<span>${esc(nombreDe(S.uid)||"Mi perfil")}</span><b class="mispts">${puntosHoy((S.rank||{})[S.uid])} pts hoy</b></button>`:`<button class="yo" data-login title="Entrar con tu cuenta de Google"><span class="ava av0" style="width:34px;height:34px;font-size:15px">G</span><span>Entrar con Google</span></button>`}</div><nav class="tiles" aria-label="Asignaturas">${tiles}</nav>${renderNovedades()}${renderRecos()}<div class="agenda">${renderCal()}${renderLeyenda()}</div></div>`}
 
 /* ---------- amigos, ranking y perfil ---------- */
 const APPS=[["vocab","Vocabulary"],["plur","Plurales"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"]];
@@ -1002,7 +1045,7 @@ function puntosSemana(p,atras=0){const d=diasSemana(atras),v=d.reduce((s,f)=>s+p
   // primera semana: como mínimo, todo lo que llevas conseguido (no se pierde nada de antes)
   return Math.max(v+legado(p),puntos(p))}
 function ganadorSemana(atras){const us=S.amigos||{},pr=S.rank||{};const L=Object.keys(us).filter(id=>!us[id].baneado).map(id=>({id,v:puntosSemana(pr[id],atras)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);return L[0]||null}
-function fechaCorta(f){const [y,m,d]=f.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-ES",{day:"numeric",month:"short"})}
+function fechaSem(f){const [y,m,d]=f.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-ES",{day:"numeric",month:"short"})}
 function renderLider(){if(!S.uid)return "";const us=S.amigos||{},pr=S.rank||{};
   const hoy=Object.keys(us).map(id=>({id,v:puntosHoy(pr[id])})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
   const sem=ganadorSemana(0),g=hoy[0]||sem;if(!g)return "";
@@ -1188,8 +1231,8 @@ function renderAmigos(){const modo=S.rkModo||"hoy",lista=clasificacion(modo);
     <button type="button" class="pts" data-rkmodo="${modo==="hoy"?"semana":"hoy"}" title="${modo==="hoy"?"Ver los puntos de la semana":"Ver los puntos de hoy"}">${x.pts}<small>${modo==="semana"?"pts semana":modo==="dominio"?"pts":"pts hoy"}</small>${modo!=="dominio"?`<em class="hoy-p">${modo==="semana"?`${otro} hoy`:`${otro} esta semana`}</em>`:""}</button></div>`}).join("");
   const sp=ganadorSemana(1),sa=ganadorSemana(0),d1=diasSemana(1),d0=diasSemana(0);
   const gan=`<div class="semana">
-     <div class="sem-c pasada">${sp?`${avatar(sp.id,46)}<div><span class="eyebrow">Ganador de la semana pasada · ${fechaCorta(d1[0])}–${fechaCorta(d1[6])}</span><b>🏆 ${esc(sp.id===S.uid?"¡Tú!":nombreDe(sp.id)||"Alguien")}</b><span>con <b>${sp.v}</b> puntos</span></div>`:`<div><span class="eyebrow">Ganador de la semana pasada</span><b>Nadie todavía</b><span>El primer recuento sale el lunes</span></div>`}</div>
-     <div class="sem-c">${sa?`${avatar(sa.id,46)}<div><span class="eyebrow">Esta semana · hasta el domingo ${fechaCorta(d0[6])}</span><b>${esc(sa.id===S.uid?"Vas tú":"Va ganando "+(nombreDe(sa.id)||"alguien"))}</b><span>con <b>${sa.v}</b> puntos</span></div>`:`<div><span class="eyebrow">Esta semana</span><b>Aún nadie ha sumado</b><span>¡Empieza tú!</span></div>`}</div></div>`;
+     <div class="sem-c pasada">${sp?`${avatar(sp.id,46)}<div><span class="eyebrow">Ganador de la semana pasada · ${fechaSem(d1[0])}–${fechaSem(d1[6])}</span><b>🏆 ${esc(sp.id===S.uid?"¡Tú!":nombreDe(sp.id)||"Alguien")}</b><span>con <b>${sp.v}</b> puntos</span></div>`:`<div><span class="eyebrow">Ganador de la semana pasada</span><b>Nadie todavía</b><span>El primer recuento sale el lunes</span></div>`}</div>
+     <div class="sem-c">${sa?`${avatar(sa.id,46)}<div><span class="eyebrow">Esta semana · hasta el domingo ${fechaSem(d0[6])}</span><b>${esc(sa.id===S.uid?"Vas tú":"Va ganando "+(nombreDe(sa.id)||"alguien"))}</b><span>con <b>${sa.v}</b> puntos</span></div>`:`<div><span class="eyebrow">Esta semana</span><b>Aún nadie ha sumado</b><span>¡Empieza tú!</span></div>`}</div></div>`;
   return `<div class="vista"><button class="back" data-go="resumen">← Inicio</button>
    <section class="sheet"><header><h2>Amigos y ranking</h2><span class="note">${lista.length} en la clase · ${lista.filter(x=>enLinea(x.u)).length} conectados ahora</span></header>
    ${gan}
@@ -1299,7 +1342,7 @@ function render(){actualizarSplash();const r=route(),v=$("#view");
   {const f=document.getElementById("chatform");if(S.uid&&S.loaded&&f&&f.dataset.ruta===r&&!bloqueado(r==="chat"?"chat":"privados")){pintarChat();pintarTabsChat();return}}
   if(S.error){v.innerHTML=`<div class="sheet"><b>No se ha podido cargar el curso.</b><span class="muted">${esc(S.error)} Abre la página de nuevo en un rato.</span></div>`;return}
   if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">Cargando temas y exámenes…</span></div>`;return}
-  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r==="privados"?renderPrivados():r.startsWith("privado-")?renderPrivado(r.slice(8)):r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();admDecorar();if((r==="chat"||r.startsWith("privado-"))&&S.uid){pintarChat(true);pintarAdj()}
+  v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r.startsWith("mipanel")?(window.MP?MP.html(r):(cargarMiPanel(),'<div class="sheet"><span class="muted">Abriendo tu panel…</span></div>')):r==="companeros"?renderCompaneros():r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r==="privados"?renderPrivados():r.startsWith("privado-")?renderPrivado(r.slice(8)):r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();admDecorar();admTabs(r);if((r==="chat"||r.startsWith("privado-"))&&S.uid){pintarChat(true);pintarAdj()}
   if(enfocar&&r!=="resumen"){const el=document.querySelector(`[data-det="${CSS.escape(enfocar)}"],[data-exam="${CSS.escape(enfocar)}"]`);enfocar=null;
     if(el){el.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});el.classList.add("flash")}}}
 
@@ -1437,7 +1480,7 @@ render();
 <script type="module">
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js?v=1794478586";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js?v=1794511315";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }
@@ -1465,7 +1508,7 @@ function verReportes() { if (quitarRep) { quitarRep(); quitarRep = null; } if (q
 window.guardarCambios = (tipo, mapa) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: mapa }, { merge: true });
 window.guardarCambio = (tipo, id, campos) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: { [id]: campos } }, { merge: true });
 S.admin = modoAdmin();
-document.addEventListener("admin1b", e => { S.admin = !!e.detail; const era = S.esAdmin; S.esAdmin = !!window.__esAdmin1b; if (era !== S.esAdmin || (S.esAdmin && !quitarRep)) verReportes(); render(); if (!$("#ficha").hidden) admDecorar(); });
+document.addEventListener("admin1b", e => { S.admin = !!e.detail; const era = S.esAdmin; S.esAdmin = !!window.__esAdmin1b; if (S.esAdmin && route().startsWith("mipanel")) cargarMiPanel(); if (era !== S.esAdmin || (S.esAdmin && !quitarRep)) verReportes(); render(); if (!$("#ficha").hidden) admDecorar(); });
 function aplicar() {
   if (!datos) return;
   const pt = prog.temas || {}, pp = prog.practica || {}, oc = prog.ocultos || {};
