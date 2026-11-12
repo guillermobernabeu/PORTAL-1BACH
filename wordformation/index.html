@@ -1156,9 +1156,9 @@ applyMode(); renderHome(); route();
 .b1-claude{position:fixed;right:10px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;font:600 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #c3132b;color:#c3132b;border-radius:999px;background:rgba(255,255,255,.92)}
 @media (min-width:1024px){.b1-back,.b1-claude{bottom:18px}}</style>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794511315";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794512057";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1794511315";
+import { iniciarLateral } from "../shared/lateral.js?v=1794512057";
 copiaEnLaNube("wf", () => Object.keys(localStorage).filter(k => k.startsWith("wf_")));
 const lee=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}};
 function resumen(){ const n=(s,f)=>{s=s||{};f=f||{};return Object.keys(s).filter(k=>!f[k]).length};const ok=n(lee("wf_seen"),lee("wf_fails"))+n(lee("wf_ut2_seen"),lee("wf_ut2_fails"));if(!localStorage.getItem("wf_seen")&&!localStorage.getItem("wf_ut2_seen"))return null;return [ok,376]; }

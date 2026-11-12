@@ -284,7 +284,8 @@ function sha256js(m) {
 const ADMIN_HS = ["567368fac0b19f0df9590340c50247491ee14e5df1325c518877acbdeabcb98a", "3f2d11649c13eec8cba8a9851c96d40eb6e2b2d2f139939ed667a5001d2c3bb7", "0ae3100b6386404bc796d8a829ec4de9537464551200084507056c389ce17e90"];
 let soyAdmin = false;
 export const esAdmin = () => soyAdmin;
-export const modoAdmin = () => { try { return soyAdmin && localStorage.getItem("modoAdmin") === "1"; } catch (e) { return false; } };
+// el administrador siempre puede editar: ya no hay interruptor jugador/administrador
+export const modoAdmin = () => soyAdmin;
 function aplicarAdmin() {
   const on = modoAdmin(); window.__esAdmin1b = soyAdmin; document.documentElement.classList.toggle("admin-1b", on);
   const b = document.querySelector(".adm-1b"); if (b) b.setAttribute("aria-pressed", String(on));
@@ -301,24 +302,7 @@ onAuthStateChanged(auth, async (u) => {
     if (!ok) ok = await fs.setDoc(fs.doc(db, "clase", "ping"), { t: Date.now() }, { merge: true }).then(() => true).catch(() => false);
     if (ok) { soyAdmin = true; try { sessionStorage.setItem("admPing_" + u.uid, "1"); } catch (e) {} }
   }
-  let b = document.querySelector(".adm-1b");
-  if (soyAdmin && !b) {
-    const st = document.createElement("style");
-    st.textContent = `.adm-1b{display:flex;align-items:center;gap:8px;border:1px solid #e3e7ee;background:#fff;color:#3b4258;border-radius:999px;padding:7px 12px 7px 8px;font:700 13px system-ui,sans-serif;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.12);z-index:96}
-.adm-1b.suelto{position:fixed;top:10px;right:10px}
-.adm-1b .sw{width:30px;height:18px;border-radius:999px;background:#cfd5df;position:relative;transition:background .2s}
-.adm-1b .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
-.adm-1b[aria-pressed=true]{background:#141a2e;color:#ffd75e;border-color:#141a2e}.adm-1b[aria-pressed=true] .sw{background:#e5231b}.adm-1b[aria-pressed=true] .sw::after{transform:translateX(12px)}
-.adm-1b .t2{font-weight:600;opacity:.7}
-@media (max-width:600px){.adm-1b.suelto{top:4px;right:6px;padding:4px 8px 4px 5px;font-size:12px}.adm-1b.suelto .t1{font-size:0}.adm-1b.suelto .t1::before{content:"🛠";font-size:14px}}`;
-    document.head.append(st);
-    b = document.createElement("button"); b.type = "button"; b.className = "adm-1b"; b.title = "Cambia entre jugador y administrador";
-    b.innerHTML = '<span class="sw" aria-hidden="true"></span><span class="t1">🛠 Administrador</span>';
-    b.onclick = () => { try { localStorage.setItem("modoAdmin", modoAdmin() ? "0" : "1"); } catch (e) {} aplicarAdmin(); };
-    const sitio = () => { const li = document.querySelector(".lat-i"); if (li) { b.classList.remove("suelto"); li.append(b); } else { b.classList.add("suelto"); document.body.append(b); } };
-    sitio(); setTimeout(sitio, 1500);
-  }
-  if (!soyAdmin && b) b.remove();
+  document.querySelector(".adm-1b")?.remove();
   aplicarAdmin();
 });
 

@@ -1,7 +1,7 @@
 // Mi panel: el proyecto 1 BACH completo de Guillermo, solo para el administrador.
 // Los datos y las páginas están cifrados (AES-GCM) en el repositorio público: sin la clave no se pueden leer.
 // Cada página tiene su propia clave; al publicar un documento solo se comparten las claves de sus páginas.
-import { db, fs, auth } from "./fb.js?v=1794511315";
+import { db, fs, auth } from "./fb.js?v=1794512057";
 
 const BASE = new URL("../", import.meta.url).href;
 const b64d = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
@@ -53,10 +53,14 @@ const paginasDe = x => (x.paginas || x.apuntes || []).filter(p => MP.D.pag[p]);
 
 // ---------- vistas ----------
 const nombreA = id => (typeof NOM !== "undefined" && NOM[id]) || id;
+// como en el portal: un examen deja de ser "próximo" a las 14:00 de su día (el último, si dura varios días)
+const ultimoDia = e => (Array.isArray(e.dias) && e.dias.length ? e.dias.slice().sort().pop() : e.fecha);
+const pasado = e => { const d = parseF(ultimoDia(e)); if (!d) return false; d.setHours(14, 0, 0, 0); return Date.now() >= d.getTime(); };
+const pendiente = e => !e.hecho && !!e.fecha && !pasado(e);
 const fCorta = f => { const d = f && parseF(f); return d ? d.toLocaleDateString("es-ES", { day: "numeric", month: "short" }) : "sin fecha"; };
 function filaExamen(e) {
-  const d = e.fecha ? dias(e.fecha) : null, hp = paginasDe(e).length;
-  return `<li class="mp-it"><div class="mp-t"><b>${H(e.titulo)}</b><span>${H(nombreA(e.asig))} · ${fCorta(e.fecha)}${!e.hecho && d != null && d >= 0 ? ` · en ${d} días` : ""}${e.nota ? ` · Nota: <b>${H(e.nota)}</b>` : ""}</span>${e.alcance ? `<small>${H(e.alcance)}</small>` : ""}</div>
+  const d = e.fecha ? dias(e.fecha) : null, hp = paginasDe(e).length, pend = pendiente(e);
+  return `<li class="mp-it"><div class="mp-t"><b>${H(e.titulo)}</b><span>${H(nombreA(e.asig))} · ${fCorta(e.fecha)}${pend && d != null ? (d === 0 ? " · hoy" : d === 1 ? " · mañana" : ` · en ${d} días`) : e.fecha ? " · hecho" : ""}${e.nota ? ` · Nota: <b>${H(e.nota)}</b>` : ""}</span>${e.alcance ? `<small>${H(e.alcance)}</small>` : ""}</div>
     <div class="mp-a">${hp ? `<button type="button" class="mp-b" data-mpver="examenes:${H(e.id)}">📄 Ver ${hp} ${hp === 1 ? "hoja" : "hojas"}</button>` : ""}${botonPub("examenes", e)}</div></li>`;
 }
 function filaRecurso(r) {
@@ -83,7 +87,7 @@ MP.html = (r) => {
     ${MP.error ? `<p class="mp-err">${H(MP.error)}</p>` : ""}</section></div>`;
   const D = MP.D, a = r.startsWith("mipanel-") ? r.slice(8) : "";
   if (!a) {
-    const prox = D.examenes.filter(e => !e.hecho && e.fecha && dias(e.fecha) >= 0).sort((x, y) => x.fecha.localeCompare(y.fecha));
+    const prox = D.examenes.filter(pendiente).sort((x, y) => x.fecha.localeCompare(y.fecha));
     const tiles = ASIG.map(s => { const n = D.recursos.filter(x => x.asig === s.id).length + D.temas.filter(x => x.asig === s.id).length, pe = prox.find(e => e.asig === s.id);
       return `<a class="tile" data-a="${s.id}" href="#mipanel-${s.id}"><b>${H(s.n)}</b><span class="cuando">${pe ? `Examen ${dias(pe.fecha) === 0 ? "hoy" : `en ${dias(pe.fecha)} días`}` : `${n} cosas`}</span></a>`; }).join("");
     const npub = ["examenes", "temas", "recursos"].reduce((s, t) => s + D[t].filter(x => pubDe(t, x.id)).length, 0);
@@ -91,13 +95,14 @@ MP.html = (r) => {
       <section class="sheet"><header><h2>Próximos exámenes</h2></header><ul class="mp-l">${prox.map(filaExamen).join("") || '<li class="empty">No hay exámenes próximos.</li>'}</ul></section>
       <p class="note" style="text-align:center"><a href="https://claude.ai/artifact/Np3XpCt8KZ7UtnWXBBqbsE" target="_blank" rel="noopener">Abrir mi panel original en Claude ↗</a> (para practicar con Claude y añadir cosas nuevas)</p></div>`;
   }
-  const ex = D.examenes.filter(e => e.asig === a), prox = ex.filter(e => !e.hecho).sort((x, y) => (x.fecha || "9").localeCompare(y.fecha || "9")), hech = ex.filter(e => e.hecho).sort((x, y) => (y.fecha || "").localeCompare(x.fecha || ""));
+  const ex = D.examenes.filter(e => e.asig === a), prox = ex.filter(e => pendiente(e) || (!e.hecho && !e.fecha)).sort((x, y) => (x.fecha || "9").localeCompare(y.fecha || "9")), hech = ex.filter(e => !prox.includes(e)).sort((x, y) => (y.fecha || "").localeCompare(x.fecha || ""));
   const tem = D.temas.filter(t => t.asig === a).sort((x, y) => (x.tri || 0) - (y.tri || 0) || (x.orden ?? 99) - (y.orden ?? 99));
   const rec = D.recursos.filter(x => x.asig === a), fal = D.fallos.filter(f => f.asig === a);
   const grupos = {}; rec.forEach(x => { const g = x.paginas && x.paginas.length ? "Documentos" : x.tipo === "chat" ? "Chats de estudio" : "Apps y enlaces"; (grupos[g] = grupos[g] || []).push(x); });
   const voc = a === "ingles" ? (D.vocab.find(v => v.asig === "ingles" || v.id === "ingles") || {}).items : null;
   return cabecera("🗂 " + H(nombreA(a)), true)
-    + `<section class="sheet"><header><h2>Exámenes</h2></header><ul class="mp-l">${[...prox, ...hech].map(filaExamen).join("") || '<li class="empty">Nada todavía.</li>'}</ul></section>`
+    + `<section class="sheet"><header><h2>Próximos exámenes</h2></header><ul class="mp-l">${prox.map(filaExamen).join("") || '<li class="empty">No tienes exámenes próximos.</li>'}</ul></section>`
+    + (hech.length ? `<section class="sheet"><header><h2>Exámenes hechos</h2></header><ul class="mp-l">${hech.map(filaExamen).join("")}</ul></section>` : "")
     + `<section class="sheet"><header><h2>Temas</h2></header><ul class="mp-l">${tem.map(filaTema).join("") || '<li class="empty">Nada todavía.</li>'}</ul></section>`
     + Object.entries(grupos).map(([g, L]) => `<section class="sheet"><header><h2>${g}</h2></header><ul class="mp-l">${L.map(filaRecurso).join("")}</ul></section>`).join("")
     + (fal.length ? `<section class="sheet"><header><h2>Tus fallos</h2><span class="note">Solo para ti</span></header><ul class="mp-fallos">${fal.map(f => `<li>${H(f.texto || f.t || f.fallo || JSON.stringify(f))}</li>`).join("")}</ul></section>` : "")
