@@ -35,7 +35,7 @@ h1 sup{font-size:.5em}
 <span class="marca" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
 <main class="hoja"><h1>VOCABULARY 1<sup>ST</sup> TERM</h1><div class="leyenda" id="leyenda"></div><div class="tabla" id="tabla"></div>
 <p class="pie">Lista de la clase. Las palabras con un circulito las ha añadido un compañero desde la app.</p></main>
-<script src="palabras.js?v=1794512924"></script>
+<script src="palabras.js?v=1794514981"></script>
 <script>
 const S={words:[],users:{}};
 const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
@@ -64,7 +64,7 @@ document.getElementById("q").oninput=pinta;document.getElementById("orden").onch
 document.getElementById("volver").onclick=e=>{try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}};
 </script>
 <script type="module">
-import { db, fs, alCambiarSesion, alCambiarClase, exigirCuenta } from "../shared/fb.js?v=1794512924";
+import { db, fs, alCambiarSesion, alCambiarClase, exigirCuenta } from "../shared/fb.js?v=1794514981";
 exigirCuenta();
 fs.onSnapshot(fs.collection(db, "vocabulary_palabras"), snap => { remotas = snap.docs.map(d => ({ id: d.id, ...d.data() })); juntar(); }, () => {});
 let quitar = null;
