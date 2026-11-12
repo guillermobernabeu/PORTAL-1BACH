@@ -21,7 +21,7 @@ figcaption{color:#c9cede;font-size:13px;text-align:center}
 <span class="marca" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
 <main id="pags"><div class="msg">Cargando…</div></main>
 <script type="module">
-import { db, fs, alCambiarSesion, exigirCuenta } from "../shared/fb.js?v=1794512057";
+import { db, fs, alCambiarSesion, exigirCuenta } from "../shared/fb.js?v=1794512924";
 exigirCuenta();
 const $ = s => document.querySelector(s), H = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const b64d = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };

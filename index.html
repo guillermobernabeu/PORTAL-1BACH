@@ -870,7 +870,8 @@ function montarCal(){const sc=$("#mscroll");if(!sc)return;if(matchMedia("(max-wi
     $("#calTit").firstChild.textContent=c.t+" ";$("#calY").textContent=c.y;$("#calSub").textContent=c.sub}},90)}}
 function irPar(i){const sc=$("#mscroll");if(!sc)return;i=Math.max(0,Math.min(PARES.length-1,i));const h=sc.clientHeight;
   sc.scrollTo({top:i*h,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}
-const hrs=e=>typeof e.horas==="number"&&e.horas>0?e.horas:null;
+// las horas de estudio estimadas se han quitado (no eran fiables): sin horas no sale "Lo que más te va a costar" ni el ritmo por día
+const hrs=e=>null;
 function renderLeyenda(){
   const up=S.examenes.filter(e=>!e.hecho&&e.fecha&&dias(e.fecha)>=0).sort((a,b)=>a.fecha.localeCompare(b.fecha));
   const sinF=S.examenes.filter(e=>!e.hecho&&!e.fecha);
@@ -990,7 +991,7 @@ let enfocar=null;
 
 
 // ---------- portal del administrador: Mi panel · Clase · Compañeros ----------
-function cargarMiPanel(){if(!S.esAdmin||window.__mpCargando)return;window.__mpCargando=1;import("./shared/mipanel.js?v=1794512057").then(()=>render()).catch(()=>{window.__mpCargando=0;toast("No se ha podido abrir tu panel.")})}
+function cargarMiPanel(){if(!S.esAdmin||window.__mpCargando)return;window.__mpCargando=1;import("./shared/mipanel.js?v=1794512924").then(()=>render()).catch(()=>{window.__mpCargando=0;toast("No se ha podido abrir tu panel.")})}
 function admTabs(r){document.querySelector(".admtabs")?.remove();if(!S.esAdmin||!S.uid)return;const v=$("#view"),a=r.startsWith("mipanel")?"mp":r==="companeros"?"co":"cl";
   v.insertAdjacentHTML("afterbegin",`<nav class="admtabs" aria-label="Portal del administrador"><a href="#mipanel" aria-current="${a==="mp"}">🗂 Mi panel</a><a href="#" data-go="resumen" aria-current="${a==="cl"}">👥 Clase</a><a href="#companeros" aria-current="${a==="co"}">🧑‍🤝‍🧑 Compañeros</a></nav>`)}
 function renderCompaneros(){if(!S.esAdmin)return `<div class="sheet"><b>Esto es solo para el administrador.</b></div>`;
@@ -1479,7 +1480,7 @@ render();
 <script type="module">
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js?v=1794512057";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js?v=1794512924";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }

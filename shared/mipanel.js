@@ -1,7 +1,7 @@
 // Mi panel: el proyecto 1 BACH completo de Guillermo, solo para el administrador.
 // Los datos y las páginas están cifrados (AES-GCM) en el repositorio público: sin la clave no se pueden leer.
 // Cada página tiene su propia clave; al publicar un documento solo se comparten las claves de sus páginas.
-import { db, fs, auth } from "./fb.js?v=1794512057";
+import { db, fs, auth } from "./fb.js?v=1794512924";
 
 const BASE = new URL("../", import.meta.url).href;
 const b64d = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
