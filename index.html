@@ -991,7 +991,9 @@ const SEM0="2026-11-09";
 function legado(p){if(p&&typeof p.legado==="number")return p.legado;const h=hoyStr();if(h<SEM0)return 0;
   const base=Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||!a.total)return s;return s+Math.min(1,(a.dia===h?(a.ok0||0):a.ok)/a.total)*100},0));
   const prev=diasSemana(0)[0]===SEM0?diasSemana(0).filter(f=>f<h).reduce((s,f)=>s+puntosHoy(p,f),0):0;return Math.max(0,base-prev)}
-function puntosSemana(p,atras=0){const d=diasSemana(atras);return d.reduce((s,f)=>s+puntosHoy(p,f),0)+(d[0]===SEM0?legado(p):0)}
+function puntosSemana(p,atras=0){const d=diasSemana(atras),v=d.reduce((s,f)=>s+puntosHoy(p,f),0);if(d[0]!==SEM0)return v;
+  // primera semana: como mínimo, todo lo que llevas conseguido (no se pierde nada de antes)
+  return Math.max(v+legado(p),puntos(p))}
 function ganadorSemana(atras){const us=S.amigos||{},pr=S.rank||{};const L=Object.keys(us).filter(id=>!us[id].baneado).map(id=>({id,v:puntosSemana(pr[id],atras)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);return L[0]||null}
 function fechaCorta(f){const [y,m,d]=f.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("es-ES",{day:"numeric",month:"short"})}
 function renderLider(){if(!S.uid)return "";const us=S.amigos||{},pr=S.rank||{};

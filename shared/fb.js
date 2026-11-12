@@ -65,7 +65,7 @@ export async function guardarProgreso(app, ok, total) {
     // en las apps que guardan el progreso en el navegador, los puntos no bajan (p. ej. al cambiar de dirección web)
     if (prev && ["verbos", "afijos", "wf"].includes(app) && (prev.ok || 0) > ok) ok = prev.ok;
     const ok0 = prev && prev.dia === hoy ? (prev.ok0 ?? 0) : (prev ? prev.ok || 0 : (["verbos", "afijos", "wf"].includes(app) ? ok : 0));
-    const nuevo = { ok, total, t: Date.now(), dia: hoy, ok0: Math.min(ok0, ok) }, datos = snap.exists() ? snap.data() : {};
+    const nuevo = { ok, total, t: Date.now(), dia: hoy, ok0 }, datos = snap.exists() ? snap.data() : {};
     const hoyPts = ptsHoyDe({ apps: { ...(datos.apps || {}), [app]: nuevo }, dias: datos.dias }, hoy), dias = { [hoy]: hoyPts };
     // antes de empezar un día nuevo en esta app, se apuntan los puntos que hiciste el último día que la usaste
     if (prev && prev.dia && prev.dia !== hoy) { const v = ptsHoyDe(datos, prev.dia); if (v > 0) dias[prev.dia] = v; }
@@ -142,7 +142,7 @@ const SEM0 = "2026-11-09";
 function calcLegado(p) { const h = hoyISO();
   const base = Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || !a.total) return s; return s + Math.min(1, (a.dia === h ? (a.ok0 || 0) : a.ok) / a.total) * 100; }, 0));
   const prev = diasSemana(0)[0] === SEM0 ? diasSemana(0).filter(f => f < h).reduce((s, f) => s + ptsHoyDe(p, f), 0) : 0; return Math.max(0, base - prev); }
-export const ptsSemanaDe = (p, atras = 0) => { const d = diasSemana(atras); return d.reduce((s, x) => s + ptsHoyDe(p, x), 0) + (d[0] === SEM0 ? (typeof (p && p.legado) === "number" ? p.legado : calcLegado(p)) : 0); };
+export const ptsSemanaDe = (p, atras = 0) => { const d = diasSemana(atras), v = d.reduce((s, x) => s + ptsHoyDe(p, x), 0); if (d[0] !== SEM0) return v; return Math.max(v + (typeof (p && p.legado) === "number" ? p.legado : calcLegado(p)), ptsDe(p)); };
 onAuthStateChanged(auth, async (u) => {
   if (!u || diasSemana(0)[0] !== SEM0) return;
   try { const ref = fs.doc(db, "progreso", u.uid), s = await fs.getDoc(ref), p = s.exists() ? s.data() : {};
