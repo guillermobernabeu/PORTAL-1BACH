@@ -254,12 +254,13 @@ let quitarAvisos = [];
 onAuthStateChanged(auth, (u) => {
   quitarAvisos.forEach(f => f()); quitarAvisos = [];
   if (!u) return;
-  const inicio = Date.now(); let ultChat = inicio; const ultPriv = {};
+  const inicio = Date.now(); let ultChat = inicio; const ultPriv = {}; let bloq = {};
+  quitarAvisos.push(fs.onSnapshot(fs.doc(db, "bloqueos", u.uid), s => { bloq = s.exists() ? s.data() : {}; }, () => {}));
   quitarAvisos.push(fs.onSnapshot(fs.query(fs.collection(db, "chat"), fs.orderBy("t"), fs.limitToLast(1)), snap => {
-    snap.docs.forEach(d => { const m = d.data(); if ((m.t || 0) > ultChat && m.uid !== u.uid) { ultChat = m.t; avisoMensaje(m.uid, m.texto, "chat", false, (m.menc || []).includes(u.uid)); } });
+    snap.docs.forEach(d => { const m = d.data(); if ((m.t || 0) > ultChat && m.uid !== u.uid && !bloq.chat) { ultChat = m.t; avisoMensaje(m.uid, m.texto, "chat", false, (m.menc || []).includes(u.uid)); } });
   }, () => {}));
   quitarAvisos.push(fs.onSnapshot(fs.query(fs.collection(db, "privados"), fs.where("miembros", "array-contains", u.uid)), snap => {
-    snap.docs.forEach(d => { const c = d.data(), m = c.ultimo || {}; if (!m.t || m.uid === u.uid || m.t <= inicio || m.t <= (ultPriv[d.id] || 0)) return;
+    snap.docs.forEach(d => { const c = d.data(), m = c.ultimo || {}; if (bloq.privados || !m.t || m.uid === u.uid || m.t <= inicio || m.t <= (ultPriv[d.id] || 0)) return;
       ultPriv[d.id] = m.t; avisoMensaje(m.uid, m.texto, "privado-" + m.uid, true); });
   }, () => {}));
 });

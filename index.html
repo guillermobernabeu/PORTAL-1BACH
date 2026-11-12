@@ -658,6 +658,13 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .rk-modos button{border:1px solid var(--rule);background:var(--paper);color:var(--ink-2);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
 .rk-modos button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
 button.pts{background:none;border:0;cursor:pointer;padding:4px 6px;border-radius:10px}button.pts:hover{background:rgba(0,0,0,.05)}
+
+.bloq-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:34px 18px;border:1px dashed var(--rule);border-radius:16px}
+.bloq-c .bloq-i{font-size:40px;line-height:1}.bloq-c b{font-size:17px}.bloq-c p{margin:0;white-space:pre-wrap}
+.bloq-tag{font-size:13px;font-weight:700;color:#b3261e;background:rgba(212,35,28,.08);border-radius:999px;padding:5px 12px;align-self:center}
+.bloq-op{display:flex;gap:10px;align-items:center;font-weight:700;font-size:15px;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;cursor:pointer}
+.bloq-op input{width:18px;height:18px}
+#bloqForm{display:flex;flex-direction:column;gap:10px}
 /* calendario más pequeño */
 @media (min-width:901px){.agenda{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
 .cal{padding:24px 16px 16px}
@@ -1017,6 +1024,9 @@ function renderEntra(r){const t={amigos:"Amigos y ranking",perfil:"Tu perfil",ch
 const MAXF=3;window.ADJ=window.ADJ||[];
 function pintarAdj(){const a=document.getElementById("chatAdj");if(!a)return;a.innerHTML=window.ADJ.map((u,i)=>`<span class="adj"><img src="${u}" alt=""><button type="button" data-quitaadj="${i}" aria-label="Quitar foto">×</button></span>`).join("")}
 const ETQ={general:"💬 General",mal:"❌ Pregunta o respuesta mal",fecha:"📅 Fecha mal",noentra:"📚 Qué entra",idea:"💡 Idea"};
+const BLQ={chat:"💬 Chat de la clase",privados:"✉️ Mensajes privados"};
+function bloqueado(c){return !!((S.bloq||{})[c])}
+function avisoBloqueo(c){const m=(S.bloq||{}).motivo;return `<div class="bloq-c"><span class="bloq-i">🔇</span><b>El administrador te ha bloqueado ${c==="chat"?"el chat de la clase":"los mensajes privados"}.</b>${m?`<p>${esc(m)}</p>`:""}<span class="note">Si crees que es un error, habla con él.</span></div>`}
 function tabsChat(){const p=S.sinLeerPriv||0,g=route()==="chat"?0:(S.sinLeer||0),r=route();
   return `<div class="ctabs2" id="ctabs2" role="tablist"><button data-go="chat" aria-pressed="${r==="chat"}">👥 Clase${S.mencNuevas&&r!=="chat"?`<span class="badge-m">@</span>`:""}${g?`<span class="badge">${g}</span>`:""}</button><button data-go="privados" aria-pressed="${r!=="chat"}">🔒 Privados${p?`<span class="badge">${p}</span>`:""}</button></div>`}
 function pintarTabsChat(){const t=document.getElementById("ctabs2");if(t)t.outerHTML=tabsChat()}
@@ -1024,12 +1034,12 @@ function renderChat(){
   return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}
    <section class="sheet"><header><h2>Chat de la clase</h2><span class="note">Lo leen todos los que han entrado</span></header>
    <p class="note" style="margin:0">Avisa aquí si una pregunta está mal, si algo no entra en el examen o si una fecha no es la buena.</p>
-   <div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
+   ${bloqueado("chat")?avisoBloqueo("chat")+"</section></div>":`<div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
    <form class="chatform" id="chatform" data-ruta="chat"><select id="chatTag" aria-label="Tipo de mensaje">${Object.entries(ETQ).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
      <div class="chatadj" id="chatAdj"></div>
      <div class="menc-box" id="menc" hidden></div><div class="chatin"><button class="clip" type="button" data-adjuntar title="Adjuntar fotos (hasta ${MAXF})" aria-label="Adjuntar fotos">📷</button><textarea id="chatTxt" rows="2" maxlength="800" placeholder="Escribe un mensaje para la clase… (usa @ para mencionar a alguien)"></textarea><button class="btn-p" style="--cf:var(--accent)" type="submit">Enviar</button></div>
      <p class="note" style="margin:0">Puedes adjuntar hasta ${MAXF} fotos por mensaje; se reducen solas para que no pesen.</p></form>
-   </section></div>`}
+   </section></div>`}`}
 function horaChat(t){const d=new Date(t),h=new Date();const mismo=d.toDateString()===h.toDateString();
   return (mismo?"":d.toLocaleDateString("es-ES",{day:"numeric",month:"short"})+" · ")+d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}
 function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)return;const priv=route().startsWith("privado-"),ms=(priv?S.privMsgs:S.chat)||[];
@@ -1045,7 +1055,7 @@ function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)ret
 const convId=(a,b)=>[a,b].sort().join("_");
 const otroDe=c=>(c.miembros||[]).find(x=>x!==S.uid)||"";
 function noLeido(c){const u=c.ultimo||{};return !!u.t&&u.uid!==S.uid&&u.t>((c.leido||{})[S.uid]||0)}
-function renderPrivados(){const cs=(S.privs||[]).filter(c=>c.ultimo&&c.ultimo.t).sort((a,b)=>(b.ultimo.t||0)-(a.ultimo.t||0));
+function renderPrivados(){if(bloqueado("privados"))return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}<section class="sheet"><header><h2>Chats privados</h2></header>${avisoBloqueo("privados")}</section></div>`;const cs=(S.privs||[]).filter(c=>c.ultimo&&c.ultimo.t).sort((a,b)=>(b.ultimo.t||0)-(a.ultimo.t||0));
   const ya=new Set(cs.map(otroDe));
   const otros=Object.keys(S.amigos||{}).filter(id=>id!==S.uid&&!(S.amigos[id]||{}).baneado).sort((a,b)=>nombreDe(a).localeCompare(nombreDe(b)));
   return `<div class="vista chatv"><button class="back" data-go="resumen">← Inicio</button>${tabsChat()}
@@ -1054,7 +1064,7 @@ function renderPrivados(){const cs=(S.privs||[]).filter(c=>c.ultimo&&c.ultimo.t)
      return `<a class="conv ${nl?"nl":""}" href="#privado-${esc(o)}">${avatar(o,44)}<span class="conv-t"><b>${esc(nombreDe(o)||"Alguien")}</b><span>${u.uid===S.uid?"Tú: ":""}${esc(u.texto||"")}</span></span><span class="conv-h">${horaChat(u.t)}${nl?'<i class="punto" aria-label="Sin leer"></i>':""}</span></a>`}).join(""):'<div class="empty">Todavía no tienes chats privados. Empieza uno con alguien de la clase.</div>'}</div></section>
    <section class="sheet"><header><h2>Empezar un chat</h2><span class="note">Toca a alguien para ver su perfil y escribirle</span></header>
    <div class="gente">${otros.length?otros.map(id=>`<button class="persona" data-perfil="${esc(id)}">${avatar(id,52)}<span>${esc((nombreDe(id)||"Alguien").split(" ")[0])}</span>${ya.has(id)?"":""}${enLinea((S.amigos||{})[id])?'<i class="on-dot" aria-label="Conectado"></i>':""}</button>`).join(""):'<div class="empty">Aún no ha entrado nadie más.</div>'}</div></section></div>`}
-function renderPrivado(o){const n=nombreDe(o)||"Alguien",u=(S.amigos||{})[o];
+function renderPrivado(o){if(bloqueado("privados"))return renderPrivados();const n=nombreDe(o)||"Alguien",u=(S.amigos||{})[o];
   return `<div class="vista chatv"><button class="back" data-go="privados">← Privados</button>
    <section class="sheet"><header class="priv-h"><button class="priv-p" data-perfil="${esc(o)}">${avatar(o,40)}<span><b>${esc(n)}</b><small class="${enLinea(u)?"on":""}">${enLinea(u)?"● conectado ahora":"chat privado"}</small></span></button></header>
    <div class="chatlist" id="chatlist"><div class="empty">Cargando mensajes…</div></div>
@@ -1069,7 +1079,8 @@ function abrirPerfil(id){if(!id)return;const lista=clasificacion("hoy"),pos=list
     <h2>${esc(n)}${id===S.uid?" (tú)":""}</h2><span class="pfm-on ${enLinea(u)?"on":""}">${enLinea(u)?"● conectado ahora":"última vez "+new Date(u.visto||0).toLocaleDateString("es-ES")}</span>
     <div class="pfm-n"><span><b>${puntosHoy(p)}</b><small>puntos hoy</small></span><span><b>${puntosSemana(p)}</b><small>esta semana</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>hoy en la clase</small></span></div>
     ${barrasApps(p)}
-    ${id===S.uid?`<button class="btn-sec" data-go="perfil" data-pfmcerrar>Ir a mi perfil</button>`:`<button class="btn-p" style="--cf:var(--accent)" data-privado="${esc(id)}">💬 Enviar mensaje privado</button><button class="btn-sec" data-reportar="${esc(id)}">🚩 Reportar</button>`}
+    ${id===S.uid?`<button class="btn-sec" data-go="perfil" data-pfmcerrar>Ir a mi perfil</button>`:`${bloqueado("privados")?"":`<button class="btn-p" style="--cf:var(--accent)" data-privado="${esc(id)}">💬 Enviar mensaje privado</button>`}<button class="btn-sec" data-reportar="${esc(id)}">🚩 Reportar</button>`}
+    ${S.esAdmin&&id!==S.uid?(()=>{const b=(S.bloqueos||{})[id]||{},act=Object.keys(BLQ).filter(k=>b[k]);return `${act.length?`<span class="bloq-tag">🔇 Bloqueado: ${act.map(k=>BLQ[k]).join(", ")}</span>`:""}<button class="btn-sec" data-bloquear="${esc(id)}">🔇 Bloquear acciones…</button>`})():""}
     ${S.esAdmin&&id!==S.uid?(u.baneado?`<button class="btn-sec" data-readmitir="${esc(id)}">✅ Readmitir</button>`:`<button class="btn-p" style="--cf:#d4231c" data-expulsar="${esc(id)}">🚫 Expulsar</button>`):""}</div>`;
   $("#pfm").hidden=false;history.pushState({modal:"p"},"")}
 function cerrarPerfil(pop){if($("#pfm").hidden)return;if(pop!==true&&history.state&&history.state.modal==="p"){history.back();return}$("#pfm").hidden=true;$("#pfm").innerHTML=""}
@@ -1083,7 +1094,7 @@ function admDecorar(){document.querySelectorAll(".admx,.adm-bar").forEach(x=>x.r
   pon("[data-exid]","examenes","data-exid");pon("[data-rid]","recursos","data-rid");document.querySelectorAll("[data-tid] > .body > b").forEach(b=>{const t=b.closest("[data-tid]");if(t.querySelector(":scope > .admx"))return;const x=document.createElement("span");x.className="admx admx-t";const id=t.dataset.tid;x.innerHTML=`<button type="button" data-admmove="temas:${esc(id)}:-1" title="Subir tema">↑</button><button type="button" data-admmove="temas:${esc(id)}:1" title="Bajar tema">↓</button><button type="button" data-admedit="temas:${esc(id)}">✏️</button><button type="button" data-admdel="temas:${esc(id)}">🗑</button>`;t.append(x)});
   const f=document.querySelector("#ficha .ficha");if(f&&fichaActual){const b=document.createElement("div");b.className="admx admx-f";b.innerHTML=`<button type="button" data-admedit="examenes:${esc(fichaActual.id)}">✏️ Editar examen</button><button type="button" data-admdel="examenes:${esc(fichaActual.id)}">🗑 Borrar examen</button>`;f.insertBefore(b,f.children[1]||null)}
   const v=$("#view");if(v&&!v.querySelector(".adm-bar")){const nb=(S.borradosEx||[]).length+(S.borradosRec||[]).length+(S.borradosTem||[]).length;const bar=document.createElement("div");bar.className="adm-bar";
-    bar.innerHTML=`<b>🛠 Modo administrador</b><span>Los cambios los ven todos al momento.</span><button type="button" data-admnew="examenes">+ Añadir examen</button><button type="button" data-admnew="recursos">+ Añadir material</button><button type="button" data-admnew="temas">+ Añadir tema</button><button type="button" data-admreportes>🚩 Reportes${(S.reportes||[]).length?` (${S.reportes.length})`:""}</button><button type="button" data-admexpulsados>🚫 Expulsados</button>${nb?`<button type="button" data-admpapelera>🗑 Borrados (${nb})</button>`:""}`;v.prepend(bar)}}
+    bar.innerHTML=`<b>🛠 Modo administrador</b><span>Los cambios los ven todos al momento.</span><button type="button" data-admnew="examenes">+ Añadir examen</button><button type="button" data-admnew="recursos">+ Añadir material</button><button type="button" data-admnew="temas">+ Añadir tema</button><button type="button" data-admreportes>🚩 Reportes${(S.reportes||[]).length?` (${S.reportes.length})`:""}</button><button type="button" data-admexpulsados>🚫 Expulsados y bloqueos</button>${nb?`<button type="button" data-admpapelera>🗑 Borrados (${nb})</button>`:""}`;v.prepend(bar)}}
 function admMover(tipo,id,dir){const L=admLista(tipo),o=L.find(x=>x.id===id);if(!o)return;
   const her=L.filter(x=>x.asig===o.asig&&x.tri===o.tri&&(tipo==="temas"||(x.tema||"")===(o.tema||""))).sort((a,b)=>(a.orden??999)-(b.orden??999)||0);
   const i=her.indexOf(o),j=i+Number(dir);if(j<0||j>=her.length){toast(dir<0?"Ya está el primero.":"Ya está el último.");return}
@@ -1145,6 +1156,10 @@ function ponerMencion(id){const ta=document.getElementById("chatTxt");if(!ta)ret
 // ---------- reportar y expulsar ----------
 function cerrarPfm(){if(!$("#pfm").hidden){$("#pfm").hidden=true;$("#pfm").innerHTML=""}}
 document.addEventListener("click",ev=>{if(!ev.target.closest)return;
+  const bq=ev.target.closest("[data-bloquear]"),qb=ev.target.closest("[data-desbloquear]");
+  if(bq){ev.preventDefault();ev.stopImmediatePropagation();const id=bq.dataset.bloquear,b=(S.bloqueos||{})[id]||{};cerrarPfm();
+    admModal(`<h2>🔇 Bloquear a ${esc(nombreDe(id)||"esta persona")}</h2><p>Marca lo que no podrá usar. Lo demás del portal le sigue funcionando.</p><form id="bloqForm" data-u="${esc(id)}">${Object.entries(BLQ).map(([k,v])=>`<label class="bloq-op"><input type="checkbox" name="${k}" ${b[k]?"checked":""}> ${v}</label>`).join("")}<label class="rep-l">Mensaje que verá (opcional)<textarea name="motivo" rows="2" maxlength="300">${esc(b.motivo||"")}</textarea></label><div class="adm-b"><button type="submit" class="btn-p" style="--cf:#d4231c">Guardar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`);return}
+  if(qb){ev.preventDefault();ev.stopImmediatePropagation();window.guardarBloqueo(qb.dataset.desbloquear,{}).then(()=>{qb.closest("li")?.remove();toast("Desbloqueado.")}).catch(e=>toast("No se ha podido ("+(e.code||"error")+")."));return}
   const rp=ev.target.closest("[data-reportar]"),ex=ev.target.closest("[data-expulsar]"),ra=ev.target.closest("[data-readmitir]"),lr=ev.target.closest("[data-admreportes]"),le=ev.target.closest("[data-admexpulsados]"),dr=ev.target.closest("[data-descartar]");
   if(!rp&&!ex&&!ra&&!lr&&!le&&!dr)return;ev.preventDefault();ev.stopImmediatePropagation();
   if(rp){const id=rp.dataset.reportar,txt=rp.dataset.msgtxt||"";cerrarPfm();
@@ -1154,11 +1169,15 @@ document.addEventListener("click",ev=>{if(!ev.target.closest)return;
   if(ra){const id=ra.dataset.readmitir;window.readmitir(id).then(()=>{cerrarPfm();admCerrar();toast("Readmitido.")}).catch(e=>toast("No se ha podido ("+(e.code||"error")+")."));return}
   if(lr){const L=S.reportes||[];admModal(`<h2>🚩 Reportes</h2>${L.length?`<ul class="adm-l rep-lista">${L.map(r=>`<li><div><b>${esc(nombreDe(r.de)||"Alguien")}</b> reportó a <b>${esc(nombreDe(r.a)||"alguien")}</b> · ${horaChat(r.t||0)}<p>${esc(r.motivo||"")}</p>${r.msg?`<p class="rep-msg">«${esc(r.msg)}»</p>`:""}</div><div class="adm-b"><button type="button" data-perfil="${esc(r.a)}">Ver perfil</button><button type="button" data-expulsar="${esc(r.a)}">🚫 Expulsar</button><button type="button" data-descartar="${esc(r.id)}">Descartar</button></div></li>`).join("")}</ul>`:'<p>No hay reportes.</p>'}<div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
   if(dr){window.descartarReporte(dr.dataset.descartar).then(()=>dr.closest("li").remove()).catch(()=>toast("No se ha podido."));return}
-  if(le){const L=Object.keys(S.amigos||{}).filter(id=>(S.amigos[id]||{}).baneado);admModal(`<h2>🚫 Expulsados</h2>${L.length?`<ul class="adm-l">${L.map(id=>`<li><span>${esc(nombreDe(id)||id)}</span><button type="button" data-readmitir="${esc(id)}">Readmitir</button></li>`).join("")}</ul>`:'<p>No has expulsado a nadie.</p>'}<div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
+  if(le){const L=Object.keys(S.amigos||{}).filter(id=>(S.amigos[id]||{}).baneado),B=Object.entries(S.bloqueos||{}).filter(([id,b])=>Object.keys(BLQ).some(k=>b[k]));
+    admModal(`<h2>🚫 Expulsados</h2>${L.length?`<ul class="adm-l">${L.map(id=>`<li><span>${esc(nombreDe(id)||id)}</span><button type="button" data-readmitir="${esc(id)}">Readmitir</button></li>`).join("")}</ul>`:'<p>No has expulsado a nadie.</p>'}
+    <h2>🔇 Bloqueados</h2>${B.length?`<ul class="adm-l">${B.map(([id,b])=>`<li><span><b>${esc(nombreDe(id)||id)}</b> · ${Object.keys(BLQ).filter(k=>b[k]).map(k=>BLQ[k]).join(", ")}</span><span class="adm-b"><button type="button" data-bloquear="${esc(id)}">Cambiar</button><button type="button" data-desbloquear="${esc(id)}">Quitar</button></span></li>`).join("")}</ul>`:'<p>No has bloqueado nada a nadie.</p>'}<div class="adm-b"><button type="button" class="btn-sec" data-admcerrar>Cerrar</button></div>`);return}
 },true);
 document.addEventListener("submit",ev=>{const f=ev.target;
   if(f.id==="repForm"){ev.preventDefault();const m=f.elements.motivo.value.trim();if(!m){toast("Escribe qué ha pasado.");return}
     window.reportar(f.dataset.a,m,f.dataset.msg||"").then(()=>{admCerrar();toast("Reporte enviado al administrador.")}).catch(e=>toast("No se ha podido enviar ("+(e.code||"error")+")."))}
+  if(f.id==="bloqForm"){ev.preventDefault();const d={};Object.keys(BLQ).forEach(k=>{if(f.elements[k].checked)d[k]=true});const m=f.elements.motivo.value.trim();if(m)d.motivo=m;
+    window.guardarBloqueo(f.dataset.u,d).then(()=>{admCerrar();toast(Object.keys(BLQ).some(k=>d[k])?"Bloqueo guardado.":"Desbloqueado.")}).catch(e=>toast("No se ha podido guardar ("+(e.code||"error")+")."))}
   if(f.id==="banForm"){ev.preventDefault();window.expulsar(f.dataset.u,f.elements.motivo.value.trim()||"Has sido expulsado de 1 BACH.").then(()=>{admCerrar();toast("Expulsado.")}).catch(e=>toast("No se ha podido expulsar ("+(e.code||"error")+")."))}});
 function renderAmigos(){const modo=S.rkModo||"hoy",lista=clasificacion(modo);
   const filas=lista.map((x,i)=>{const otro=modo==="semana"?puntosHoy(x.p):puntosSemana(x.p);
@@ -1277,7 +1296,7 @@ document.addEventListener("click",ev=>{const a=ev.target.closest&&ev.target.clos
 document.addEventListener("toggle",ev=>{if(ev.target.classList&&ev.target.classList.contains("papelera"))abiertaPap=ev.target.open},true);
 
 function render(){actualizarSplash();const r=route(),v=$("#view");
-  {const f=document.getElementById("chatform");if(S.uid&&S.loaded&&f&&f.dataset.ruta===r){pintarChat();pintarTabsChat();return}}
+  {const f=document.getElementById("chatform");if(S.uid&&S.loaded&&f&&f.dataset.ruta===r&&!bloqueado(r==="chat"?"chat":"privados")){pintarChat();pintarTabsChat();return}}
   if(S.error){v.innerHTML=`<div class="sheet"><b>No se ha podido cargar el curso.</b><span class="muted">${esc(S.error)} Abre la página de nuevo en un rato.</span></div>`;return}
   if(!S.loaded){v.innerHTML=`<div class="sheet"><span class="muted">Cargando temas y exámenes…</span></div>`;return}
   v.innerHTML=r==="resumen"?renderResumen():!S.uid&&r!=="resumen"?renderEntra(r):r==="amigos"?renderAmigos():r==="perfil"?renderPerfil():r==="chat"?renderChat():r==="privados"?renderPrivados():r.startsWith("privado-")?renderPrivado(r.slice(8)):r.startsWith("practica-")?renderPractica(r.slice(9)):renderAsig(r);filtrarVocab();if(r==="resumen")montarCal();admDecorar();if((r==="chat"||r.startsWith("privado-"))&&S.uid){pintarChat(true);pintarAdj()}
@@ -1418,7 +1437,7 @@ render();
 <script type="module">
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js?v=1794467160";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "./shared/fb.js?v=1794478586";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }
@@ -1434,12 +1453,14 @@ function mezclar(base, cb) {
   return [out, borr];
 }
 fs.onSnapshot(fs.doc(fdb, "clase", "cambios"), snap => { cambios = (snap.exists() && snap.data()) || {}; aplicar(); }, () => {});
+window.guardarBloqueo = (uid, d) => Object.keys(d).length ? fs.setDoc(fs.doc(fdb, "bloqueos", uid), { ...d, t: Date.now() }) : fs.deleteDoc(fs.doc(fdb, "bloqueos", uid));
 window.reportar = (a, motivo, msg) => fs.addDoc(fs.collection(fdb, "reportes"), { de: S.uid, a, motivo, msg, t: Date.now() });
 window.descartarReporte = (id) => fs.deleteDoc(fs.doc(fdb, "reportes", id));
 window.expulsar = async (uid, motivo) => { await fs.setDoc(fs.doc(fdb, "baneos", uid), { motivo, t: Date.now() }); await fs.setDoc(fs.doc(fdb, "usuarios", uid), { baneado: true }, { merge: true }); };
 window.readmitir = async (uid) => { await fs.deleteDoc(fs.doc(fdb, "baneos", uid)); await fs.setDoc(fs.doc(fdb, "usuarios", uid), { baneado: false }, { merge: true }); };
-let quitarRep = null;
-function verReportes() { if (quitarRep) { quitarRep(); quitarRep = null; } if (!S.esAdmin) { S.reportes = []; return; }
+let quitarRep = null, quitarBloq = null;
+function verReportes() { if (quitarRep) { quitarRep(); quitarRep = null; } if (quitarBloq) { quitarBloq(); quitarBloq = null; } if (!S.esAdmin) { S.reportes = []; S.bloqueos = {}; return; }
+  quitarBloq = fs.onSnapshot(fs.collection(fdb, "bloqueos"), snap => { const b = {}; snap.docs.forEach(d => b[d.id] = d.data()); S.bloqueos = b; }, () => { S.bloqueos = {}; });
   quitarRep = fs.onSnapshot(fs.collection(fdb, "reportes"), snap => { S.reportes = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.t || 0) - (a.t || 0)); if (S.admin) { document.querySelector(".adm-bar")?.remove(); admDecorar(); } }, () => { S.reportes = []; }); }
 window.guardarCambios = (tipo, mapa) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: mapa }, { merge: true });
 window.guardarCambio = (tipo, id, campos) => fs.setDoc(fs.doc(fdb, "clase", "cambios"), { [tipo]: { [id]: campos } }, { merge: true });
@@ -1511,6 +1532,9 @@ alCambiarSesion(async user => {
     const r = {}; snap.docs.forEach(d => r[d.id] = d.data()); S.rank = r; if (RUTAS_VIVAS.includes(route())) render();
   }, () => {}));
   quitar.push(suscribirPrivados(user.uid));
+  S.bloq = {};
+  quitar.push(fs.onSnapshot(fs.doc(fdb, "bloqueos", user.uid), snap => { const antes = JSON.stringify(S.bloq || {}); S.bloq = snap.exists() ? snap.data() : {};
+    if (antes !== JSON.stringify(S.bloq)) { const r = route(); if (r === "chat" || r === "privados" || r.startsWith("privado-")) render(); } }, () => { S.bloq = {}; }));
   quitar.push(() => { if (quitarConv) { quitarConv(); quitarConv = null; } convAbierta = null; });
   setTimeout(abrirConv, 0);
   quitar.push(fs.onSnapshot(fs.query(fs.collection(fdb, "chat"), fs.orderBy("t"), fs.limitToLast(80)), snap => {
@@ -1549,6 +1573,7 @@ setInterval(() => { if (route() === "amigos") render(); }, 60000);
 // ---------- chat ----------
 window.enviarMsg = async (tag, texto, form) => {
   texto = String(texto || "").trim().slice(0, 800); const fotos = window.ADJ.slice(0, MAXF);
+  if (bloqueado(route().startsWith("privado-") ? "privados" : "chat")) { toast("El administrador te ha bloqueado esto."); return; }
   if ((!texto && !fotos.length) || !S.uid) return;
   const b = form.querySelector("button[type=submit]"); b.disabled = true;
   const r = route();
