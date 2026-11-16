@@ -1,8 +1,11 @@
 #!/bin/sh
-# Antes de cada subida: nueva versión y ?v= en los scripts compartidos para que ningún navegador mezcle archivos viejos y nuevos.
+# Antes de cada subida: nueva versión en version.json y ?v= en todos los .js/.css locales
+# para que ningún navegador mezcle archivos viejos y nuevos (las páginas se recargan solas al cambiar version.json).
+cd "$(dirname "$0")/.." || exit 1
 V=$(date +%s)
 printf '{"v":"%s"}\n' "$V" > version.json
-grep -rlE '(fb|lateral|palabras|plurales)\.js' --include=*.html --include=*.js . | grep -v node_modules | while read f; do
-  sed -i -E "s/((shared\/|\.\/)(fb|lateral|mipanel|apuntes)\.js|(palabras|plurales)\.js)(\?v=[0-9]+)?\"/\1?v=$V\"/g" "$f"
+grep -rlE '\.(js|css)(\?v=[0-9]+)?"' --include=*.html --include=*.js . | grep -vE 'node_modules|^\./x/|^\./cloudflare/|^\./tests/' | while read f; do
+  # referencias locales: "ruta/archivo.js" o "ruta/archivo.css" (no http...), con o sin ?v=
+  sed -i -E "s#\"((\.\./|\./)?[A-Za-z0-9_/.-]+\.(js|css))(\?v=[0-9]+)?\"#\"\1?v=$V\"#g" "$f"
 done
 echo "$V"
