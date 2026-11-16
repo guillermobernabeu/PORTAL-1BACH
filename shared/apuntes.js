@@ -2,9 +2,9 @@
 // Cualquiera sube fotos de sus apuntes, la IA (Gemini, a través del Worker de Cloudflare) los pasa a limpio,
 // el administrador los aprueba y todos pueden darles 👍 y proponer mejoras. Puntos y niveles por colaborar.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, fs, auth } from "./fb.js?v=1794517945";
+import { db, fs, auth } from "./fb.js?v=1794854002";
 
-const CONVERSOR = "https://apuntes-1bach.maison-ichie.workers.dev";
+const CONVERSOR = "https://apuntes-1bach1.maison-ichie.workers.dev";
 const MAX_FOTOS = 10;
 const PTS = { apunte: 50, util: 5, mejora: 20, topeDia: 3 };
 const NIVELES = [[0, "🌱", "Novato"], [100, "📗", "Colaborador"], [300, "🎓", "Experto"], [700, "🏆", "Leyenda"]];
