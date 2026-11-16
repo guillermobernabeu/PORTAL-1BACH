@@ -481,7 +481,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .pg img{display:block}
 .rb{position:absolute;left:.5cqw;transform:translateY(-50%);z-index:4;border:0;border-radius:999px;background:#d4231c;color:#fff;font:800 max(10px,1.55cqw)/1 var(--f-display);padding:.8cqw 1.2cqw;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);white-space:nowrap}
 .rb[aria-pressed=true]{background:#fff;color:#d4231c;outline:2px solid #d4231c}
-.rc,.mk{display:none}
+.pg .rc,.pg .mk{display:none}
 .rc.on{display:block;position:absolute;left:10%;width:88%;z-index:3;background:#fffdf5;border:.3cqw solid #d4231c;border-radius:1.2cqw;box-shadow:0 1.4cqw 4cqw rgba(0,0,0,.45);
   padding:2.4cqw 2.4cqw 2cqw;color:#c4161c;font:700 2.4cqw/1.2 Caveat,"Bradley Hand",cursive}
 .rc .cbx{position:absolute;top:-1.6cqw;left:1.6cqw;background:#fffdf5;border:.25cqw solid #b4532a;color:#b4532a;border-radius:999px;font:700 max(9px,1.4cqw)/1 var(--f-display);padding:.5cqw 1.1cqw}
@@ -614,6 +614,7 @@ body.con-splash .wrap{visibility:hidden;opacity:0}
 .admx{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
 .admx button{border:1px solid #e5231b;background:#fff;color:#c3132b;border-radius:8px;padding:2px 6px;font-size:13px;cursor:pointer;line-height:1.2}
 .exam .admx,.ce .admx{position:absolute;top:6px;right:6px}.exam,.ce{position:relative}
+.hero .admx{position:absolute;top:10px;right:10px;z-index:2}.hero{position:relative}
 .admx-f{display:flex;gap:8px}.admx-f button{padding:6px 12px;font-weight:700}
 .adm{position:fixed;inset:0;z-index:88;background:rgba(8,12,26,.65);display:grid;place-items:center;padding:16px}
 .adm-c{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--sheet);color:var(--ink);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 70px rgba(0,0,0,.45)}

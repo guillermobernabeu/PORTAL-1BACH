@@ -303,7 +303,8 @@ function juntar() {
   for (const w of remotas) m.set(w.id, { ...(m.get(w.id) || {}), ...w });
   const todas = [...m.values()];
   S.words = todas.filter(w => !w.borrada); S.borradas = todas.filter(w => w.borrada);
-  if (!document.getElementById("app").hidden) { if (S.tab === "list" || !S.q) nueva(); else stats(); }
+  // en plurales y al añadir palabras no se vuelve a pintar la tarjeta (borraría lo que estás contestando)
+  if (!document.getElementById("app").hidden) { if (S.tab === "list" || (!S.q && S.tab !== "pl" && S.tab !== "add")) nueva(); else stats(); }
 }
 juntar();
 const DBW = { collection: () => ({

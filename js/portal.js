@@ -73,7 +73,7 @@ window.entrarGoogle = () => gEntrar().catch(e => toast("No se pudo entrar (" + (
 window.salirPortal = async () => { try { sessionStorage.removeItem("dentro"); } catch (e) {} await gSalir(); location.hash = ""; location.reload(); };
 const ADMIN = "567368fac0b19f0df9590340c50247491ee14e5df1325c518877acbdeabcb98a";
 async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
-const RUTAS_VIVAS = ["amigos", "resumen", "perfil"];
+const RUTAS_VIVAS = ["amigos", "resumen", "perfil", "companeros", "apuntes"];
 alCambiarSesion(async user => {
   quitar.forEach(f => f()); quitar = [];
   if (!user) {

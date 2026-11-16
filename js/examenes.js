@@ -6,7 +6,7 @@ function heroExamen(e){const L=limite(e),ms=L?L-new Date():null,pr=pExamen(e),ts
   const lista=ts.map(t=>{const n=(t.puntos||[]).length,h=hechosDe(t),ok=n?h.length===n:t.estado==="dominado";
     return `<div class="tk ${ok?"ok":""}"><label><input type="checkbox" data-ptema="${esc(t.id)}" ${ok?"checked":""} ${S.canWrite?"":"disabled"}><span>${esc(t.titulo)}</span>${n?`<span class="pt">${h.length}/${n}</span>`:""}</label>
       ${n?`<ul>${t.puntos.map((x,i)=>{const d=h.includes(i);return `<li class="${d?"ok":""}"><label><input type="checkbox" data-punto="${esc(t.id)}:${i}" ${d?"checked":""} ${S.canWrite?"":"disabled"}><span>${esc(x)}</span></label></li>`}).join("")}</ul>`:""}</div>`}).join("");
-  return `<section class="hero ${urge?"urge":""}" data-a="${e.asig}"><div class="h-top"><div><div class="eyebrow">Próximo examen${f?` · ${f.d} ${f.m}`:""}</div><h2>${esc(e.titulo)}</h2>${e.alcance?`<div class="note">${esc(e.alcance)}</div>`:""}</div>
+  return `<section class="hero ${urge?"urge":""}" data-a="${e.asig}" data-heroid="${esc(e.id)}"><div class="h-top"><div><div class="eyebrow">Próximo examen${f?` · ${f.d} ${f.m}`:""}</div><h2>${esc(e.titulo)}</h2>${e.alcance?`<div class="note">${esc(e.alcance)}</div>`:""}</div>
     ${L?`<div class="h-cd"><small>Tiempo de estudio hasta las 23:59 del día anterior</small><span class="cdn" data-cd="${L.getTime()}">${fmtCd(ms)}</span></div>`:""}</div>
     <div><div class="h-pct"><span class="big">${pct}%</span><div class="barra" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div></div><div class="desg">${esc(desg)}</div></div>
     ${ts.length?`<div class="chk">${lista}</div>`:""}
