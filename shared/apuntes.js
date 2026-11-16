@@ -2,7 +2,7 @@
 // Cualquiera sube fotos de sus apuntes, la IA (Gemini, a través del Worker de Cloudflare) los pasa a limpio,
 // el administrador los aprueba y todos pueden darles 👍 y proponer mejoras. Puntos y niveles por colaborar.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, fs, auth } from "./fb.js?v=1794867150";
+import { db, fs, auth } from "./fb.js?v=1794868843";
 
 const CONVERSOR = "https://apuntes-1bach1.maison-ichie.workers.dev";
 const MAX_FOTOS = 10;
@@ -56,7 +56,8 @@ AP.puntos = (uid) => {
   AP.lista.slice().sort((a, b) => (a.aprobadoT || 0) - (b.aprobadoT || 0)).forEach(a => {
     if (a.autor === uid) { const d = dia(a.aprobadoT); porDia[d] = (porDia[d] || 0) + 1; if (porDia[d] <= PTS.topeDia) p += PTS.apunte;
       p += (a.utiles || []).filter(x => x !== uid).length * PTS.util; }
-    p += (a.colaboradores || []).filter(x => x === uid).length * PTS.mejora;
+    // una mejora aceptada por apunte y persona (el autor no puede darse puntos a sí mismo)
+    if (uid !== a.autor && (a.colaboradores || []).includes(uid)) p += PTS.mejora;
   });
   return p;
 };
@@ -107,7 +108,7 @@ function vistaSubir() {
 function vistaApunte(id) {
   const a = todos().find(x => x.id === id);
   if (!a) return `<div class="vista"><button class="back" data-go="apuntes">← Apuntes</button><section class="sheet"><div class="empty">${AP.cargando ? "Cargando…" : "Este apunte no existe o ya no está."}</div></section></div>`;
-  const yoUtil = (a.utiles || []).includes(AP.uid), mio = a.autor === AP.uid, col = [...new Set(a.colaboradores || [])];
+  const yoUtil = (a.utiles || []).includes(AP.uid), mio = a.autor === AP.uid, col = [...new Set((a.colaboradores || []).filter(c => c !== a.autor))];
   return `<div class="vista"><button class="back" data-go="apuntes">← Apuntes</button>
    ${a.estado === "pendiente" ? `<div class="ap-aviso">⏳ Pendiente de aprobar. ${S.esAdmin ? "Revísalo y apruébalo o recházalo abajo." : "Lo verá todo el mundo cuando el administrador lo apruebe."}</div>` : ""}
    ${a.estado === "rechazado" ? `<div class="ap-aviso ap-no">No se ha aprobado${a.motivo ? ": " + H(a.motivo) : ""}.</div>` : ""}

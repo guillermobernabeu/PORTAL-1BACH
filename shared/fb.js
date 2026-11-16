@@ -133,8 +133,10 @@ function avisar(html, ir, dura = 7000) {
 }
 const APPS_R = ["vocab", "plur", "verbos", "afijos", "wf"];
 // Puntos del día: lo que has avanzado hoy en cada app (vuelven a 0 cada día). Se guardan en progreso.dias[fecha] y nunca bajan.
-const ganadoHoy = (p, hoy) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || a.dia !== hoy || !a.total) return s; return s + Math.max(0, (a.ok - (a.ok0 || 0)) / a.total) * 100; }, 0));
-export const ptsHoyDe = (p, hoy = hoyISO()) => Math.max(ganadoHoy(p, hoy), Number(((p && p.dias) || {})[hoy]) || 0);
+// Topes (contra trampas editando la base de datos): como mucho 100 puntos por app y día, 500 al día en total.
+const TOPE_DIA = 100 * APPS_R.length;
+const ganadoHoy = (p, hoy) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || a.dia !== hoy || !a.total) return s; return s + Math.min(1, Math.max(0, (a.ok - (a.ok0 || 0)) / a.total)) * 100; }, 0));
+export const ptsHoyDe = (p, hoy = hoyISO()) => Math.min(TOPE_DIA, Math.max(ganadoHoy(p, hoy), Math.min(TOPE_DIA, Number(((p && p.dias) || {})[hoy]) || 0)));
 const lunes = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
 const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 export const diasSemana = (atras = 0) => { const l = lunes(new Date()); l.setDate(l.getDate() - 7 * atras); return Array.from({ length: 7 }, (_, i) => { const d = new Date(l); d.setDate(l.getDate() + i); return iso(d); }); };
@@ -143,13 +145,13 @@ const SEM0 = "2026-11-09";
 function calcLegado(p) { const h = hoyISO();
   const base = Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || !a.total) return s; return s + Math.min(1, (a.dia === h ? (a.ok0 || 0) : a.ok) / a.total) * 100; }, 0));
   const prev = diasSemana(0)[0] === SEM0 ? diasSemana(0).filter(f => f < h).reduce((s, f) => s + ptsHoyDe(p, f), 0) : 0; return Math.max(0, base - prev); }
-export const ptsSemanaDe = (p, atras = 0) => { const d = diasSemana(atras), v = d.reduce((s, x) => s + ptsHoyDe(p, x), 0); if (d[0] !== SEM0) return v; return Math.max(v + (typeof (p && p.legado) === "number" ? p.legado : calcLegado(p)), ptsDe(p)); };
+export const ptsSemanaDe = (p, atras = 0) => { const d = diasSemana(atras), v = d.reduce((s, x) => s + ptsHoyDe(p, x), 0); if (d[0] !== SEM0) return v; return Math.max(v + Math.min(TOPE_DIA, Math.max(0, typeof (p && p.legado) === "number" ? p.legado : calcLegado(p))), ptsDe(p)); };
 onAuthStateChanged(auth, async (u) => {
   if (!u || diasSemana(0)[0] !== SEM0) return;
   try { const ref = fs.doc(db, "progreso", u.uid), s = await fs.getDoc(ref), p = s.exists() ? s.data() : {};
     if (typeof p.legado !== "number") await fs.setDoc(ref, { legado: calcLegado(p) }, { merge: true }); } catch (e) {}
 });
-export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, a.ok / a.total) * 100 : 0); }, 0));
+export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, Math.max(0, a.ok / a.total)) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let quitarRank = null;
 // Guarda quién iba por delante (en tu cuenta, para que funcione en cualquier dispositivo) y te avisa

@@ -75,9 +75,11 @@ export default {
     if (!env.GEMINI_KEY) return responder({ error: "Falta el secreto GEMINI_KEY en Cloudflare." }, 500, origen);
     try { await verificarToken((req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "")); }
     catch (e) { return responder({ error: "Entra en el portal con tu cuenta para convertir apuntes." }, 401, origen); }
+    // límites: cuerpo de 6 MB como mucho y cada foto hasta 600 KB (el portal las reduce a ~330 KB)
+    const tam = Number(req.headers.get("Content-Length") || 0); if (tam > 6e6) return responder({ error: "Demasiadas fotos o demasiado grandes." }, 413, origen);
     let cuerpo;
     try { cuerpo = await req.json(); } catch (e) { return responder({ error: "Petición no válida." }, 400, origen); }
-    const imagenes = (cuerpo.imagenes || []).filter((i) => i && typeof i.data === "string").slice(0, MAX_FOTOS);
+    const imagenes = (cuerpo.imagenes || []).filter((i) => i && typeof i.data === "string" && i.data.length <= 820000 && /^image\/(jpeg|png|webp)$/.test(i.mime || "image/jpeg")).slice(0, MAX_FOTOS);
     if (!imagenes.length) return responder({ error: "No hay fotos." }, 400, origen);
     try {
       const r = await convertir(env, imagenes, String(cuerpo.contexto || "").slice(0, 300));
