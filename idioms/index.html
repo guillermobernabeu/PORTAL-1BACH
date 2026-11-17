@@ -87,7 +87,7 @@ const IDIOMS = [
 const TOTAL = IDIOMS.length, RACHA_DOM = 2, KEY = "idioms_v1", RONDA = 10;
 
 // ---- Guardado local (se copia a la nube) ----
-function cargar() { try { const o = JSON.parse(localStorage.getItem(KEY) || "{}"); return { s: o.s || {}, modo: o.modo || "mix", tipo: o.tipo || "opc" }; } catch (e) { return { s: {}, modo: "mix", tipo: "opc" }; } }
+function cargar() { try { const o = JSON.parse(localStorage.getItem(KEY) || "{}"); return { s: o.s || {}, modo: o.modo || "mix", tipo: o.tipo || "esc" }; } catch (e) { return { s: {}, modo: "mix", tipo: "esc" }; } }
 const S = cargar();
 function guardar() { try { localStorage.setItem(KEY, JSON.stringify({ s: S.s, modo: S.modo, tipo: S.tipo })); } catch (e) {} }
 const st = (id, d) => { const x = S.s[id] = S.s[id] || {}; return x[d] = x[d] || { a: 0, f: 0, r: 0 }; };
@@ -151,7 +151,7 @@ function pintarDominio() {
 function htmlFiltros() {
   const c = (k, v, t) => `<button type="button" class="chip" data-${k}="${v}" aria-pressed="${S[k] === v}">${t}</button>`;
   return `<div class="filt"><span class="lb">Dirección</span>${c("modo", "mix", "🔀 Mezcla")}${c("modo", "en", "🇬🇧 → 🇪🇸")}${c("modo", "es", "🇪🇸 → 🇬🇧")}</div>
-  <div class="filt"><span class="lb">Responder</span>${c("tipo", "opc", "Elegir")}${c("tipo", "esc", "Escribir")}</div>
+  <div class="filt"><span class="lb">Responder</span>${c("tipo", "esc", "✍️ Escribir")}${c("tipo", "opc", "🔘 Con opciones")}</div>
   <p class="nota">Dominas un idiom cuando lo aciertas ${RACHA_DOM} veces seguidas en los dos sentidos. Cada idiom dominado suma ${Math.round(100 / TOTAL * 10) / 10} puntos al ranking (100 si dominas los ${TOTAL}).</p>`;
 }
 function htmlJuego() {
@@ -226,9 +226,9 @@ if (location.hash === "#lista") { tab = "lista"; $("#start").hidden = true; $("#
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794946540";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794946846";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1794946540";
+import { iniciarLateral } from "../shared/lateral.js?v=1794946846";
 copiaEnLaNube("idioms", () => ["idioms_v1"]);
 let ult = "", t = null;
 function enviar() { const r = [nDom(), TOTAL], k = r.join("/"); if (k === ult) return; ult = k; guardarProgreso("idioms", r[0], r[1]); }

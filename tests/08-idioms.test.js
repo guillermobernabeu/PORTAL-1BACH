@@ -28,6 +28,8 @@ module.exports = {
     const p = await abrir(A, ctx);
     assert.ok(await A.hay(p, ".claude"), "marca Bernabéu");
     assert.ok(await A.hay(p, ".lat-d"), "paneles laterales");
+    assert.equal(await p.evaluate(() => S.tipo), "esc", "por defecto se escribe");
+    await p.click("[data-tipo=opc]"); await p.waitForTimeout(200);
     assert.equal(await p.evaluate(() => R.qs.length), 10);
     assert.equal(await p.evaluate(() => document.querySelectorAll(".opts button").length), 4);
     // acierta la primera
@@ -43,7 +45,7 @@ module.exports = {
 
   "idioms: escribir, fallar y 'lo he dicho con otras palabras'": async (A, ctx) => {
     const p = await abrir(A, ctx);
-    await p.click("[data-tipo=esc]"); await p.click("[data-modo=en]"); await p.waitForTimeout(200);
+    await p.click("[data-modo=en]"); await p.waitForTimeout(200);
     await p.fill("#fEsc input", "zzz no sé"); await p.click("#fEsc .btn");
     assert.ok(/No\./.test(await A.texto(p, ".fb")));
     await p.click("[data-valia]");
