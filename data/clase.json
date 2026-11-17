@@ -198,7 +198,7 @@
   {
    "alcance": "Sistema óseo, articular y muscular (presentación del profesor)",
    "asig": "ef",
-   "fecha": "",
+   "fecha": "2026-12-02",
    "hecho": false,
    "horas": 5,
    "temas": [],
@@ -243,30 +243,104 @@
    "nota": null
   },
   {
-   "alcance": "26, 27 y 30 de noviembre y 1 de diciembre. Falta saber qué día cae cada asignatura. Filosofía: solo temas nuevos (no entran 1, 2 y 3)",
-   "asig": "global",
-   "dias": [
-    "2026-11-26",
-    "2026-11-27",
-    "2026-11-30",
-    "2026-12-01"
-   ],
-   "fecha": "2026-11-26",
-   "hecho": false,
-   "titulo": "Semana de globales",
-   "id": "g1",
-   "temas": [],
-   "nota": null
-  },
-  {
    "alcance": "Existencialismo o transhumanismo: qué es, autores, comparativa y reflexión personal. Mínimo 5 folios, a ordenador",
    "asig": "filosofia",
-   "fecha": "2026-11-20",
+   "fecha": "2026-11-25",
    "hecho": false,
    "horas": 8,
    "temas": [],
    "titulo": "Entrega del trabajo por grupos",
    "id": "t14",
+   "nota": null
+  },
+  {
+   "id": "gf",
+   "asig": "filosofia",
+   "fecha": "2026-11-26",
+   "titulo": "Global de Filosofía",
+   "alcance": "Solo temas nuevos (no entran los temas 1, 2 y 3)",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "ge",
+   "asig": "economia",
+   "fecha": "2026-11-26",
+   "titulo": "Global de Economía",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gm",
+   "asig": "mates",
+   "fecha": "2026-11-27",
+   "titulo": "Global de Matemáticas",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gla",
+   "asig": "global",
+   "fecha": "2026-11-27",
+   "titulo": "Global de Latín",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gl",
+   "asig": "lengua",
+   "fecha": "2026-11-30",
+   "titulo": "Global de Lengua",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gb",
+   "asig": "bio",
+   "fecha": "2026-11-30",
+   "titulo": "Global de Biología",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gd",
+   "asig": "global",
+   "fecha": "2026-11-30",
+   "titulo": "Global de Dibujo Técnico",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gh",
+   "asig": "global",
+   "fecha": "2026-12-01",
+   "titulo": "Global de Historia",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
+   "nota": null
+  },
+  {
+   "id": "gq",
+   "asig": "fyq",
+   "fecha": "2026-12-01",
+   "titulo": "Global de Química",
+   "alcance": "",
+   "hecho": false,
+   "temas": [],
    "nota": null
   }
  ],

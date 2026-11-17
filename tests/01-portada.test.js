@@ -28,12 +28,12 @@ module.exports = {
     const d = base();
     d.clase = { cambios: { examenes: {
       t1: { nuevo: true, titulo: "Prueba de mates", asig: "mates", fecha: enDias(3), alcance: "Temas 1 y 2", temas: [] },
-      t2: { nuevo: true, titulo: "Examen de ayer", asig: "lengua", fecha: enDias(-1), alcance: "x", temas: [] },
+      t2: { nuevo: true, titulo: "Examen de ayer", asig: "tic", fecha: enDias(-1), alcance: "x", temas: [] },
     } } };
     const p = await A.pagina(ctx, { usuario: U.gon, datos: d });
     await A.abrir(p);
     assert.ok(/Examen en 3 días/.test(await A.texto(p, '.tile[data-a="mates"]')), "la tarjeta de Mates avisa del examen");
-    assert.ok(!/Examen/.test(await A.texto(p, '.tile[data-a="lengua"]')), "el examen de ayer ya no cuenta");
+    assert.ok(!/Examen/.test(await A.texto(p, '.tile[data-a="tic"]')), "el examen de ayer ya no cuenta");
     const asig = await p.evaluate(() => S.examenes.find(e => e.id === "t2"));
     assert.equal(asig.hecho, true, "a las 14:00 del día del examen pasa a hecho");
     assert.ok(/Prueba de mates/.test(await A.texto(p, ".recos")) || /Prueba de mates/.test(await A.texto(p, "#view")), "aparece en la portada");
