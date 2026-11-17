@@ -9,7 +9,7 @@ function heroExamen(e){const L=limite(e),ms=L?L-new Date():null,pr=pExamen(e),ts
   return `<section class="hero ${urge?"urge":""}" data-a="${e.asig}" data-heroid="${esc(e.id)}"><div class="h-top"><div><div class="eyebrow">Próximo examen${f?` · ${f.d} ${f.m}`:""}</div><h2>${esc(e.titulo)}</h2>${e.alcance?`<div class="note">${esc(e.alcance)}</div>`:""}</div>
     ${L?`<div class="h-cd"><small>Tiempo de estudio hasta las 23:59 del día anterior</small><span class="cdn" data-cd="${L.getTime()}">${fmtCd(ms)}</span></div>`:""}</div>
     <div><div class="h-pct"><span class="big">${pct}%</span><div class="barra" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div></div><div class="desg">${esc(desg)}</div></div>
-    ${ts.length?`<div class="chk">${lista}</div>`:""}
+    ${(e.entra||[]).length?entraHTML(e,"en-hero"):ts.length?`<div class="chk">${lista}</div>`:""}
     <div class="acciones">${hayP?`<button class="btn-empezar" data-practicar="${esc(e.id)}">Practicar el examen aquí</button>`:""}<button class="btn-sec" data-det="${esc(e.id)}">Qué entra y apuntes</button><a class="btn-sec" href="#prep-${esc(e.id)}">🎯 Mapa y examen de prueba</a></div></section>`}
 setInterval(()=>{document.querySelectorAll("[data-cd]").forEach(el=>{el.textContent=fmtCd(+el.dataset.cd-Date.now())})},1000);
 async function guardarTema(t,campos){const viejo={estado:t.estado,hechos:t.hechos};Object.assign(t,campos);render();

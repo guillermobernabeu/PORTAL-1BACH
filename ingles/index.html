@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Global de Inglés · 1.º Bachillerato</title>
+<style>
+:root{--bg:#f2f4f7;--paper:#fff;--ink:#17202b;--ink2:#5f6b7a;--rule:#dde3ea;--acc:#2156c9;--acc2:#e8efff;--ok:#1b7a3d;--okbg:#e4f5ea;--ko:#c0352b;--kobg:#fde8e6;--warn:#8a5a00;--warnbg:#fff3d6;--gold:#b7791f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a;--gold:#f0c060;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a;--gold:#f0c060;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+[hidden]{display:none!important}
+.claude{position:fixed;top:14px;left:56px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #c3132b;color:#c3132b;border-radius:999px;background:var(--paper)}
+a.back{color:var(--acc);font-weight:700;text-decoration:none}
+#start{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
+#start h1{margin:0;font-size:clamp(30px,7vw,52px);letter-spacing:-.02em}#start p{margin:0;color:var(--ink2);max-width:440px}
+.go{font:700 20px/1 system-ui;padding:15px 44px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:62px 16px 60px}
+header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:block;font-size:13px;color:var(--ink2);font-weight:600}
+.tabs,.filt{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tabs{margin:14px 0 10px}.filt{margin-bottom:10px}
+.filt .lb{font:700 11.5px system-ui;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin-right:2px}
+.tabs button,.chip{font:600 14px/1 system-ui;padding:9px 13px;border-radius:999px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.chip{padding:7px 11px;font-size:13px}
+.tabs button[aria-pressed=true],.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:20px 18px}
+.dominio{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;margin:0 0 12px;padding:14px 16px}
+.dominio .t{font-size:14px;color:var(--ink2)}.dominio .t b{color:var(--ink)}
+.bar{height:8px;border-radius:4px;background:var(--rule);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);transition:width .4s}
+.pts-v{grid-row:span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--ink);color:var(--bg)}
+.pts-v b{font:800 26px/1 system-ui}.pts-v span{font:700 10.5px system-ui;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.ronda-t{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:14px}.ronda-t span{color:var(--ink2);font-weight:700}
+.ronda-t .rb{flex:1;min-width:80px;height:6px;border-radius:3px;background:var(--rule);overflow:hidden}.ronda-t .rb i{display:block;height:100%;background:var(--acc)}
+.tag{display:inline-block;font:700 11px/1 system-ui;text-transform:uppercase;letter-spacing:.06em;padding:5px 8px;border-radius:6px;background:var(--acc2);color:var(--acc)}
+.ask{font-size:14px;color:var(--ink2);margin:12px 0 4px}
+.prompt{font-size:clamp(22px,5vw,30px);font-weight:800;margin:0 0 14px;line-height:1.25;text-wrap:balance}
+.inp{display:flex;gap:8px}.inp input{flex:1;min-width:0;height:50px;border:2px solid var(--rule);border-radius:12px;padding:0 14px;font:600 18px system-ui;background:var(--paper);color:var(--ink)}
+.inp input:focus{outline:none;border-color:var(--acc)}.inp input.ok{border-color:var(--ok);background:var(--okbg)}.inp input.ko{border-color:var(--ko);background:var(--kobg)}
+.btn{height:46px;padding:0 16px;border-radius:12px;border:0;background:var(--acc);color:#fff;font:700 15px system-ui;cursor:pointer}
+.btn.sec{background:var(--paper);color:var(--ink);border:1.5px solid var(--rule)}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;font:600 16px/1.35 system-ui;padding:13px 14px;border-radius:12px;border:2px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--acc)}
+.opts button.ok{border-color:var(--ok);background:var(--okbg)}.opts button.ko{border-color:var(--ko);background:var(--kobg)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:15px}
+.fb.ok{background:var(--okbg);color:var(--ok)}.fb.ko{background:var(--kobg);color:var(--ko)}.fb.casi{background:var(--warnbg);color:var(--warn)}
+.fb b{color:inherit}.fb .ej{display:block;margin-top:6px;color:var(--ink2);font-style:italic}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lnk{background:none;border:0;color:var(--acc);font:700 14px system-ui;cursor:pointer;padding:6px 0}
+.pista{margin-top:8px;font-size:14px;color:var(--ink2)}
+.fin h2{margin:0 0 6px;font-size:26px}.fin p{margin:4px 0;color:var(--ink2)}.fin .big{font:800 44px/1 system-ui;color:var(--ink);margin:6px 0}
+.fin .mas{color:var(--ok);font-weight:800}
+.lista{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px 14px}
+.row .en{font-weight:800}.row .es{color:var(--ink2);font-size:14.5px}.row .ex{grid-column:1/-1;font-size:13.5px;color:var(--ink2);font-style:italic}
+.dots{display:flex;gap:10px;font:700 12px system-ui;color:var(--ink2)}.dots span{display:flex;align-items:center;gap:4px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--rule)}.dots i.m{background:var(--gold)}.dots i.d{background:var(--ok)}
+.nota{font-size:12.5px;color:var(--ink2);margin:0 0 8px}
+@media (max-width:480px){.dominio{grid-template-columns:1fr}.pts-v{grid-row:auto;flex-direction:row;gap:6px;width:auto;height:auto;border-radius:12px;padding:6px 12px;justify-self:start}.row{grid-template-columns:1fr}}
+.tabl{font:600 14px/1 system-ui;padding:9px 13px;border-radius:999px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink);text-decoration:none}
+.prompt.med{font-size:clamp(18px,4.2vw,23px);font-weight:700}
+.prompt u{text-decoration-thickness:3px;text-underline-offset:4px;text-decoration-color:var(--acc)}
+.hueco{color:var(--acc);letter-spacing:.1em}
+.inp.larga{flex-wrap:wrap}.inp.larga input{flex-basis:100%}
+</style></head><body>
+<span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<div class="wrap" id="app">
+<header><p style="margin:0 0 6px"><a href="../" class="back vback1">← Volver</a></p><h1><small>Inglés · Global del 19 de noviembre</small>Global de Inglés</h1></header>
+<div class="tabs" id="tabs">
+<button type="button" data-tab="def">📖 Definitions</button><button type="button" data-tab="trad">🔁 Translate</button><button type="button" data-tab="past">⏪ Past simple</button><button type="button" data-tab="preg">❓ Make questions</button><a class="tabl" href="../idioms/">💬 Idioms</a><button type="button" data-tab="examen">📝 Examen: todo junto</button>
+</div>
+<div class="card dominio" id="dominio"></div>
+<main id="main"></main>
+</div>
+<script src="../vocabulary/palabras.js?v=1794947791"></script>
+<script src="../idioms/datos.js?v=1794947791"></script>
+<script src="datos.js?v=1794947791"></script>
+<script>
+// ---------- Juegos del global de Inglés ----------
+const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const azar = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const RACHA = 2, KEY = "global_ingles_v1";
+
+// --- material ---
+const W = (window.SEED || []).filter(w => w.oficial);
+const WEATHER = W.filter(w => w.bloque === "Weather");
+const VOCAB = W.filter(w => w.bloque === "Textos" || w.bloque === "Weather");
+const sinTo = (t) => String(t).replace(/^to\s+/i, "");
+const enOk = (w) => [w.en, sinTo(w.en), ...w.en.split("/"), ...(w.ok || [])].map(s => s.trim()).filter(Boolean);
+const esOk = (w) => w.es.split(/[,/]/).map(s => s.replace(/\(.*?\)/g, "").trim()).filter(Boolean).concat([w.es.replace(/\(.*?\)/g, "").trim()]);
+
+// --- corrección ---
+const CONTR = [[/\bdidnt\b/g, "did not"], [/\bdoesnt\b/g, "does not"], [/\bdont\b/g, "do not"], [/\bwasnt\b/g, "was not"], [/\bwerent\b/g, "were not"], [/\bwhats\b/g, "what is"], [/\bwhos\b/g, "who is"], [/\bwheres\b/g, "where is"], [/\bhows\b/g, "how is"], [/\bwhom\b/g, "who"], [/\bisnt\b/g, "is not"], [/\barent\b/g, "are not"]];
+function nrm(t) { let s = norm(t); for (const [r, v] of CONTR) s = s.replace(r, v); return s; }
+// 2 bien · 1 casi (ortografía) · 0 mal. estricto: gramática (sin "casi")
+function corr(resp, oks, estricto) {
+  const r = nrm(resp); if (!r) return 0; const ok = oks.map(nrm);
+  if (ok.some(v => v === r || sinArt(v) === sinArt(r))) return 2;
+  if (estricto) return 0;
+  const tol = (v) => v.length >= 12 ? 2 : v.length >= 5 ? 1 : 0;
+  return ok.some(v => lev(sinArt(v), sinArt(r)) <= tol(sinArt(v))) ? 1 : 0;
+}
+
+// --- juegos: cada uno genera preguntas {id, juego, tag, ask, html, oks, sol, tipo:"esc"|"opc", opts?, estricto, propias} ---
+const JUEGOS = {
+  def: { app: "def", titulo: "Definitions", items: () => WEATHER, nota: "Weather: lee la definición y escribe la palabra, o elige la definición correcta de una palabra.",
+    q: (w) => Math.random() < 0.6
+      ? { tag: "Definition → word", ask: "¿Qué palabra es?", html: H(w.def), oks: enOk(w), sol: w.en, tipo: "esc" }
+      : { tag: "Word → definition", ask: "Elige su definición", html: H(w.en), tipo: "opc", opts: azar([w, ...azar(WEATHER.filter(x => x.id !== w.id)).slice(0, 3)]).map(x => ({ t: x.def, ok: x.id === w.id })), sol: w.def } },
+  trad: { app: "trad", titulo: "Translate", items: () => VOCAB, nota: "Vocabulario de los textos y del tiempo, en los dos sentidos.",
+    q: (w) => Math.random() < 0.5
+      ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(w.es), oks: enOk(w), sol: w.en, tipo: "esc" }
+      : { tag: "English → Español", ask: "Tradúcelo al español", html: H(w.en), oks: esOk(w), sol: w.es, tipo: "esc", propias: true } },
+  past: { app: "past", titulo: "Past simple", items: () => PAST, nota: "Afirmativa, negativa y preguntas en past simple (verbos regulares e irregulares).",
+    q: (p) => p.t === "v"
+      ? { tag: "Past simple", ask: p.v ? `Escribe el verbo <b>${H(p.v)}</b> en past simple` : "Escribe el verbo en past simple", html: H(p.f).replace("___", '<span class="hueco">_____</span>'), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true }
+      : { tag: p.t === "neg" ? "Negativa" : "Pregunta", ask: p.t === "neg" ? "Pásala a negativa" : "Pásala a pregunta", html: H(p.f), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true } },
+  preg: { app: "preg", titulo: "Make questions", items: () => PREGS, racha: 1, nota: "Escribe la pregunta cuya respuesta es la parte subrayada. Siempre salen frases nuevas; las falladas, en «Repasar falladas».",
+    q: (p) => ({ tag: "Make questions", ask: "Haz la pregunta: la respuesta es lo <u>subrayado</u>", html: H(p.f).replace(/\[(.+?)\]/, "<u>$1</u>"), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true, propias: true }) },
+  idioms: { app: "idioms", titulo: "Idioms", items: () => IDIOMS, externo: true,
+    q: (i) => Math.random() < 0.5
+      ? { tag: "Idiom → español", ask: "¿Qué significa?", html: H(i.en), oks: [...i.esOk, ...i.es.split("/")], sol: i.es, tipo: "esc", propias: true, dir: "en" }
+      : { tag: "Español → idiom", ask: "Escribe el idiom en inglés", html: H(i.es), oks: [i.en, ...i.enOk], sol: i.en, tipo: "esc", dir: "es" } },
+};
+const MEZCLA = { def: 4, trad: 4, past: 4, preg: 4, idioms: 4 };
+
+// --- progreso ---
+function leer(k, d) { try { return JSON.parse(localStorage.getItem(k) || "null") || d; } catch (e) { return d; } }
+const S = leer(KEY, {}); for (const k of ["def", "trad", "past", "preg"]) S[k] = S[k] || {};
+const ID = leer("idioms_v1", { s: {} }); ID.s = ID.s || {};
+function guardar() { try { localStorage.setItem(KEY, JSON.stringify(S)); localStorage.setItem("idioms_v1", JSON.stringify(ID)); } catch (e) {} }
+const stDe = (j, id, dir) => { if (j === "idioms") { const x = ID.s[id] = ID.s[id] || {}; return x[dir] = x[dir] || { a: 0, f: 0, r: 0 }; } return S[j][id] = S[j][id] || { a: 0, f: 0, r: 0 }; };
+const rachaDe = (j) => JUEGOS[j].racha || RACHA;
+const dom = (j, id) => j === "idioms" ? ["en", "es"].every(d => ((ID.s[id] || {})[d] || {}).r >= RACHA) : ((S[j][id] || {}).r || 0) >= rachaDe(j);
+const nDom = (j) => JUEGOS[j].items().filter(x => dom(j, x.id)).length;
+const total = (j) => JUEGOS[j].items().length;
+const enPractica = (j) => JUEGOS[j].items().filter(x => !dom(j, x.id) && (j === "idioms" ? Object.keys(ID.s[x.id] || {}).length : S[j][x.id])).length;
+const pts = (j) => Math.round(nDom(j) / total(j) * 100);
+
+// --- rondas ---
+let tab = "def", R = null;
+function prio(j, x) { const s = j === "idioms" ? { r: Math.min(...["en", "es"].map(d => ((ID.s[x.id] || {})[d] || {}).r || 0)), f: 0 } : (S[j][x.id] || { r: 0, f: 0, a: 0 }); return (s.r >= RACHA ? 0 : 10) + (s.f || 0) * 2 - s.r * 3 + Math.random() * 5; }
+let modoPreg = "nuevas";
+const falladasPreg = () => PREGS.filter(x => { const s = S.preg[x.id]; return s && s.f > 0 && !(s.r > 0); });
+function elegir(j, n) {
+  if (j === "preg") {
+    // siempre nuevas: primero las que no has visto nunca, luego las que aún no has acertado; "falladas": solo las falladas
+    const vis = (x) => S.preg[x.id], L = modoPreg === "falladas" && tab === "preg" ? azar(falladasPreg())
+      : [...azar(PREGS.filter(x => !vis(x))), ...azar(PREGS.filter(x => vis(x) && !dom("preg", x.id))), ...azar(PREGS.filter(x => dom("preg", x.id)))];
+    return L.slice(0, n).map(x => ({ j, x, ...JUEGOS[j].q(x) }));
+  }
+  return JUEGOS[j].items().map(x => [x, prio(j, x)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(([x]) => ({ j, x, ...JUEGOS[j].q(x) })); }
+function nuevaRonda() {
+  const qs = tab === "examen" ? azar(Object.entries(MEZCLA).flatMap(([j, n]) => elegir(j, n))) : azar(elegir(tab, 10));
+  R = { qs, n: 0, bien: 0, d0: Object.fromEntries(Object.keys(JUEGOS).map(j => [j, nDom(j)])), resp: null };
+}
+
+function render() {
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === tab)));
+  if (!R) nuevaRonda();
+  pintarDominio(); $("#main").innerHTML = htmlJuego();
+  const i = $("#main .inp input"); if (i && !R.resp) i.focus({ preventScroll: true });
+}
+function pintarDominio() {
+  if (tab === "examen") {
+    const js = ["def", "trad", "past", "preg", "idioms"], t = js.reduce((s, j) => s + pts(j), 0);
+    $("#dominio").innerHTML = `<div class="t">Mezcla de todo lo que entra: ${js.map(j => `${JUEGOS[j].titulo} <b>${pts(j)}%</b>`).join(" · ")}</div><div class="pts-v"><b>${t}</b><span>puntos</span></div><div class="bar"><i style="width:${t / js.length}%"></i></div>`;
+    return;
+  }
+  const d = nDom(tab), T = total(tab);
+  $("#dominio").innerHTML = `<div class="t"><b>${d}</b> de ${T} dominados · ${enPractica(tab)} en práctica<br><span style="font-size:12.5px">${H(JUEGOS[tab].nota)}</span></div><div class="pts-v"><b>${pts(tab)}</b><span>puntos</span></div><div class="bar"><i style="width:${d / T * 100}%"></i></div>`;
+}
+function htmlJuego() {
+  const modos = tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
+  if (!R.qs.length) return modos + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
+  if (R.n >= R.qs.length) return modos + htmlFin();
+  const q = R.qs[R.n], r = R.resp;
+  let cuerpo;
+  if (q.tipo === "opc") cuerpo = `<div class="opts">${q.opts.map((o, k) => `<button type="button" data-op="${k}" class="${r ? (o.ok ? "ok" : r.elegida === k ? "ko" : "") : ""}" ${r ? "disabled" : ""}>${H(o.t)}</button>`).join("")}</div>`;
+  else cuerpo = `<form class="inp${q.frase ? " larga" : ""}" id="fEsc" autocomplete="off"><input name="r" class="${r ? (r.v ? "ok" : "ko") : ""}" placeholder="Escribe aquí…" autocapitalize="${q.frase ? "sentences" : "off"}" spellcheck="false" ${r ? "readonly" : ""} value="${r ? H(r.txt) : ""}"><button class="btn" ${r ? "disabled" : ""}>Comprobar</button></form>`;
+  let fb = "";
+  if (r) {
+    if (r.v === 2) fb = `<div class="fb ok">✅ <b>Correcto.</b>${q.oks && q.oks.length > 1 && q.frase ? " También vale: " + H(q.oks.filter(o => nrm(o) !== nrm(r.txt || "")).slice(0, 2).join(" · ")) : ""}${r.sube ? " · 🏅 ¡Dominado!" : ""}</div>`;
+    else if (r.v === 1) fb = `<div class="fb casi">🟡 <b>Casi: cuenta como acierto.</b> Se escribe: <b>${H(q.sol)}</b></div>`;
+    else fb = `<div class="fb ko">❌ <b>No.</b> ${q.tipo === "opc" ? "Era la marcada en verde." : "Era: <b>" + H(q.sol) + "</b>"}</div>${q.propias && !r.revisado ? `<div class="acts"><button type="button" class="btn sec" data-valia>Lo he puesto de otra forma correcta: cuenta como bien</button></div>` : ""}`;
+    fb += `<div class="acts"><button type="button" class="btn" data-sig>${R.n + 1 >= R.qs.length ? "Ver resultado" : "Siguiente →"}</button></div>`;
+  }
+  return modos + `<div class="card"><div class="ronda-t"><span>${R.n + 1} / ${R.qs.length}</span><div class="rb"><i style="width:${R.n / R.qs.length * 100}%"></i></div><span>✅ ${R.bien}</span></div>
+  <span class="tag">${tab === "examen" ? H(JUEGOS[q.j].titulo) + " · " : ""}${H(q.tag)}</span><p class="ask">${q.ask}</p><p class="prompt${q.frase || q.j === "def" && q.tipo === "esc" ? " med" : ""}">${q.html}</p>${cuerpo}${fb}</div>`;
+}
+function htmlFin() {
+  const ganados = Object.keys(JUEGOS).reduce((s, j) => s + Math.max(0, nDom(j) - R.d0[j]), 0);
+  const p = Object.keys(JUEGOS).reduce((s, j) => s + Math.round(Math.max(0, nDom(j) - R.d0[j]) / total(j) * 100), 0);
+  const msg = R.bien === R.qs.length ? "¡Perfecto! 🎉" : R.bien >= R.qs.length * .7 ? "¡Muy bien! 💪" : "Sigue practicando 📚";
+  return `<div class="card fin"><h2>${msg}</h2><p class="big">${R.bien} / ${R.qs.length}</p>
+  <p>${ganados > 0 ? `<span class="mas">+${ganados} dominado${ganados > 1 ? "s" : ""} · ≈ +${p} puntos</span>` : `Esta ronda no has dominado ninguno nuevo: ${tab === "preg" ? "cada frase cuenta cuando la aciertas." : `hacen falta ${RACHA} aciertos seguidos.`}`}</p>
+  ${tab === "examen" ? `<p>Nota de este examen de prueba: <b>${Math.round(R.bien / R.qs.length * 100) / 10}</b></p>` : ""}
+  <div class="acts"><button type="button" class="btn" data-otra>Otra ronda</button></div></div>`;
+}
+function responder(v, extra) {
+  const q = R.qs[R.n], antes = dom(q.j, q.x.id), s = stDe(q.j, q.x.id, q.dir);
+  if (v) { s.a++; s.r++; R.bien++; } else { s.f++; s.r = 0; }
+  R.resp = { v, ...extra, sube: !antes && dom(q.j, q.x.id) }; guardar(); render(); window.dispatchEvent(new Event("ingles-cambio"));
+}
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.tab) { tab = t.dataset.tab; R = null; history.replaceState(null, "", "#" + tab); render(); return; }
+  if (t.dataset.mp) { modoPreg = t.dataset.mp; R = null; render(); return; }
+  if (t.hasAttribute("data-op") && R && !R.resp) { const k = +t.dataset.op; responder(R.qs[R.n].opts[k].ok ? 2 : 0, { elegida: k }); return; }
+  if (t.hasAttribute("data-sig")) { R.n++; R.resp = null; render(); return; }
+  if (t.hasAttribute("data-otra")) { R = null; render(); return; }
+  if (t.hasAttribute("data-valia") && R && R.resp && !R.resp.v) { const q = R.qs[R.n], s = stDe(q.j, q.x.id, q.dir), antes = dom(q.j, q.x.id); s.f = Math.max(0, s.f - 1); s.a++; s.r = 1; R.bien++; R.resp = { ...R.resp, v: 2, revisado: true, sube: !antes && dom(q.j, q.x.id) }; guardar(); render(); window.dispatchEvent(new Event("ingles-cambio")); }
+});
+document.addEventListener("submit", (e) => {
+  if (e.target.id !== "fEsc") return; e.preventDefault(); if (!R || R.resp) return;
+  const txt = e.target.r.value; if (!txt.trim()) return; const q = R.qs[R.n];
+  responder(corr(txt, q.oks, q.estricto), { txt });
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && R && R.resp) { const b = $("[data-sig]"); if (b) { e.preventDefault(); b.click(); } } });
+{ const h = location.hash.slice(1); if (JUEGOS[h] && h !== "idioms" || h === "examen") tab = h; }
+render();
+document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
+</script>
+<script type="module">
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794947791";
+exigirCuenta();
+import { iniciarLateral } from "../shared/lateral.js?v=1794947791";
+copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
+const ult = {}; let t = null;
+function enviar() { for (const j of ["def", "trad", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }
+window.addEventListener("ingles-cambio", enviar);
+alCambiarSesion(u => { clearInterval(t); if (u) { for (const k in ult) delete ult[k]; enviar(); t = setInterval(enviar, 8000); } });
+iniciarLateral({ recurso: "p-global-ingles", stats: () => { const js = tab === "examen" ? ["def", "trad", "past", "preg", "idioms"] : [tab]; return { dom: js.reduce((s, j) => s + nDom(j), 0), ctrl: js.reduce((s, j) => s + enPractica(j), 0), total: js.reduce((s, j) => s + total(j), 0) }; } });
+</script>
+</body></html>

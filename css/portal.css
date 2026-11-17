@@ -767,3 +767,14 @@ button.pts{background:none;border:0;cursor:pointer;padding:4px 6px;border-radius
 .pq-e{font-size:15px;color:var(--ink)}.pq-o{display:flex;flex-direction:column;gap:6px}.pq-vf{flex-direction:row;gap:16px}
 .pq-o label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;padding:6px 8px;border-radius:8px}.pq-o label.ok{background:rgba(22,122,58,.12)}.pq-o label.ko{background:rgba(179,38,30,.1)}
 .pq-c{margin:0;font-size:13.5px}.pq details summary{cursor:pointer;font-weight:700;font-size:13px}
+
+/* qué entra seguro (e.entra), con su juego */
+.entra{display:flex;flex-direction:column;gap:8px}
+.en-i{display:grid;grid-template-columns:minmax(0,1fr) 90px 44px auto;gap:4px 10px;align-items:center;padding:10px 12px;border:1px solid var(--rule);border-radius:12px;background:var(--sheet);color:var(--ink);text-decoration:none}
+.en-i .en-s{grid-column:1/-1;font:800 10.5px system-ui;letter-spacing:.07em;text-transform:uppercase;color:#1b7a3d}
+.en-i b{font-size:15px}.en-i.sin{grid-template-columns:1fr}
+.en-b{height:6px;border-radius:3px;background:var(--rule);overflow:hidden}.en-b i{display:block;height:100%;background:#1b7a3d}
+.en-p{font:800 13px ui-monospace,Menlo,monospace;text-align:right}.en-go{font:700 13px system-ui;color:var(--accent,#2156c9);white-space:nowrap}
+.en-todo{grid-template-columns:minmax(0,1fr) auto;border-style:dashed;border-width:1.5px}
+a.en-i[href]:hover{border-color:var(--accent,#2156c9)}
+@media (max-width:480px){.en-i{grid-template-columns:minmax(0,1fr) 44px auto}.en-b{display:none}}

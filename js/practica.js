@@ -2,6 +2,15 @@
 // (parte del antiguo script de index.html; los archivos js/ se cargan en orden y comparten las variables)
 const PANEL="https://claude.ai/artifact/Np3XpCt8KZ7UtnWXBBqbsE";
 function temasDe(e){const ids=Array.isArray(e.temas)?e.temas:[];return ids.map(id=>S.temas.find(t=>t.id===id)).filter(Boolean)}
+// "Qué entra" que ha marcado el admin (e.entra): cada punto con su juego y lo que llevas
+const _nE=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function recursoDeEntra(e,x){const n=_nE(x),c=n.replace(/^grammar:\s*/,"").split(/\s+/)[0];if(!c)return null;
+  return S.recursos.find(r=>r.asig===e.asig&&r.url&&r.app&&_nE(r.titulo).split(/[\s·]+/).some(w=>w.length>3&&(w.startsWith(c.slice(0,5))||c.startsWith(w.slice(0,5)))))||null}
+function entraHTML(e,cls){if(!Array.isArray(e.entra)||!e.entra.length)return "";const mio=(S.rank||{})[S.uid]||{};
+  const todo=S.recursos.find(r=>r.asig===e.asig&&r.id==="p-global-"+e.asig);
+  return `<div class="entra ${cls||""}">${e.entra.map(x=>{const r=recursoDeEntra(e,x),p=r?Math.round(pctApp(mio,r.app)*100):null;
+    return `<a class="en-i${r?"":" sin"}" ${r?`href="${esc(r.url)}"`:""}><span class="en-s">✅ Entra seguro</span><b>${esc(x)}</b>${r?`<span class="en-b"><i style="width:${p}%"></i></span><span class="en-p">${p}%</span><span class="en-go">Practicar →</span>`:""}</a>`}).join("")}
+    ${todo?`<a class="en-i en-todo" href="${esc(todo.url)}"><b>📝 Todo junto, como en el examen</b><span class="en-go">Empezar →</span></a>`:""}</div>`}
 function fechaLarga(f){const d=parseF(f);return d?d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}):"sin fecha"}
 function promptDe(e){const ts=temasDe(e),d=dias(e.fecha),fal=S.fallos.filter(f=>f.asig===e.asig).slice(0,12);
   const L=[`Vamos a estudiar para mi examen de ${NOM[e.asig]||e.asig}: ${e.titulo}.`,
@@ -88,8 +97,8 @@ function abrirFicha(id){const e=S.examenes.find(x=>x.id===id);if(!e)return;ficha
     <button class="cerrar volver" id="fcerrar" aria-label="Volver">← Volver</button>
     <div><span class="chip-asig" data-a="${e.asig}">${esc(NOM[e.asig]||e.asig)}</span><h2 id="ftit">${esc(e.titulo)}</h2></div>
     <div class="meta"><span class="pill ${d!=null&&d>=0&&d<5?"urge":""}">${cuando}</span><span>${esc(fechaLarga(e.fecha))}</span>${hrs(e)?`<span>· ≈${hrs(e)} h de estudio</span>`:""}</div>
-    ${e.alcance&&ts.length?`<p class="note" style="margin:0">${esc(e.alcance)}</p>`:""}
-    <div style="display:flex;flex-direction:column;gap:8px"><h3>Qué entra</h3>${idx}</div>
+    ${e.alcance&&(ts.length||(e.entra||[]).length)?`<p class="note" style="margin:0">${esc(e.alcance)}</p>`:""}
+    <div style="display:flex;flex-direction:column;gap:8px"><h3>Qué entra</h3>${entraHTML(e)||idx}</div>
     ${aptsHTML(e)}
     ${rec.length?`<div style="display:flex;flex-direction:column;gap:8px"><h3>Material para estudiarlo</h3><div class="res">${rec.map(link).join("")}</div></div>`:""}
     <div class="acciones">${S.practica.some(x=>x.examen===e.id)?`<button class="btn-empezar" data-practicar="${esc(e.id)}">Practicar el examen aquí</button>`:""}<a class="btn-sec" href="#prep-${esc(e.id)}" data-fcierra>🎯 Mapa de qué entra y examen de prueba con IA</a></div></div>`;
