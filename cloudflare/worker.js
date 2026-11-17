@@ -170,7 +170,7 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { headers: cors(origen) });
     if (req.method === "GET") {
       if (ruta === "/recordatorio" && (await esAdmin(req))) return new Response(await recordatorioExamenes(env).catch(e => "error: " + e.message), { headers: { "Content-Type": "text/plain; charset=utf-8", ...cors(origen) } });
-      return new Response("✅ Conversor de apuntes de 1 BACH funcionando." + (env.GEMINI_KEY ? "" : " ⚠️ Falta el secreto GEMINI_KEY.") + (env.FIREBASE_SA ? " 🔔 Push y exámenes IA listos." : " ⚠️ Falta el secreto FIREBASE_SA (push y exámenes de prueba)."), { headers: { "Content-Type": "text/plain; charset=utf-8", ...cors(origen) } });
+      return new Response("✅ Conversor de apuntes de 1 BACH funcionando." + (env.GEMINI_KEY ? "" : " ⚠️ Falta el secreto GEMINI_KEY.") + (env.FIREBASE_SA ? " 🔔 Push y puntos de exámenes listos." : " ⚠️ Falta el secreto FIREBASE_SA (notificaciones push y puntos de los exámenes de prueba)."), { headers: { "Content-Type": "text/plain; charset=utf-8", ...cors(origen) } });
     }
     if (req.method !== "POST") return responder({ error: "Método no permitido" }, 405, origen);
     if (!ORIGENES.includes(origen)) return responder({ error: "Solo se puede usar desde el portal de 1 BACH." }, 403, origen);
