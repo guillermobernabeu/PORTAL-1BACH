@@ -2,7 +2,7 @@
 // Cualquiera sube fotos de sus apuntes, la IA (Gemini, a través del Worker de Cloudflare) los pasa a limpio,
 // el administrador los aprueba y todos pueden darles 👍 y proponer mejoras. Puntos y niveles por colaborar.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, fs, auth, enviarPush } from "./fb.js?v=1794920283";
+import { db, fs, auth, enviarPush } from "./fb.js?v=1794920691";
 
 const CONVERSOR = "https://apuntes-1bach1.maison-ichie.workers.dev";
 const MAX_FOTOS = 10;
@@ -123,6 +123,7 @@ function vistaApunte(id) {
     <div id="apFotosV"></div></article>
    <section class="sheet" id="apMejoras"><header><h2>✏️ Mejoras propuestas</h2></header><div class="empty">Cargando…</div></section></div>`;
 }
+AP.pintarMd = pintarMd;
 AP.html = (r) => r === "apuntes" ? vistaLista() : r === "subir-apunte" ? vistaSubir() : vistaApunte(r.slice(7));
 AP.montar = (r) => {
   if (r === "subir-apunte" && AP.borrador && AP.borrador.fase === "md") pintarMd(document.getElementById("apPrev"), AP.borrador.md);

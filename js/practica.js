@@ -92,10 +92,11 @@ function abrirFicha(id){const e=S.examenes.find(x=>x.id===id);if(!e)return;ficha
     <div style="display:flex;flex-direction:column;gap:8px"><h3>Qué entra</h3>${idx}</div>
     ${aptsHTML(e)}
     ${rec.length?`<div style="display:flex;flex-direction:column;gap:8px"><h3>Material para estudiarlo</h3><div class="res">${rec.map(link).join("")}</div></div>`:""}
-    ${S.practica.some(x=>x.examen===e.id)?`<div class="acciones"><button class="btn-empezar" data-practicar="${esc(e.id)}">Practicar el examen aquí</button></div>`:""}</div>`;
+    <div class="acciones">${S.practica.some(x=>x.examen===e.id)?`<button class="btn-empezar" data-practicar="${esc(e.id)}">Practicar el examen aquí</button>`:""}<a class="btn-sec" href="#prep-${esc(e.id)}" data-fcierra>🎯 Mapa de qué entra y examen de prueba con IA</a></div></div>`;
   $("#ficha").hidden||history.pushState({modal:"f"},"");$("#ficha").hidden=false;admDecorar();document.body.style.overflow="hidden";$("#fcerrar").focus()}
 function cerrarFicha(pop){if(pop!==true&&!$("#ficha").hidden&&history.state&&history.state.modal==="f"){history.back();return}$("#ficha").hidden=true;$("#ficha").innerHTML="";document.body.style.overflow="";fichaActual=null}
 let enfocar=null;
 
 
 
+document.addEventListener("click",ev=>{if(ev.target.closest&&ev.target.closest("[data-fcierra]"))cerrarFicha(true)},true);

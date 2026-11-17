@@ -36,7 +36,7 @@ const hojas=e=>(e.paginas||[]).filter(esDoc);
 function progreso(list){if(!list.length)return null;return list.reduce((s,t)=>s+pTema(t),0)/list.length}
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,2200)}
 
-function route(){const h=location.hash.slice(1);return AN[h]||h==="apuntes"||h==="subir-apunte"||/^apunte-[A-Za-z0-9]+$/.test(h)||h==="mipanel"||/^mipanel-[a-z]+$/.test(h)||h==="companeros"||h==="amigos"||h==="perfil"||h==="chat"||h==="privados"||/^privado-[A-Za-z0-9]+$/.test(h)||/^practica-[a-z0-9]+$/.test(h)?h:"resumen"}
+function route(){const h=location.hash.slice(1);return AN[h]||h==="apuntes"||h==="subir-apunte"||/^apunte-[A-Za-z0-9]+$/.test(h)||h==="mipanel"||/^mipanel-[a-z]+$/.test(h)||h==="companeros"||h==="amigos"||h==="perfil"||h==="chat"||h==="privados"||/^privado-[A-Za-z0-9]+$/.test(h)||/^practica-[a-z0-9]+$/.test(h)||/^prep-[A-Za-z0-9_-]+$/.test(h)?h:"resumen"}
 
 
 function limite(e){const d=parseF(e.fecha);return d?new Date(d.getFullYear(),d.getMonth(),d.getDate()-1,23,59,59):null}
