@@ -1,8 +1,8 @@
 // 🎯 Preparar un examen: pistas de la clase, mapa de lo que va a entrar (predicción que aprende sola)
 // y exámenes de prueba hechos por la IA (Gemini, a través del Worker de Cloudflare) con corrección y puntos.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, fs, auth, WORKER } from "./fb.js?v=1794922628";
-import { predecir, aprender, acierto, FUENTES, NIVELES, parecido } from "./prediccion.js?v=1794922628";
+import { db, fs, auth, WORKER } from "./fb.js?v=1794924278";
+import { predecir, aprender, acierto, FUENTES, NIVELES, parecido } from "./prediccion.js?v=1794924278";
 
 const H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const PR = window.PR = { pistas: [], modelo: null, historial: [], misEx: [], ex: null, resp: [], res: null, cargando: false, abierto: null };
@@ -30,6 +30,8 @@ function apuntesDe(e) { return ((window.AP && AP.lista) || []).filter(a => a.asi
 function mapaDe(e) {
   const admin = (uid) => uid === S.uid ? !!S.esAdmin : false;  // solo se sabe con seguridad quién es admin en su propio navegador
   const pistas = PR.pistas.map(p => ({ ...p, admin: !!p.admin || admin(p.de) }));
+  // lo que ha confirmado el administrador en el propio examen (campo "entra") cuenta como pista segura suya
+  (e.entra || []).forEach((t, i) => pistas.push({ id: "entra" + i, texto: t, nivel: "seguro", de: "admin", admin: true }));
   return predecir({ examen: e, temas: temasDe(e), pistas, apuntes: apuntesDe(e), historial: PR.historial, modelo: PR.modelo });
 }
 

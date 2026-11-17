@@ -1,6 +1,6 @@
 // Paneles laterales para las apps en el ordenador: casa, modo Deep Work, cuenta atrás del examen,
 // porcentaje de lo que dominas y el ranking (los 3 primeros · … · tú).
-import { auth, db, fs, alCambiarClase, nombreDe, fotoDe, concentracion, ponerConcentracion } from "./fb.js?v=1794922628";
+import { auth, db, fs, alCambiarClase, nombreDe, fotoDe, concentracion, ponerConcentracion } from "./fb.js?v=1794924278";
 
 const RAIZ = new URL("../", import.meta.url).href;
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);

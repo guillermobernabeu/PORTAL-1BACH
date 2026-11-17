@@ -180,7 +180,7 @@
    "nota": null
   },
   {
-   "alcance": "Definitions, translate, grammar (past simple, make questions) e idioms. Inglés no tiene global",
+   "alcance": "Definitions, translate, grammar (past simple y make questions) e idioms",
    "asig": "ingles",
    "fecha": "2026-11-19",
    "hecho": false,
@@ -191,9 +191,16 @@
     "i5",
     "i6"
    ],
-   "titulo": "Examen grande de Inglés",
+   "titulo": "Global de Inglés",
    "id": "e11",
-   "nota": null
+   "nota": null,
+   "entra": [
+    "Definitions",
+    "Translate",
+    "Grammar: past simple",
+    "Grammar: make questions",
+    "Idioms"
+   ]
   },
   {
    "alcance": "Sistema óseo, articular y muscular (presentación del profesor)",
