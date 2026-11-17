@@ -1,4 +1,5 @@
 {
+  "id": "./",
   "name": "1 BACH · Portal de la clase",
   "short_name": "1 BACH",
   "description": "Portal de estudio de 1.º de Bachillerato: exámenes, apuntes, vocabulario, chat y ranking de la clase.",
@@ -6,17 +7,59 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#141a2e",
   "theme_color": "#141a2e",
   "icons": [
-    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "iconos/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "iconos/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "iconos/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "iconos/icono-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Vocabulary", "url": "./vocabulary/", "icons": [{ "src": "iconos/icono-96.png", "sizes": "96x96" }] },
-    { "name": "Chat de la clase", "url": "./#chat", "icons": [{ "src": "iconos/icono-96.png", "sizes": "96x96" }] },
-    { "name": "Ranking", "url": "./#amigos", "icons": [{ "src": "iconos/icono-96.png", "sizes": "96x96" }] }
+    {
+      "name": "Vocabulary",
+      "url": "./vocabulary/",
+      "icons": [
+        {
+          "src": "iconos/icono-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Chat de la clase",
+      "url": "./#chat",
+      "icons": [
+        {
+          "src": "iconos/icono-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Ranking",
+      "url": "./#amigos",
+      "icons": [
+        {
+          "src": "iconos/icono-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }
