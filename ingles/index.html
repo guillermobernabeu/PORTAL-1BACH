@@ -69,9 +69,9 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="../vocabulary/palabras.js?v=1794953864"></script>
-<script src="../idioms/datos.js?v=1794953864"></script>
-<script src="datos.js?v=1794953864"></script>
+<script src="../vocabulary/palabras.js?v=1794956098"></script>
+<script src="../idioms/datos.js?v=1794956098"></script>
+<script src="datos.js?v=1794956098"></script>
 <script>
 // ---------- Juegos del global de Inglés ----------
 const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -108,6 +108,12 @@ const JUEGOS = {
     q: (w) => Math.random() < 0.5
       ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(w.es), oks: enOk(w), sol: w.en, tipo: "esc" }
       : { tag: "English → Español", ask: "Tradúcelo al español", html: H(w.en), oks: esOk(w), sol: w.es, tipo: "esc", propias: true } },
+  gi: { app: "gi", titulo: "Gerund & infinitive", items: () => GI, nota: "Text 3: traduce frases con gerundio o infinitivo y elige -ing o to + verbo.",
+    q: (g) => g.t === "gap"
+      ? { tag: "Gerund or infinitive", ask: `¿-ing o to? Usa el verbo <b>${H(g.v)}</b>`, html: H(g.f).replace("___", '<span class="hueco">_____</span>'), oks: g.ok, sol: g.ok[0], tipo: "esc", estricto: true }
+      : g.t === "es"
+        ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(g.f), oks: g.ok, sol: g.ok[0], tipo: "esc", frase: true, propias: true }
+        : { tag: "English → Español", ask: "Tradúcelo al español", html: H(g.f), oks: g.ok, sol: g.ok[0], tipo: "esc", frase: true, propias: true } },
   past: { app: "past", titulo: "Past simple", items: () => PAST, nota: "Afirmativa, negativa y preguntas en past simple (verbos regulares e irregulares).",
     q: (p) => p.t === "v"
       ? { tag: "Past simple", ask: p.v ? `Escribe el verbo <b>${H(p.v)}</b> en past simple` : "Escribe el verbo en past simple", html: H(p.f).replace("___", '<span class="hueco">_____</span>'), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true }
@@ -119,11 +125,11 @@ const JUEGOS = {
       ? { tag: "Idiom → español", ask: "¿Qué significa?", html: H(i.en), oks: [...i.esOk, ...i.es.split("/")], sol: i.es, tipo: "esc", propias: true, dir: "en" }
       : { tag: "Español → idiom", ask: "Escribe el idiom en inglés", html: H(i.es), oks: [i.en, ...i.enOk], sol: i.en, tipo: "esc", dir: "es" } },
 };
-const MEZCLA = { def: 4, trad: 4, past: 4, preg: 4, idioms: 4 };
+const MEZCLA = { def: 4, trad: 2, gi: 2, past: 4, preg: 4, idioms: 4 };
 
 // --- progreso ---
 function leer(k, d) { try { return JSON.parse(localStorage.getItem(k) || "null") || d; } catch (e) { return d; } }
-const S = leer(KEY, {}); for (const k of ["def", "trad", "past", "preg"]) S[k] = S[k] || {};
+const S = leer(KEY, {}); for (const k of ["def", "trad", "gi", "past", "preg"]) S[k] = S[k] || {};
 const ID = leer("idioms_v1", { s: {} }); ID.s = ID.s || {};
 function guardar() { try { localStorage.setItem(KEY, JSON.stringify(S)); localStorage.setItem("idioms_v1", JSON.stringify(ID)); } catch (e) {} }
 const stDe = (j, id, dir) => { if (j === "idioms") { const x = ID.s[id] = ID.s[id] || {}; return x[dir] = x[dir] || { a: 0, f: 0, r: 0 }; } return S[j][id] = S[j][id] || { a: 0, f: 0, r: 0 }; };
@@ -153,14 +159,14 @@ function nuevaRonda() {
 }
 
 function render() {
-  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === tab)));
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === tab || b.dataset.tab === "trad" && tab === "gi")));
   if (!R) nuevaRonda();
   pintarDominio(); $("#main").innerHTML = htmlJuego();
   const i = $("#main .inp input"); if (i && !R.resp) i.focus({ preventScroll: true });
 }
 function pintarDominio() {
   if (tab === "examen") {
-    const js = ["def", "trad", "past", "preg", "idioms"], t = js.reduce((s, j) => s + pts(j), 0);
+    const js = ["def", "trad", "gi", "past", "preg", "idioms"], t = js.reduce((s, j) => s + pts(j), 0);
     $("#dominio").innerHTML = `<div class="t">Mezcla de todo lo que entra: ${js.map(j => `${JUEGOS[j].titulo} <b>${pts(j)}%</b>`).join(" · ")}</div><div class="pts-v"><b>${t}</b><span>puntos</span></div><div class="bar"><i style="width:${t / js.length}%"></i></div>`;
     return;
   }
@@ -168,7 +174,7 @@ function pintarDominio() {
   $("#dominio").innerHTML = `<div class="t"><b>${d}</b> de ${T} dominados · ${enPractica(tab)} en práctica<br><span style="font-size:12.5px">${H(JUEGOS[tab].nota)}</span></div><div class="pts-v"><b>${pts(tab)}</b><span>puntos</span></div><div class="bar"><i style="width:${d / T * 100}%"></i></div>`;
 }
 function htmlJuego() {
-  const modos = tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
+  const modos = tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi"}">🔀 Gerund & infinitive</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
   if (!R.qs.length) return modos + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
   if (R.n >= R.qs.length) return modos + htmlFin();
   const q = R.qs[R.n], r = R.resp;
@@ -219,14 +225,14 @@ render();
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794953864";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794956098";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1794953864";
+import { iniciarLateral } from "../shared/lateral.js?v=1794956098";
 copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
 const ult = {}; let t = null;
-function enviar() { for (const j of ["def", "trad", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }
+function enviar() { for (const j of ["def", "trad", "gi", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }
 window.addEventListener("ingles-cambio", enviar);
 alCambiarSesion(u => { clearInterval(t); if (u) { for (const k in ult) delete ult[k]; enviar(); t = setInterval(enviar, 8000); } });
-iniciarLateral({ recurso: "p-global-ingles", stats: () => { const js = tab === "examen" ? ["def", "trad", "past", "preg", "idioms"] : [tab]; return { dom: js.reduce((s, j) => s + nDom(j), 0), ctrl: js.reduce((s, j) => s + enPractica(j), 0), total: js.reduce((s, j) => s + total(j), 0) }; } });
+iniciarLateral({ recurso: "p-global-ingles", stats: () => { const js = tab === "examen" ? ["def", "trad", "gi", "past", "preg", "idioms"] : [tab]; return { dom: js.reduce((s, j) => s + nDom(j), 0), ctrl: js.reduce((s, j) => s + enPractica(j), 0), total: js.reduce((s, j) => s + total(j), 0) }; } });
 </script>
 </body></html>

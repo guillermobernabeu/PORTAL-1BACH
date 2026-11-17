@@ -251,6 +251,21 @@
    "pub": 1794947433604,
    "app": "idioms",
    "destacado": true
+  },
+  {
+   "id": "p-gi",
+   "asig": "ingles",
+   "tri": 1,
+   "tema": "i7",
+   "tipo": "app",
+   "cat": "App",
+   "claude": true,
+   "titulo": "Translate · gerund & infinitive",
+   "nota": "Text 3: traducir y elegir -ing o to",
+   "url": "ingles/#gi",
+   "app": "gi",
+   "destacado": true,
+   "pub": 1794956098345
   }
  ],
  "examenes": [

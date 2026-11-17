@@ -28,7 +28,7 @@ module.exports = {
     assert.ok(d.progreso.u2.apps.past && d.progreso.u2.apps.past.ok >= 5 && d.progreso.u2.apps.past.total === 46, JSON.stringify(d.progreso.u2.apps));
     await p.click("[data-tab=examen]"); await p.waitForTimeout(300);
     const js = await p.evaluate(() => [...new Set(R.qs.map(q => q.j))].sort());
-    assert.deepEqual(js, ["def", "idioms", "past", "preg", "trad"]); assert.equal(await p.evaluate(() => R.qs.length), 20);
+    assert.deepEqual(js, ["def", "gi", "idioms", "past", "preg", "trad"]); assert.equal(await p.evaluate(() => R.qs.length), 20);
   },
   "make questions: más de 200, siempre nuevas y modo de repasar falladas": async (A, ctx) => {
     const p = await abrir(A, ctx, "#preg");
@@ -41,5 +41,13 @@ module.exports = {
     await p.click("[data-mp=nuevas]"); await p.waitForTimeout(200);
     const r2 = await p.evaluate(() => R.qs.map(q => q.x.id));
     assert.ok(!r2.includes(r1[0]), "no repite la ya vista");
+  },
+  "translate: apartado de gerund & infinitive": async (A, ctx) => {
+    const p = await abrir(A, ctx, "#trad");
+    await p.click(".filt [data-tab=gi]"); await p.waitForTimeout(200);
+    assert.ok(/gerund|english|español/i.test(await A.texto(p, ".tag")));
+    assert.equal(await p.evaluate(() => R.qs.every(q => q.j === "gi")), true);
+    const r = await p.evaluate(() => { const g = id => GI.find(x => x.id === id).ok; return [corr("to buy", g("g43"), true), corr("buying", g("g43"), true), corr("I can't help laughing", g("g03")), corr("Paré para comprar pan", g("g31"))]; });
+    assert.deepEqual(r, [2, 0, 2, 2]);
   },
 };
