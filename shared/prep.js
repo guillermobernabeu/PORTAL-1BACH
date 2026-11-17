@@ -1,8 +1,8 @@
 // 🎯 Preparar un examen: pistas de la clase, mapa de lo que va a entrar (predicción que aprende sola)
 // y exámenes de prueba hechos por la IA (Gemini, a través del Worker de Cloudflare) con corrección y puntos.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, fs, auth, WORKER } from "./fb.js?v=1794924278";
-import { predecir, aprender, acierto, FUENTES, NIVELES, parecido } from "./prediccion.js?v=1794924278";
+import { db, fs, auth, WORKER } from "./fb.js?v=1794946540";
+import { predecir, aprender, acierto, FUENTES, NIVELES, parecido } from "./prediccion.js?v=1794946540";
 
 const H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const PR = window.PR = { pistas: [], modelo: null, historial: [], misEx: [], ex: null, resp: [], res: null, cargando: false, abierto: null };

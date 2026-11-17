@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Idioms · 1.º Bachillerato</title>
+<style>
+:root{--bg:#f2f4f7;--paper:#fff;--ink:#17202b;--ink2:#5f6b7a;--rule:#dde3ea;--acc:#2156c9;--acc2:#e8efff;--ok:#1b7a3d;--okbg:#e4f5ea;--ko:#c0352b;--kobg:#fde8e6;--warn:#8a5a00;--warnbg:#fff3d6;--gold:#b7791f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a;--gold:#f0c060;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a;--gold:#f0c060;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+[hidden]{display:none!important}
+.claude{position:fixed;top:14px;left:56px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #c3132b;color:#c3132b;border-radius:999px;background:var(--paper)}
+a.back{color:var(--acc);font-weight:700;text-decoration:none}
+#start{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
+#start h1{margin:0;font-size:clamp(30px,7vw,52px);letter-spacing:-.02em}#start p{margin:0;color:var(--ink2);max-width:440px}
+.go{font:700 20px/1 system-ui;padding:15px 44px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:62px 16px 60px}
+header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:block;font-size:13px;color:var(--ink2);font-weight:600}
+.tabs,.filt{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tabs{margin:14px 0 10px}.filt{margin-bottom:10px}
+.filt .lb{font:700 11.5px system-ui;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin-right:2px}
+.tabs button,.chip{font:600 14px/1 system-ui;padding:9px 13px;border-radius:999px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.chip{padding:7px 11px;font-size:13px}
+.tabs button[aria-pressed=true],.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:20px 18px}
+.dominio{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;margin:0 0 12px;padding:14px 16px}
+.dominio .t{font-size:14px;color:var(--ink2)}.dominio .t b{color:var(--ink)}
+.bar{height:8px;border-radius:4px;background:var(--rule);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);transition:width .4s}
+.pts-v{grid-row:span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--ink);color:var(--bg)}
+.pts-v b{font:800 26px/1 system-ui}.pts-v span{font:700 10.5px system-ui;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.ronda-t{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:14px}.ronda-t span{color:var(--ink2);font-weight:700}
+.ronda-t .rb{flex:1;min-width:80px;height:6px;border-radius:3px;background:var(--rule);overflow:hidden}.ronda-t .rb i{display:block;height:100%;background:var(--acc)}
+.tag{display:inline-block;font:700 11px/1 system-ui;text-transform:uppercase;letter-spacing:.06em;padding:5px 8px;border-radius:6px;background:var(--acc2);color:var(--acc)}
+.ask{font-size:14px;color:var(--ink2);margin:12px 0 4px}
+.prompt{font-size:clamp(22px,5vw,30px);font-weight:800;margin:0 0 14px;line-height:1.25;text-wrap:balance}
+.inp{display:flex;gap:8px}.inp input{flex:1;min-width:0;height:50px;border:2px solid var(--rule);border-radius:12px;padding:0 14px;font:600 18px system-ui;background:var(--paper);color:var(--ink)}
+.inp input:focus{outline:none;border-color:var(--acc)}.inp input.ok{border-color:var(--ok);background:var(--okbg)}.inp input.ko{border-color:var(--ko);background:var(--kobg)}
+.btn{height:46px;padding:0 16px;border-radius:12px;border:0;background:var(--acc);color:#fff;font:700 15px system-ui;cursor:pointer}
+.btn.sec{background:var(--paper);color:var(--ink);border:1.5px solid var(--rule)}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;font:600 16px/1.35 system-ui;padding:13px 14px;border-radius:12px;border:2px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--acc)}
+.opts button.ok{border-color:var(--ok);background:var(--okbg)}.opts button.ko{border-color:var(--ko);background:var(--kobg)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:15px}
+.fb.ok{background:var(--okbg);color:var(--ok)}.fb.ko{background:var(--kobg);color:var(--ko)}.fb.casi{background:var(--warnbg);color:var(--warn)}
+.fb b{color:inherit}.fb .ej{display:block;margin-top:6px;color:var(--ink2);font-style:italic}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lnk{background:none;border:0;color:var(--acc);font:700 14px system-ui;cursor:pointer;padding:6px 0}
+.pista{margin-top:8px;font-size:14px;color:var(--ink2)}
+.fin h2{margin:0 0 6px;font-size:26px}.fin p{margin:4px 0;color:var(--ink2)}.fin .big{font:800 44px/1 system-ui;color:var(--ink);margin:6px 0}
+.fin .mas{color:var(--ok);font-weight:800}
+.lista{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px 14px}
+.row .en{font-weight:800}.row .es{color:var(--ink2);font-size:14.5px}.row .ex{grid-column:1/-1;font-size:13.5px;color:var(--ink2);font-style:italic}
+.dots{display:flex;gap:10px;font:700 12px system-ui;color:var(--ink2)}.dots span{display:flex;align-items:center;gap:4px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--rule)}.dots i.m{background:var(--gold)}.dots i.d{background:var(--ok)}
+.nota{font-size:12.5px;color:var(--ink2);margin:0 0 8px}
+@media (max-width:480px){.dominio{grid-template-columns:1fr}.pts-v{grid-row:auto;flex-direction:row;gap:6px;width:auto;height:auto;border-radius:12px;padding:6px 12px;justify-self:start}.row{grid-template-columns:1fr}}
+</style></head><body>
+<span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<section id="start"><a href="../" class="back vback1" style="position:fixed;top:56px;left:12px">← Volver</a><h1>Idioms</h1><p>Inglés ↔ español. Domina las 16 expresiones del global de inglés: cada una vale puntos para el ranking.</p><button class="go" id="go" type="button">Empezar</button></section>
+<div class="wrap" id="app" hidden>
+<header><p style="margin:0 0 6px"><a href="../" class="back vback1">← Volver</a></p><h1><small>Inglés · 1.º Bachillerato</small>Idioms</h1></header>
+<div class="tabs" id="tabs"><button type="button" data-tab="jugar" aria-pressed="true">🎮 Jugar</button><button type="button" data-tab="lista" aria-pressed="false">📋 Lista</button></div>
+<div class="card dominio" id="dominio"></div>
+<main id="main"></main>
+</div>
+<script>
+// ---- Datos: los 16 idioms del global de Inglés ----
+// en: como se enseña · enOk: otras formas válidas · es: significado · esOk: respuestas en español que valen · ej: ejemplo
+const IDIOMS = [
+  { id: "i01", en: "my lips are sealed", enOk: ["lips are sealed"], es: "no diré nada / soy una tumba", esOk: ["no dire nada", "soy una tumba", "no dire nada a nadie", "no voy a decir nada", "mis labios estan sellados", "no lo contare", "no dire ni una palabra", "guardare el secreto"], ej: "Don't worry, I won't tell anyone — my lips are sealed." },
+  { id: "i02", en: "face the music", enOk: [], es: "afrontar las consecuencias", esOk: ["afrontar las consecuencias", "enfrentar las consecuencias", "asumir las consecuencias", "dar la cara", "afrontar los hechos"], ej: "He broke the window, so now he has to face the music." },
+  { id: "i03", en: "it's raining cats and dogs", enOk: ["it is raining cats and dogs", "raining cats and dogs", "rain cats and dogs"], es: "llueve a cántaros", esOk: ["llueve a cantaros", "esta lloviendo a cantaros", "llover a cantaros", "llueve mucho", "esta lloviendo mucho", "diluvia", "esta diluviando", "cae el diluvio"], ej: "Take an umbrella, it's raining cats and dogs!" },
+  { id: "i04", en: "under the weather", enOk: ["to be under the weather", "be under the weather", "feel under the weather", "feeling under the weather"], es: "estar malo / pachucho", esOk: ["estar malo", "pachucho", "estar pachucho", "estar enfermo", "encontrarse mal", "sentirse mal", "estar indispuesto", "malo", "enfermo"], ej: "I'm a bit under the weather today, so I'm staying home." },
+  { id: "i05", en: "hit the sack", enOk: ["hit the hay"], es: "irse a dormir", esOk: ["irse a dormir", "ir a dormir", "irse a la cama", "ir a la cama", "acostarse", "irse a acostar", "me voy a dormir"], ej: "I'm exhausted — time to hit the sack." },
+  { id: "i06", en: "beat around the bush", enOk: ["beat about the bush"], es: "andarse por las ramas", esOk: ["andarse por las ramas", "irse por las ramas", "andar por las ramas", "dar rodeos", "andarse con rodeos", "no ir al grano"], ej: "Stop beating around the bush and tell me what happened." },
+  { id: "i07", en: "out of this world", enOk: [], es: "buenísimo / de otro planeta", esOk: ["buenisimo", "de otro planeta", "de otro mundo", "increible", "espectacular", "riquisimo", "alucinante", "fuera de este mundo"], ej: "Your grandmother's cake is out of this world!" },
+  { id: "i08", en: "as busy as a bee", enOk: ["busy as a bee", "be as busy as a bee"], es: "muy atareado / ocupadísimo", esOk: ["muy atareado", "muy ocupado", "ocupadisimo", "atareadisimo", "liadisimo", "muy liado", "estar muy ocupado", "no parar"], ej: "With exams and football, she's as busy as a bee." },
+  { id: "i09", en: "bring home the bacon", enOk: ["bring the bacon home"], es: "ganarse el pan / traer el dinero a casa", esOk: ["ganarse el pan", "ganarse la vida", "traer el dinero a casa", "traer dinero a casa", "mantener a la familia", "ganar el pan", "ganar dinero"], ej: "Both of my parents work to bring home the bacon." },
+  { id: "i10", en: "hit the books", enOk: [], es: "ponerse a estudiar / hincar los codos", esOk: ["ponerse a estudiar", "hincar los codos", "estudiar mucho", "estudiar", "empollar", "ponerse a empollar"], ej: "The global is on Thursday, so I need to hit the books." },
+  { id: "i11", en: "in the loop", enOk: ["be in the loop", "keep in the loop", "keep someone in the loop"], es: "estar al tanto / al corriente", esOk: ["estar al tanto", "al tanto", "estar al corriente", "al corriente", "estar informado", "mantener informado", "estar enterado"], ej: "Keep me in the loop about the trip, please." },
+  { id: "i12", en: "blood is thicker than water", enOk: [], es: "la familia es lo primero", esOk: ["la familia es lo primero", "la familia primero", "la familia es lo mas importante", "la sangre es mas espesa que el agua", "la sangre tira"], ej: "I'll always help my brother — blood is thicker than water." },
+  { id: "i13", en: "as white as a sheet", enOk: ["white as a sheet", "go as white as a sheet", "turn as white as a sheet"], es: "blanco como la pared / pálido", esOk: ["blanco como la pared", "blanco como el papel", "blanco como una sabana", "palido", "muy palido", "blanco como la leche", "ponerse blanco"], ej: "When he saw the exam, he went as white as a sheet." },
+  { id: "i14", en: "a golden opportunity", enOk: ["golden opportunity"], es: "una oportunidad de oro", esOk: ["una oportunidad de oro", "oportunidad de oro", "una ocasion de oro", "una oportunidad unica", "oportunidad unica", "una gran oportunidad"], ej: "This exchange is a golden opportunity to practise English." },
+  { id: "i15", en: "have a whale of a time", enOk: ["had a whale of a time", "a whale of a time", "having a whale of a time"], es: "pasarlo en grande / pasarlo bomba", esOk: ["pasarlo en grande", "pasarlo genial", "pasarlo bomba", "pasarselo en grande", "pasarlo muy bien", "pasarlo de lujo", "pasarlo pipa", "divertirse mucho"], ej: "We had a whale of a time at the party." },
+  { id: "i16", en: "out of the blue", enOk: [], es: "de repente / sin avisar", esOk: ["de repente", "sin avisar", "de la nada", "de improviso", "inesperadamente", "de sopetón", "de golpe", "sin previo aviso"], ej: "My cousin called me out of the blue after two years." },
+];
+const TOTAL = IDIOMS.length, RACHA_DOM = 2, KEY = "idioms_v1", RONDA = 10;
+
+// ---- Guardado local (se copia a la nube) ----
+function cargar() { try { const o = JSON.parse(localStorage.getItem(KEY) || "{}"); return { s: o.s || {}, modo: o.modo || "mix", tipo: o.tipo || "opc" }; } catch (e) { return { s: {}, modo: "mix", tipo: "opc" }; } }
+const S = cargar();
+function guardar() { try { localStorage.setItem(KEY, JSON.stringify({ s: S.s, modo: S.modo, tipo: S.tipo })); } catch (e) {} }
+const st = (id, d) => { const x = S.s[id] = S.s[id] || {}; return x[d] = x[d] || { a: 0, f: 0, r: 0 }; };
+const dirDom = (id, d) => ((S.s[id] || {})[d] || {}).r >= RACHA_DOM;
+const dominado = (id) => dirDom(id, "en") && dirDom(id, "es");
+const nDom = () => IDIOMS.filter(i => dominado(i.id)).length;
+const practicado = (id) => { const x = S.s[id] || {}; return ["en", "es"].some(d => x[d] && (x[d].a + x[d].f) > 0); };
+const puntos = () => Math.round(nDom() / TOTAL * 100);
+
+// ---- Corrección ----
+const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/['’`]/g, "").replace(/[^a-z0-9ñ\s]/g, " ").replace(/\b(its)\b/g, "it is").replace(/\s+/g, " ").trim();
+const sinArt = (t) => t.replace(/^(to |be |a |an |the |estar |el |la |los |las |un |una |muy )+/, "");
+function lev(a, b) { const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+// 2 = bien · 1 = casi (falta de ortografía) · 0 = mal
+function corrige(resp, idiom, dir) {
+  const r = norm(resp); if (!r) return 0;
+  const val = dir === "es" ? [idiom.en, ...idiom.enOk] : [...idiom.esOk, ...idiom.es.split("/")];
+  const ok = val.map(norm);
+  if (ok.some(v => v === r || sinArt(v) === sinArt(r))) return 2;
+  // en español vale si contiene una de las respuestas largas (p. ej. "pues irse a dormir")
+  if (dir === "en" && ok.some(v => v.length >= 8 && r.includes(v))) return 2;
+  const tol = (v) => v.length >= 14 ? 3 : v.length >= 7 ? 2 : v.length >= 4 ? 1 : 0;
+  if (ok.some(v => lev(sinArt(v), sinArt(r)) <= tol(sinArt(v)))) return 1;
+  return 0;
+}
+</script>
+<script>
+// ---- Juego ----
+const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const azar = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+let tab = "jugar", R = null; // R = ronda en curso
+const preguntaTxt = (q) => q.dir === "en" ? q.i.en : q.i.es;
+const solucionTxt = (q) => q.dir === "en" ? q.i.es : q.i.en + (q.i.id === "i05" ? " / hit the hay" : "");
+
+function prioridad(i, d) { const x = ((S.s[i.id] || {})[d]) || { a: 0, f: 0, r: 0 }; return (x.r >= RACHA_DOM ? 0 : 10) + x.f * 2 - x.r * 3 + (x.a + x.f === 0 ? 5 : 0) + Math.random() * 4; }
+function nuevaRonda() {
+  const dirs = S.modo === "mix" ? ["en", "es"] : [S.modo];
+  const cand = []; for (const i of IDIOMS) for (const d of dirs) cand.push({ i, dir: d, p: prioridad(i, d) });
+  cand.sort((a, b) => b.p - a.p);
+  const vistos = new Set(), qs = [];
+  for (const c of cand) { if (qs.length >= RONDA) break; if (vistos.has(c.i.id)) continue; vistos.add(c.i.id); qs.push({ i: c.i, dir: c.dir }); }
+  R = { qs: azar(qs), n: 0, bien: 0, dom0: nDom(), resp: null, opts: null };
+  prepararOpciones();
+}
+function prepararOpciones() {
+  const q = R.qs[R.n]; if (!q) return;
+  const otros = azar(IDIOMS.filter(x => x.id !== q.i.id)).slice(0, 3);
+  R.opts = azar([q.i, ...otros]);
+}
+
+function render() {
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === tab)));
+  pintarDominio();
+  $("#main").innerHTML = tab === "lista" ? htmlLista() : htmlJuego();
+  if (tab === "jugar" && R && !R.resp && S.tipo === "esc") { const i = $("#main .inp input"); if (i) i.focus({ preventScroll: true }); }
+}
+function pintarDominio() {
+  const d = nDom(), pr = IDIOMS.filter(i => practicado(i.id) && !dominado(i.id)).length;
+  $("#dominio").innerHTML = `<div class="t"><b>${d}</b> de ${TOTAL} dominados · ${pr} en práctica</div><div class="pts-v"><b>${puntos()}</b><span>puntos</span></div><div class="bar"><i style="width:${d / TOTAL * 100}%"></i></div>`;
+}
+function htmlFiltros() {
+  const c = (k, v, t) => `<button type="button" class="chip" data-${k}="${v}" aria-pressed="${S[k] === v}">${t}</button>`;
+  return `<div class="filt"><span class="lb">Dirección</span>${c("modo", "mix", "🔀 Mezcla")}${c("modo", "en", "🇬🇧 → 🇪🇸")}${c("modo", "es", "🇪🇸 → 🇬🇧")}</div>
+  <div class="filt"><span class="lb">Responder</span>${c("tipo", "opc", "Elegir")}${c("tipo", "esc", "Escribir")}</div>
+  <p class="nota">Dominas un idiom cuando lo aciertas ${RACHA_DOM} veces seguidas en los dos sentidos. Cada idiom dominado suma ${Math.round(100 / TOTAL * 10) / 10} puntos al ranking (100 si dominas los ${TOTAL}).</p>`;
+}
+function htmlJuego() {
+  if (!R) nuevaRonda();
+  if (R.n >= R.qs.length) return htmlFin();
+  const q = R.qs[R.n], r = R.resp;
+  const ask = q.dir === "en" ? "¿Qué significa en español?" : "¿Cómo se dice en inglés? (el idiom)";
+  let cuerpo;
+  if (S.tipo === "opc") {
+    cuerpo = `<div class="opts">${R.opts.map((o, k) => {
+      const cls = r ? (o.id === q.i.id ? "ok" : (r.elegida === k ? "ko" : "")) : "";
+      return `<button type="button" data-op="${k}" class="${cls}" ${r ? "disabled" : ""}>${H(q.dir === "en" ? o.es : o.en)}</button>`; }).join("")}</div>`;
+  } else {
+    const cls = r ? (r.v ? "ok" : "ko") : "";
+    cuerpo = `<form class="inp" id="fEsc" autocomplete="off"><input name="r" class="${cls}" placeholder="${q.dir === "en" ? "Escribe el significado…" : "Write the idiom…"}" autocapitalize="off" spellcheck="false" ${r ? "readonly" : ""} value="${r ? H(r.txt) : ""}"><button class="btn" ${r ? "disabled" : ""}>Comprobar</button></form>
+    ${!r ? `<button type="button" class="lnk" data-pista>💡 Pista</button><div class="pista" id="pista" hidden></div>` : ""}`;
+  }
+  let fb = "";
+  if (r) {
+    const ej = `<span class="ej">${H(q.i.ej)}</span>`;
+    if (r.v === 2) fb = `<div class="fb ok">✅ <b>Correcto.</b> ${q.dir === "en" ? H(q.i.en) + " = " + H(q.i.es) : H(q.i.es) + " = <b>" + H(q.i.en) + "</b>"}${r.subeDom ? " · 🏅 ¡Idiom dominado! +" + Math.round(100 / TOTAL * 10) / 10 + " pts" : ""}${ej}</div>`;
+    else if (r.v === 1) fb = `<div class="fb casi">🟡 <b>Casi: cuenta como acierto.</b> Se escribe: <b>${H(solucionTxt(q))}</b>${r.subeDom ? " · 🏅 ¡Idiom dominado!" : ""}${ej}</div>`;
+    else fb = `<div class="fb ko">❌ <b>No.</b> Era: <b>${H(solucionTxt(q))}</b>${ej}</div>${S.tipo === "esc" && q.dir === "en" && !r.revisado ? `<div class="acts"><button type="button" class="btn sec" data-valia>Lo he dicho con otras palabras: cuenta como bien</button></div>` : ""}`;
+    fb += `<div class="acts"><button type="button" class="btn" data-sig>${R.n + 1 >= R.qs.length ? "Ver resultado" : "Siguiente →"}</button></div>`;
+  }
+  return htmlFiltros() + `<div class="card"><div class="ronda-t"><span>${R.n + 1} / ${R.qs.length}</span><div class="rb"><i style="width:${R.n / R.qs.length * 100}%"></i></div><span>✅ ${R.bien}</span></div>
+  <span class="tag">${q.dir === "en" ? "English → Español" : "Español → English"}</span>
+  <p class="ask">${ask}</p><p class="prompt">${H(preguntaTxt(q))}</p>${cuerpo}${fb}</div>`;
+}
+function htmlFin() {
+  const ganados = nDom() - R.dom0, pts = Math.round(ganados / TOTAL * 100);
+  const msg = R.bien === R.qs.length ? "¡Perfecto! 🎉" : R.bien >= R.qs.length * .7 ? "¡Muy bien! 💪" : "Sigue practicando 📚";
+  return `<div class="card fin"><h2>${msg}</h2><p class="big">${R.bien} / ${R.qs.length}</p>
+  <p>${ganados > 0 ? `<span class="mas">+${ganados} idiom${ganados > 1 ? "s" : ""} dominado${ganados > 1 ? "s" : ""} · +${pts} puntos</span>` : "Esta ronda no has dominado ninguno nuevo: recuerda que hacen falta " + RACHA_DOM + " aciertos seguidos en cada sentido."}</p>
+  <p>Llevas ${nDom()} de ${TOTAL} dominados (${puntos()} puntos de esta app).</p>
+  <div class="acts"><button type="button" class="btn" data-otra>Otra ronda</button><button type="button" class="btn sec" data-tab="lista">Ver la lista</button></div></div>`;
+}
+function htmlLista() {
+  const dot = (id, d) => { const x = ((S.s[id] || {})[d]) || { r: 0 }; return `<i class="${x.r >= RACHA_DOM ? "d" : x.r > 0 ? "m" : ""}"></i>`; };
+  return `<p class="nota">🟢 dominado en ese sentido · 🟡 lo vas sacando · ⚪ sin acertar todavía</p><div class="lista">${IDIOMS.map(i => `<div class="card row"><div><div class="en">${H(i.en)}${i.enOk.length && i.id === "i05" ? " / hit the hay" : ""}</div><div class="es">${H(i.es)}</div></div>
+  <div class="dots"><span title="English → Español">EN→ES ${dot(i.id, "en")}</span><span title="Español → English">ES→EN ${dot(i.id, "es")}</span></div><div class="ex">${H(i.ej)}</div></div>`).join("")}</div>`;
+}
+
+function responder(v, extra) {
+  const q = R.qs[R.n], x = st(q.i.id, q.dir), antes = dominado(q.i.id);
+  if (v) { x.a++; x.r++; R.bien++; } else { x.f++; x.r = 0; }
+  R.resp = { v, ...extra, subeDom: !antes && dominado(q.i.id) };
+  guardar(); render();
+  window.dispatchEvent(new Event("idioms-cambio"));
+}
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.tab) { tab = t.dataset.tab; render(); return; }
+  if (t.dataset.modo || t.dataset.tipo) { if (t.dataset.modo) S.modo = t.dataset.modo; if (t.dataset.tipo) S.tipo = t.dataset.tipo; guardar(); if (R && !R.resp && R.n === 0) nuevaRonda(); render(); return; }
+  if (t.hasAttribute("data-op") && R && !R.resp) { const k = +t.dataset.op, q = R.qs[R.n]; responder(R.opts[k].id === q.i.id ? 2 : 0, { elegida: k }); return; }
+  if (t.hasAttribute("data-sig")) { R.n++; R.resp = null; prepararOpciones(); render(); return; }
+  if (t.hasAttribute("data-otra")) { nuevaRonda(); render(); return; }
+  if (t.hasAttribute("data-valia") && R && R.resp && !R.resp.v) { const q = R.qs[R.n], x = st(q.i.id, q.dir), antes = dominado(q.i.id); x.f = Math.max(0, x.f - 1); x.a++; x.r = 1; R.bien++; R.resp = { ...R.resp, v: 2, revisado: true, subeDom: !antes && dominado(q.i.id) }; guardar(); render(); window.dispatchEvent(new Event("idioms-cambio")); return; }
+  if (t.hasAttribute("data-pista")) { const q = R.qs[R.n], sol = q.dir === "en" ? q.i.es.split("/")[0].trim() : q.i.en; const p = $("#pista"); p.hidden = false; p.textContent = "Empieza por «" + sol.split(" ").slice(0, 1).join(" ") + "…» (" + sol.split(" ").length + " palabras)"; return; }
+  if (t.id === "go") { $("#start").hidden = true; $("#app").hidden = false; render(); }
+});
+document.addEventListener("submit", (e) => {
+  if (e.target.id !== "fEsc") return; e.preventDefault();
+  if (!R || R.resp) return; const txt = e.target.r.value; if (!txt.trim()) return;
+  const q = R.qs[R.n]; responder(corrige(txt, q.i, q.dir), { txt });
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" || tab !== "jugar" || !R || !R.resp) return;
+  const b = document.querySelector("[data-sig]"); if (b) { e.preventDefault(); b.click(); }
+});
+if (location.hash === "#lista") { tab = "lista"; $("#start").hidden = true; $("#app").hidden = false; render(); }
+document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
+</script>
+<script type="module">
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794946540";
+exigirCuenta();
+import { iniciarLateral } from "../shared/lateral.js?v=1794946540";
+copiaEnLaNube("idioms", () => ["idioms_v1"]);
+let ult = "", t = null;
+function enviar() { const r = [nDom(), TOTAL], k = r.join("/"); if (k === ult) return; ult = k; guardarProgreso("idioms", r[0], r[1]); }
+window.addEventListener("idioms-cambio", enviar);
+alCambiarSesion(u => { clearInterval(t); if (u) { ult = ""; enviar(); t = setInterval(enviar, 8000); } });
+iniciarLateral({ recurso: "p-idioms", stats: () => ({ dom: nDom(), ctrl: IDIOMS.filter(i => practicado(i.id) && !dominado(i.id)).length, total: TOTAL }) });
+</script>
+</body></html>
