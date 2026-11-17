@@ -51,6 +51,22 @@ window.PAST = [
 
 // Make questions: la parte entre [corchetes] es la respuesta; hay que escribir la pregunta.
 window.PREGS = [
+  // ---- de la ficha de clase (salen primero) ----
+  {"id": "c01", "f": "I have never been to [South Africa].", "ok": ["Where have you never been?", "Where have you never been to?"], "clase": true},
+  {"id": "c02", "f": "Mrs Kelly goes to church [every Sunday].", "ok": ["How often does Mrs Kelly go to church?", "When does Mrs Kelly go to church?"], "clase": true},
+  {"id": "c03", "f": "Tom was going to leave [for five minutes].", "ok": ["How long was Tom going to leave for?", "How long was Tom going to leave?"], "clase": true},
+  {"id": "c04", "f": "The exam seemed [extremely difficult].", "ok": ["How did the exam seem?", "How difficult did the exam seem?", "What did the exam seem like?"], "clase": true},
+  {"id": "c05", "f": "My friends should return from Italy [at 5 a.m.]", "ok": ["What time should my friends return from Italy?", "What time should your friends return from Italy?", "When should my friends return from Italy?", "When should your friends return from Italy?", "At what time should my friends return from Italy?", "At what time should your friends return from Italy?"], "clase": true},
+  {"id": "c06", "f": "The Danube River flows into [the Black Sea].", "ok": ["Where does the Danube River flow into?", "Where does the Danube River flow?", "What does the Danube River flow into?", "Where does the Danube flow into?"], "clase": true},
+  {"id": "c07", "f": "Tom had come [very fast].", "ok": ["How fast had Tom come?", "How had Tom come?"], "clase": true},
+  {"id": "c08", "f": "There was [an interesting programme] on the radio this morning.", "ok": ["What was there on the radio this morning?", "What was on the radio this morning?"], "clase": true},
+  {"id": "c09", "f": "In Britain, [children] start school at the age of 5.", "ok": ["Who starts school at the age of 5 in Britain?", "Who start school at the age of 5 in Britain?", "In Britain, who starts school at the age of 5?", "In Britain, who start school at the age of 5?"], "clase": true},
+  {"id": "c10", "f": "[Jeremy] usually goes to school by car.", "ok": ["Who usually goes to school by car?"], "clase": true},
+  {"id": "c11", "f": "This bag cost [50 pounds].", "ok": ["How much did this bag cost?", "How much was this bag?"], "clase": true},
+  {"id": "c12", "f": "[Jack's] house is not big enough for two families.", "ok": ["Whose house is not big enough for two families?", "Whose house isn't big enough for two families?"], "clase": true},
+  {"id": "c13", "f": "There might be [a meeting] on Friday.", "ok": ["What might there be on Friday?"], "clase": true},
+  {"id": "c14", "f": "I am meeting Ann [at five o'clock tomorrow].", "ok": ["When are you meeting Ann?", "What time are you meeting Ann tomorrow?", "When are you meeting Ann tomorrow?"], "clase": true},
+  {"id": "c15", "f": "Ken gave up smoking [for two years].", "ok": ["How long did Ken give up smoking for?", "How long did Ken give up smoking?"], "clase": true},
   { id: "q01", f: "She went to London [last summer].", ok: ["When did she go to London?"] },
   { id: "q02", f: "[My brother] broke the window.", ok: ["Who broke the window?"] },
   { id: "q03", f: "They bought [a new car].", ok: ["What did they buy?"] },
