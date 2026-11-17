@@ -46,14 +46,27 @@ module.exports = {
     assert.ok(await A.hay(p, '#pfm [data-privado="u3"]'));
     assert.ok(!(await A.hay(p, "#pfm [data-expulsar]")), "un alumno no puede expulsar");
   },
-  "aviso de adelanto: salta solo cuando alguien pasa de verdad tus puntos": async (A, ctx) => {
-    const d = base(); d.progreso.u1.rankVisto = { delante: [], pos: 1, yo: 50, pts: { u1: 50, u2: 40, u3: 30 }, dia: HOY };
-    const p = await A.pagina(ctx, { usuario: U.admin, datos: d });
-    await A.abrir(p, "#amigos", 2500);
-    assert.equal(await p.evaluate(() => document.querySelectorAll(".aviso-1b").length), 0, "sin cambios no hay aviso");
+  "aviso de adelanto: lo crea quien adelanta con los números del ranking y se ve una sola vez": async (A, ctx) => {
+    const d = base(); // Guillermo 50, Gonzalo 40
+    const p = await A.pagina(ctx, { usuario: U.gon, datos: d });
+    await A.abrir(p, "#amigos");
+    // Gonzalo gana puntos (llega el cambio de su progreso): su navegador avisa a quien ha pasado
     await p.evaluate(() => { const s = JSON.parse(localStorage.st); s.progreso.u2.apps.vocab.ok = 70; localStorage.st = JSON.stringify(s); });
-    await p.goto(A.url + "/version.json"); await A.abrir(p, "#amigos", 6000);
-    const av = await p.evaluate(() => [...document.querySelectorAll(".aviso-1b")].map(x => x.innerText));
-    assert.ok(av.some(x => /Gonzalo/.test(x) && /adelantado|pasado/.test(x)), "debe avisar de Gonzalo: " + JSON.stringify(av));
+    await p.evaluate(() => { const s = JSON.parse(localStorage.st); return window.__rank1b; });
+    await p.evaluate(() => fetch("/version.json")); // nada; el simulado dispara los oyentes al escribir:
+    await p.evaluate(async () => { const { fs, db } = await import("../shared/fb.js?v=1"); await fs.setDoc(fs.doc(db, "progreso", "u2"), { apps: { vocab: { ok: 70 } } }, { merge: true }); });
+    await p.waitForTimeout(1200);
+    let d2 = await A.datos(p);
+    const avisos = Object.values(d2["avisos/u1/items"] || {});
+    assert.equal(avisos.length, 1, "un aviso para Guillermo: " + JSON.stringify(d2["avisos/u1/items"]));
+    assert.equal(avisos[0].de, "u2"); assert.ok(/Gonzalo.*adelantado/.test(avisos[0].texto)); assert.equal(avisos[0].posAhora, 2);
+    assert.ok(!d2["avisos/u3/items"], "a Sergio no, porque sigue por detrás");
+    assert.ok(A.worker.peticiones.some(x => x.url.endsWith("/push") && x.cuerpo && x.cuerpo.tipo === "adelanto"), "se pide la push");
+    // Guillermo entra: ve el aviso una vez y se borra
+    const q = await A.pagina(ctx, { usuario: U.admin, datos: d2 });
+    await A.abrir(q, "#amigos", 2500);
+    const av = await q.evaluate(() => [...document.querySelectorAll(".aviso-1b")].map(x => x.innerText));
+    assert.ok(av.some(x => /Gonzalo/.test(x) && /adelantado/.test(x)), JSON.stringify(av));
+    d2 = await A.datos(q); assert.ok(!d2["avisos/u1/items"] || !Object.keys(d2["avisos/u1/items"]).length, "el aviso se borra al verlo");
   },
 };

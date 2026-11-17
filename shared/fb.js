@@ -68,7 +68,7 @@ export async function guardarProgreso(app, ok, total) {
     const nuevo = { ok, total, t: Date.now(), dia: hoy, ok0 }, datos = snap.exists() ? snap.data() : {};
     const hoyPts = ptsHoyDe({ apps: { ...(datos.apps || {}), [app]: nuevo }, dias: datos.dias }, hoy), dias = { [hoy]: hoyPts };
     // antes de empezar un día nuevo en esta app, se apuntan los puntos que hiciste el último día que la usaste
-    if (prev && prev.dia && prev.dia !== hoy) { const v = ptsHoyDe(datos, prev.dia); if (v > 0) dias[prev.dia] = v; }
+    if (prev && prev.dia && prev.dia !== hoy) { const v = ptsHoyDe({ ...datos, bonus: null }, prev.dia); if (v > 0) dias[prev.dia] = v; }
     await fs.setDoc(ref, { apps: { [app]: nuevo }, dias }, { merge: true });
   } catch (e) {}
 }
@@ -136,7 +136,9 @@ const APPS_R = ["vocab", "plur", "verbos", "afijos", "wf"];
 // Topes (contra trampas editando la base de datos): como mucho 100 puntos por app y día, 500 al día en total.
 const TOPE_DIA = 100 * APPS_R.length;
 const ganadoHoy = (p, hoy) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; if (!a || a.dia !== hoy || !a.total) return s; return s + Math.min(1, Math.max(0, (a.ok - (a.ok0 || 0)) / a.total)) * 100; }, 0));
-export const ptsHoyDe = (p, hoy = hoyISO()) => Math.min(TOPE_DIA, Math.max(ganadoHoy(p, hoy), Math.min(TOPE_DIA, Number(((p && p.dias) || {})[hoy]) || 0)));
+// + puntos de los exámenes de prueba con IA (los pone el Worker en progreso.bonus[día]; hasta 3 exámenes × 30)
+const TOPE_BONUS = 90, bonusDe = (p, hoy) => Math.min(TOPE_BONUS, Math.max(0, Number(((p && p.bonus) || {})[hoy]) || 0));
+export const ptsHoyDe = (p, hoy = hoyISO()) => Math.min(TOPE_DIA, Math.max(ganadoHoy(p, hoy), Math.min(TOPE_DIA, Number(((p && p.dias) || {})[hoy]) || 0))) + bonusDe(p, hoy);
 const lunes = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
 const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 export const diasSemana = (atras = 0) => { const l = lunes(new Date()); l.setDate(l.getDate() - 7 * atras); return Array.from({ length: 7 }, (_, i) => { const d = new Date(l); d.setDate(l.getDate() + i); return iso(d); }); };
@@ -153,70 +155,112 @@ onAuthStateChanged(auth, async (u) => {
 });
 export const ptsDe = (p) => Math.round(APPS_R.reduce((s, k) => { const a = p && p.apps && p.apps[k]; return s + (a && a.total ? Math.min(1, Math.max(0, a.ok / a.total)) * 100 : 0); }, 0));
 const escH = (t) => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-let quitarRank = null;
-// Guarda quién iba por delante (en tu cuenta, para que funcione en cualquier dispositivo) y te avisa
-// de quién te ha adelantado: en directo, o al volver si estabas desconectado o con la pestaña en segundo plano.
+// ---------- ranking: el aviso de "te ha adelantado" lo crea quien adelanta ----------
+// Quien gana puntos mira, con los mismos números que la gráfica, a quién acaba de pasar y le deja un aviso en
+// avisos/{uid}/items (y una notificación push si la tiene activada). El avisado lo ve una sola vez: al verlo se borra.
 const TOP = 5;
-let pendiente = null;
-async function avisoAdelanto(nuevos, posAntes, posAhora, alVolver) {
-  if (concentracion()) return;
-  if (document.hidden) { pendiente = { nuevos, posAntes: pendiente ? pendiente.posAntes : posAntes, posAhora, alVolver: true }; return; }
-  const datos = await Promise.all(nuevos.slice(0, 3).map(id => fs.getDoc(fs.doc(db, "usuarios", id)).then(s => s.exists() ? s.data() : {}).catch(() => ({}))));
-  const nom = d => d.nombre || d.nombreGoogle || "Alguien";
-  const n0 = datos[0] || {}, foto = n0.fotoPropia || n0.fotoGoogle || "";
-  let quien = datos.map(nom).map(x => `<b>${escH(x)}</b>`);
-  quien = nuevos.length === 1 ? quien[0] + " te ha adelantado" : (nuevos.length <= 3 ? quien.slice(0, -1).join(", ") + " y " + quien.slice(-1) : quien.join(", ") + ` y ${nuevos.length - 3} más`) + " te han adelantado";
-  const top = posAhora <= TOP ? (posAntes && posAntes <= TOP ? ` Sigues en los ${TOP} primeros.` : "") : (posAntes && posAntes <= TOP ? ` Ya no estás en los ${TOP} primeros.` : "");
-  const pos = posAntes && posAntes !== posAhora ? `Bajas del <b>${posAntes}.º</b> al <b>${posAhora}.º</b>.` : `Ahora vas <b>${posAhora}.º</b>.`;
-  avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nom(n0).charAt(0).toUpperCase())}</span>`}<span>${alVolver ? "👋 Mientras no estabas: " : "⚠️ "}${quien} en el ranking. ${pos}${top} ¡A estudiar!</span>`, "amigos", alVolver ? 11000 : 7000);
-}
-document.addEventListener("visibilitychange", () => { if (!document.hidden && pendiente) { const p = pendiente; pendiente = null; avisoAdelanto(p.nuevos, p.posAntes, p.posAhora, true); } });
-let quitarUsRank = null;
+export const WORKER = "https://apuntes-1bach1.maison-ichie.workers.dev";
+const nombreUs = (d) => (d && (d.nombre || d.nombreGoogle)) || "Alguien";
+let quitarRank = null, quitarUsRank = null, quitarAvisosR = null;
 onAuthStateChanged(auth, (u) => {
   if (quitarRank) { quitarRank(); quitarRank = null; }
   if (quitarUsRank) { quitarUsRank(); quitarUsRank = null; }
+  if (quitarAvisosR) { quitarAvisosR(); quitarAvisosR = null; }
   if (!u) return;
-  const ref = fs.doc(db, "progreso", u.uid);
-  // Solo cuenta lo mismo que la gráfica del ranking: personas con perfil, no expulsadas, y datos del servidor (no de la caché)
-  let usuarios = null, progreso = null, mio = {}, antes = undefined, guardado = "", espera = null;
-  const tabla = () => { const pts = {}; for (const id in usuarios) if (!usuarios[id].baneado) pts[id] = progreso[id] || 0; pts[u.uid] = progreso[u.uid] || 0; return pts; };
-  const situacion = (pts) => { const yo = pts[u.uid] || 0, delante = Object.keys(pts).filter(id => id !== u.uid && pts[id] > yo); return { yo, delante, pos: delante.length + 1, pts }; };
-  function comprobar() {
-    if (!usuarios || !progreso) return;
-    const ahora = situacion(tabla());
-    const hoy = hoyISO();
-    if (antes === undefined) { const r = mio.rankVisto; antes = r && r.pts && typeof r.pts === "object" ? r : null; }
-    // el ranking es del día: al cambiar de día todos empiezan en 0
-    if (antes && antes.dia !== hoy) antes = { delante: [], pos: null, yo: 0, pts: {}, dia: hoy };
-    // alguien te ha adelantado de verdad: antes tenía tus puntos o menos, ahora tiene más, y ha sido porque ha subido él
-    const adelantos = (prev) => !prev || !prev.pts ? [] : ahora.delante.filter(id => { const ant = prev.pts[id] || 0; return ant <= (prev.yo || 0) && ahora.pts[id] > ant; });
-    const nuevos = adelantos(antes);
-    if (nuevos.length) {
-      if (espera) return; // ya hay una comprobación en marcha
-      const prev = antes;
-      // se vuelve a comprobar unos segundos después con los datos frescos, para que el aviso coincida con la gráfica
-      espera = setTimeout(() => { const ok = situacion(tabla()), siguen = nuevos.filter(id => ok.delante.includes(id) && ok.pts[id] > ((prev.pts || {})[id] || 0));
-        espera = null; if (siguen.length) avisoAdelanto(siguen, prev.pos || null, ok.pos, primeraVez).catch(() => {}); primeraVez = false; guardar(ok); }, 4000);
-      return;
-    }
-    primeraVez = false; guardar(ahora);
-  }
-  let primeraVez = true;
-  function guardar(sit) {
-    const dia = hoyISO();
-    antes = { delante: sit.delante, pos: sit.pos, yo: sit.yo, pts: sit.pts, dia };
-    const firma = JSON.stringify([dia, sit.yo, sit.pos, sit.pts]);
-    if (firma !== guardado) { guardado = firma; fs.setDoc(ref, { rankVisto: { delante: sit.delante, pos: sit.pos, yo: sit.yo, pts: sit.pts, dia, t: Date.now() } }, { merge: true }).catch(() => {}); }
-  }
-  quitarUsRank = fs.onSnapshot(fs.collection(db, "usuarios"), (snap) => {
-    if (snap.metadata && snap.metadata.fromCache) return;
-    usuarios = {}; snap.docs.forEach(d => { usuarios[d.id] = d.data(); }); comprobar();
-  }, () => {});
+  let usuarios = {}, pts = {}, yoAntes = null, dia = hoyISO();
+  const activos = () => Object.keys(usuarios).filter(id => !usuarios[id].baneado);
+  const posicion = (id, tabla) => activos().filter(x => x !== id && (tabla[x] || 0) > (tabla[id] || 0)).length + 1;
+  quitarUsRank = fs.onSnapshot(fs.collection(db, "usuarios"), (snap) => { usuarios = {}; snap.docs.forEach(d => { usuarios[d.id] = d.data(); }); }, () => {});
   quitarRank = fs.onSnapshot(fs.collection(db, "progreso"), (snap) => {
-    const pts = {}; snap.docs.forEach(d => { pts[d.id] = ptsHoyDe(d.data()); if (d.id === u.uid) mio = d.data(); });
-    window.__rank1b = pts; document.dispatchEvent(new CustomEvent("rank1b", { detail: pts }));
-    if (snap.metadata && (snap.metadata.fromCache || snap.metadata.hasPendingWrites)) return;
-    progreso = pts; comprobar();
+    const nuevo = {}; snap.docs.forEach(d => { nuevo[d.id] = ptsHoyDe(d.data()); });
+    window.__rank1b = nuevo; document.dispatchEvent(new CustomEvent("rank1b", { detail: nuevo }));
+    const h = hoyISO(); if (h !== dia) { dia = h; yoAntes = null; }
+    const yo = nuevo[u.uid] || 0;
+    // se actualiza ANTES de escribir avisos: escribir dispara otra vez este mismo listener
+    const ptsPrev = pts, yoPrev = yoAntes; pts = nuevo; yoAntes = yo;
+    if (yoPrev != null && yo > yoPrev && !(snap.metadata && snap.metadata.fromCache)) {
+      // a quién he pasado: iban por delante de mí (o empatados) y ahora están por detrás
+      const pasados = activos().filter(id => id !== u.uid && (ptsPrev[id] || 0) >= yoPrev && (ptsPrev[id] || 0) > 0 && (nuevo[id] || 0) < yo && (nuevo[id] || 0) === (ptsPrev[id] || 0));
+      if (pasados.length) {
+        const miPos = posicion(u.uid, nuevo), yoDatos = usuarios[u.uid] || {};
+        pasados.forEach(id => {
+          const posAntes = posicion(id, ptsPrev), posAhora = posicion(id, nuevo);
+          const texto = `${nombreUs(yoDatos)} te ha adelantado en el ranking de hoy. ${posAntes !== posAhora ? `Bajas del ${posAntes}.º al ${posAhora}.º.` : `Sigues ${posAhora}.º.`}${posAhora > TOP && posAntes <= TOP ? ` Ya no estás en los ${TOP} primeros.` : ""}`;
+          fs.addDoc(fs.collection(db, "avisos", id, "items"), { tipo: "adelanto", de: u.uid, texto, posAntes, posAhora, miPos, t: Date.now() }).catch(() => {});
+        });
+        enviarPush({ tipo: "adelanto", a: pasados, url: "#amigos" });
+      }
+    }
+  }, () => {});
+  // avisos pendientes para mí (en directo o al volver): se enseñan una vez y se borran
+  let cola = [];
+  const mostrar = async () => {
+    if (document.hidden || !cola.length) return;
+    const L = cola; cola = [];
+    L.forEach(d => fs.deleteDoc(fs.doc(db, "avisos", u.uid, "items", d.id)).catch(() => {}));
+    if (concentracion()) return;
+    const ad = L.filter(x => x.tipo === "adelanto");
+    if (ad.length) {
+      const de = [...new Set(ad.map(x => x.de))], datos = await Promise.all(de.slice(0, 3).map(id => quienEs(id)));
+      const n0 = datos[0] || {}, foto = n0.fotoPropia || n0.fotoGoogle || "";
+      let quien = datos.map(d => `<b>${escH(nombreUs(d))}</b>`);
+      quien = de.length === 1 ? quien[0] + " te ha adelantado" : (de.length <= 3 ? quien.slice(0, -1).join(", ") + " y " + quien.slice(-1) : quien.join(", ") + ` y ${de.length - 3} más`) + " te han adelantado";
+      const ult = ad[ad.length - 1], viejo = Date.now() - ult.t > 120000;
+      const pos = ult.posAhora ? `Ahora vas <b>${ult.posAhora}.º</b>.` : "";
+      avisar(`${foto ? `<img src="${escH(foto)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${escH(nombreUs(n0).charAt(0).toUpperCase())}</span>`}<span>${viejo ? "👋 Mientras no estabas: " : "⚠️ "}${quien} en el ranking de hoy. ${pos}${ult.posAhora > TOP && ult.posAntes <= TOP ? ` Ya no estás en los ${TOP} primeros.` : ""} ¡A estudiar!</span>`, "amigos", 9000);
+    }
+    L.filter(x => x.tipo !== "adelanto" && x.texto).forEach(x => avisar(`<span class="ic">🔔</span><span>${escH(x.texto)}</span>`, x.ir || "", 8000));
+  };
+  quitarAvisosR = fs.onSnapshot(fs.collection(db, "avisos", u.uid, "items"), (snap) => {
+    if (snap.metadata && snap.metadata.fromCache) return;
+    cola = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.t || 0) - (b.t || 0)); mostrar();
+  }, () => {});
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) mostrar(); });
+});
+// ---------- notificaciones push ----------
+// Se activan cuando el administrador guarda la clave VAPID en clase/config (desde el portal) y la persona acepta.
+// El envío lo hace el Worker de Cloudflare (con la cuenta de servicio FIREBASE_SA). Si falta algo, no pasa nada: no se envían.
+let pushCfg = null, pushListo = false;
+export async function enviarPush(m) {
+  try { const u = auth.currentUser; if (!u) return;
+    const token = await u.getIdToken();
+    await fetch(WORKER + "/push", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + token }, body: JSON.stringify(m), keepalive: true });
+  } catch (e) {}
+}
+export const pushEstado = () => ({ soportado: "Notification" in window && "serviceWorker" in navigator && "PushManager" in window, permiso: "Notification" in window ? Notification.permission : "denied", configurado: !!(pushCfg && pushCfg.vapid), activo: pushListo });
+let regSW = null;
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register(new URL("../sw.js?v=1794920283", import.meta.url).href).then(r => { regSW = r; }).catch(() => {});
+}
+async function activarPush(u) {
+  if (!("Notification" in window) || !("PushManager" in window) || !pushCfg || !pushCfg.vapid || Notification.permission !== "granted") return;
+  try {
+    const reg = regSW || await navigator.serviceWorker.ready;
+    const { getMessaging, getToken, isSupported } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
+    if (!(await isSupported())) return;
+    const tok = await getToken(getMessaging(app), { vapidKey: pushCfg.vapid, serviceWorkerRegistration: reg });
+    if (tok) { await fs.setDoc(fs.doc(db, "usuarios", u.uid), { pushToken: tok, push: true }, { merge: true }); pushListo = true; document.dispatchEvent(new CustomEvent("push1b", { detail: true })); }
+  } catch (e) { console.warn("push", e); }
+}
+// pedir permiso desde un botón (hay que llamarla en un clic)
+export async function pedirPush() {
+  const u = auth.currentUser; if (!u || !("Notification" in window)) return false;
+  const p = await Notification.requestPermission();
+  if (p === "granted") { await activarPush(u); return pushListo; }
+  return false;
+}
+export async function quitarPush() {
+  const u = auth.currentUser; if (!u) return;
+  try { await fs.setDoc(fs.doc(db, "usuarios", u.uid), { push: false, pushToken: fs.deleteField() }, { merge: true }); pushListo = false; document.dispatchEvent(new CustomEvent("push1b", { detail: false })); } catch (e) {}
+}
+let quitarCfg = null;
+onAuthStateChanged(auth, (u) => {
+  if (quitarCfg) { quitarCfg(); quitarCfg = null; }
+  pushListo = false; if (!u) return;
+  quitarCfg = fs.onSnapshot(fs.doc(db, "clase", "config"), async (s) => {
+    pushCfg = s.exists() ? s.data() : {}; window.__pushCfg1b = pushCfg;
+    // si ya había aceptado antes, se renueva el token en silencio
+    try { const yo = await fs.getDoc(fs.doc(db, "usuarios", u.uid)); if (yo.exists() && yo.data().push !== false && Notification.permission === "granted") activarPush(u); } catch (e) {}
   }, () => {});
 });
 // ---------- expulsión: mensaje en el centro de la pantalla ----------

@@ -1,7 +1,7 @@
 // 1 BACH · Conexión con Firebase (módulo; antes dentro de index.html)
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin } from "../shared/fb.js?v=1794868843";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin, enviarPush, pedirPush, quitarPush, pushEstado } from "../shared/fb.js?v=1794920283";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }
@@ -18,6 +18,10 @@ function mezclar(base, cb) {
 }
 fs.onSnapshot(fs.doc(fdb, "clase", "cambios"), snap => { cambios = (snap.exists() && snap.data()) || {}; aplicar(); }, () => {});
 window.guardarBloqueo = (uid, d) => Object.keys(d).length ? fs.setDoc(fs.doc(fdb, "bloqueos", uid), { ...d, t: Date.now() }) : fs.deleteDoc(fs.doc(fdb, "bloqueos", uid));
+// puente para el código clásico (perfil y barra del administrador)
+window.push1b = { pedir: pedirPush, quitar: quitarPush, estado: pushEstado, enviar: enviarPush,
+  guardarVapid: (k) => fs.setDoc(fs.doc(fdb, "clase", "config"), { vapid: String(k || "").trim() }, { merge: true }) };
+document.addEventListener("push1b", () => { if (route() === "perfil") render(); });
 window.reportar = (a, motivo, msg) => fs.addDoc(fs.collection(fdb, "reportes"), { de: S.uid, a, motivo, msg, t: Date.now() });
 window.descartarReporte = (id) => fs.deleteDoc(fs.doc(fdb, "reportes", id));
 window.expulsar = async (uid, motivo) => { await fs.setDoc(fs.doc(fdb, "baneos", uid), { motivo, t: Date.now() }); await fs.setDoc(fs.doc(fdb, "usuarios", uid), { baneado: true }, { merge: true }); };
@@ -147,8 +151,12 @@ window.enviarMsg = async (tag, texto, form) => {
       const o = r.slice(8), c = convId(S.uid, o), t = Date.now();
       await fs.addDoc(fs.collection(fdb, "privados", c, "mensajes"), { uid: S.uid, texto, fotos, t });
       await fs.setDoc(fs.doc(fdb, "privados", c), { miembros: c.split("_"), ultimo: { texto: texto ? texto.slice(0, 120) : "📷 Foto", t, uid: S.uid }, leido: { [S.uid]: t } }, { merge: true });
-    } else
-    await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, fotos, menc: sacarMenciones(texto), tag: ETQ[tag] ? tag : "general", t: Date.now() }); form.querySelector("textarea").value = ""; window.ADJ = []; pintarAdj(); }
+      enviarPush({ tipo: "privado", a: [o], url: "#privado-" + S.uid });
+    } else {
+      const menc = sacarMenciones(texto);
+      await fs.addDoc(fs.collection(fdb, "chat"), { uid: S.uid, nombre: (((S.amigos || {})[S.uid] || {}).nombre) || S.nombreCompleto || "", texto, fotos, menc, tag: ETQ[tag] ? tag : "general", t: Date.now() });
+      if (menc.length) enviarPush({ tipo: "mencion", a: menc, url: "#chat" });
+    } form.querySelector("textarea").value = ""; window.ADJ = []; pintarAdj(); }
   catch (e) { toast(e && e.code === "permission-denied" ? "Firebase no deja escribir: faltan las reglas nuevas del chat." : e && /size|exceeds|too large/i.test(e.message || "") ? "El mensaje pesa demasiado: quita alguna foto." : "No se ha podido enviar (" + (e.code || "error") + ")."); }
   b.disabled = false; form.querySelector("textarea").focus();
 };

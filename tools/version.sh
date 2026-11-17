@@ -8,4 +8,6 @@ grep -rlE '\.(js|css)(\?v=[0-9]+)?"' --include=*.html --include=*.js . | grep -v
   # referencias locales: "ruta/archivo.js" o "ruta/archivo.css" (no http...), con o sin ?v=
   sed -i -E "s#\"((\.\./|\./)?[A-Za-z0-9_/.-]+\.(js|css))(\?v=[0-9]+)?\"#\"\1?v=$V\"#g" "$f"
 done
+# el service worker lleva la versión dentro: así se instala uno nuevo en cada subida
+sed -i -E "s/^const VERSION = \"[0-9]*\";/const VERSION = \"$V\";/" sw.js
 echo "$V"

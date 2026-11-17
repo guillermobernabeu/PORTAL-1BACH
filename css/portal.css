@@ -735,3 +735,6 @@ button.pts{background:none;border:0;cursor:pointer;padding:4px 6px;border-radius
   .dia .mk{display:none}
   .dia.ex .n{border-width:1.5px}
 }
+
+.push-c{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+.ok-p{font-weight:800;color:#167a3a}

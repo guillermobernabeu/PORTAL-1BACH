@@ -1,3 +1,7 @@
 name = "apuntes-1bach1"
 main = "worker.js"
 compatibility_date = "2026-10-01"
+
+# recordatorio de exámenes de mañana: todos los días a las 18:00 UTC (19:00 en España en invierno, 20:00 en verano)
+[triggers]
+crons = ["0 18 * * *"]

@@ -25,6 +25,7 @@ function renderPerfil(){const lista=clasificacion("hoy"),pos=lista.findIndex(x=>
      <div class="pf-datos"><div class="eyebrow">Tu perfil</div><h2>${esc(nombreDe(S.uid)||"Sin nombre")}</h2>
        <div class="pf-big"><span><b>${puntosHoy(p)}</b><small>puntos hoy</small></span><span><b>${puntosSemana(p)}</b><small>esta semana</small></span><span><b>${pos<0?"—":pos+1+"º"}</b><small>hoy, de ${lista.length}</small></span></div></div></div>
      <div class="pf-acc"><button class="btn-p" data-foto style="--cf:var(--accent)">Subir foto de mi galería</button>${u.fotoPropia?'<button class="btn-sec" data-quitafoto>Volver a la foto de Google</button>':""}</div>
+     ${pushHTML()}
      <p class="note" style="margin:0">Has entrado con la cuenta <b>${esc(S.email||"(sin correo)")}</b>. Solo la ves tú.${S.email&&/guille|bernab/i.test(S.email)?` · Administrador: <b>${window.__esAdmin1b?"sí ✅":"no ❌"}</b>`:""}</p>
      <div class="pf-nom"><label for="nomIn">Nombre que ven los demás</label><div><input id="nomIn" maxlength="30" value="${esc(nombreDe(S.uid))}"><button class="btn-sec" data-guardanombre>Guardar</button></div></div>
    </section>
@@ -37,3 +38,23 @@ function renderPerfil(){const lista=clasificacion("hoy"),pos=lista.findIndex(x=>
    </section>
    <button class="btn-sec" data-salir style="align-self:center">Cerrar sesión</button></div>`}
 
+
+// ---------- notificaciones push e instalar la app (en el perfil) ----------
+let instalarEv=null;addEventListener("beforeinstallprompt",ev=>{ev.preventDefault();instalarEv=ev;if(route()==="perfil"||route()==="resumen")render()});
+const yaInstalada=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const esIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.MSStream;
+function pushHTML(){const e=window.push1b?window.push1b.estado():{soportado:false};
+  const push=!e.soportado?`<span class="note">Este navegador no admite notificaciones${esIOS()&&!yaInstalada()?" hasta que añadas 1 BACH a la pantalla de inicio (Compartir → Añadir a pantalla de inicio)":""}.</span>`
+    :!e.configurado?`<span class="note">Las notificaciones push se activarán en cuanto el administrador las configure.</span>`
+    :e.permiso==="denied"?`<span class="note">Tienes las notificaciones bloqueadas en el navegador. Actívalas en los ajustes del sitio.</span>`
+    :e.activo?`<span class="ok-p">🔔 Notificaciones activadas</span><button class="btn-sec" data-pushoff>Desactivar</button>`
+    :`<button class="btn-p" style="--cf:var(--accent)" data-pushon>🔔 Activar notificaciones</button><span class="note">Exámenes de mañana, menciones, privados, apuntes aprobados y adelantos en el ranking, aunque tengas el portal cerrado.</span>`;
+  const inst=yaInstalada()?`<span class="note">📲 Tienes 1 BACH instalada como app.</span>`:instalarEv?`<button class="btn-sec" data-instalar>📲 Instalar 1 BACH como app</button>`:esIOS()?`<span class="note">📲 Para tenerla como app: Compartir → «Añadir a pantalla de inicio».</span>`:"";
+  return `<div class="push-c">${push}${inst}</div>`}
+document.addEventListener("click",async ev=>{if(!ev.target.closest)return;
+  if(ev.target.closest("[data-pushon]")){ev.preventDefault();const ok=await window.push1b.pedir();toast(ok?"¡Notificaciones activadas!":"No se han podido activar.");render();return}
+  if(ev.target.closest("[data-pushoff]")){ev.preventDefault();await window.push1b.quitar();toast("Notificaciones desactivadas.");render();return}
+  if(ev.target.closest("[data-instalar]")&&instalarEv){ev.preventDefault();const e=instalarEv;instalarEv=null;e.prompt();try{await e.userChoice}catch(x){}render();return}
+  if(ev.target.closest("[data-admpush]")){ev.preventDefault();const e=window.push1b?window.push1b.estado():{};
+    admModal(`<h2>🔔 Notificaciones push</h2><p>Pega la clave pública VAPID de Firebase (Configuración del proyecto → Cloud Messaging → Certificados push web → Generar par de claves). Con ella, cada compañero podrá activar las notificaciones desde su perfil.</p><form id="vapidForm" class="ap-form"><label class="rep-l">Clave VAPID<input name="k" autocomplete="off" spellcheck="false" value="${esc((window.__pushCfg1b||{}).vapid||"")}" placeholder="B…"></label><p class="note">Para que se envíen hace falta además el secreto FIREBASE_SA en Cloudflare.${e.configurado?" ✅ Clave guardada.":""}</p><div class="adm-b"><button type="submit" class="btn-p" style="--cf:var(--accent)">Guardar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`);return}});
+document.addEventListener("submit",ev=>{if(ev.target.id!=="vapidForm")return;ev.preventDefault();window.push1b.guardarVapid(ev.target.elements.k.value).then(()=>{admCerrar();toast("Clave guardada.")}).catch(e=>toast("No se ha podido ("+(e.code||"error")+")."))});

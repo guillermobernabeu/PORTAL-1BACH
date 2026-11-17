@@ -2,7 +2,7 @@
 // Cualquiera sube fotos de sus apuntes, la IA (Gemini, a través del Worker de Cloudflare) los pasa a limpio,
 // el administrador los aprueba y todos pueden darles 👍 y proponer mejoras. Puntos y niveles por colaborar.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { db, fs, auth } from "./fb.js?v=1794868843";
+import { db, fs, auth, enviarPush } from "./fb.js?v=1794920283";
 
 const CONVERSOR = "https://apuntes-1bach1.maison-ichie.workers.dev";
 const MAX_FOTOS = 10;
@@ -204,7 +204,7 @@ document.addEventListener("click", async ev => {
     fs.updateDoc(fs.doc(db, "apuntes", a.id), { utiles: ya ? fs.arrayRemove(AP.uid) : fs.arrayUnion(AP.uid) }).catch(e => toast("No se ha podido (" + (e.code || "error") + "). ")); return; }
   if ((el = q("[data-apfotos]"))) { const id = el.dataset.apfotos; try { const s = await fs.getDocs(fs.collection(db, "apuntes", id, "fotos")); const urls = s.docs.map(d => d.data()).sort((a, b) => a.i - b.i).map(x => x.d);
       if (!urls.length) { toast("Este apunte no tiene fotos."); return; } const a = todos().find(x => x.id === id) || {}; abrirVisor(`${nomA(a.asig)} · ${a.titulo || "Apunte"}`, "Fotos originales", urls); } catch (e) { toast("No se han podido cargar las fotos."); } return; }
-  if ((el = q("[data-apaprobar]"))) { fs.updateDoc(fs.doc(db, "apuntes", el.dataset.apaprobar), { estado: "aprobado", aprobadoT: Date.now(), motivo: "" }).then(() => toast("Aprobado: ya lo ve toda la clase.")).catch(e => toast("No se ha podido (" + (e.code || "error") + ").")); return; }
+  if ((el = q("[data-apaprobar]"))) { const ap = todos().find(x => x.id === el.dataset.apaprobar); fs.updateDoc(fs.doc(db, "apuntes", el.dataset.apaprobar), { estado: "aprobado", aprobadoT: Date.now(), motivo: "" }).then(() => { toast("Aprobado: ya lo ve toda la clase."); if (ap) enviarPush({ tipo: "apunte", a: [ap.autor], extra: ap.titulo, url: "#apunte-" + ap.id }); }).catch(e => toast("No se ha podido (" + (e.code || "error") + ").")); return; }
   if ((el = q("[data-aprechazar]"))) { admModal(`<h2>Rechazar apunte</h2><form id="apRechF" data-id="${H(el.dataset.aprechazar)}" class="ap-form"><label class="rep-l">Motivo (lo verá el autor)<textarea name="m" rows="3" maxlength="300"></textarea></label><div class="adm-b"><button class="btn-p" style="--cf:#d4231c">Rechazar</button><button type="button" class="btn-sec" data-admcerrar>Cancelar</button></div></form>`); return; }
   if ((el = q("[data-apborrar]"))) { if (!el.dataset.c) { el.dataset.c = 1; el.textContent = "¿Seguro? Pulsa otra vez"; return; }
     fs.deleteDoc(fs.doc(db, "apuntes", el.dataset.apborrar)).then(() => { toast("Borrado."); location.hash = "apuntes"; }).catch(e => toast("No se ha podido (" + (e.code || "error") + ").")); return; }
@@ -222,7 +222,7 @@ document.addEventListener("submit", ev => {
   if (f.id === "apMejF") { ev.preventDefault(); const md = f.elements.md.value, a = todos().find(x => x.id === f.dataset.id);
     if (a && md.trim() === String(a.md).trim()) { toast("No has cambiado nada."); return; }
     fs.addDoc(fs.collection(db, "apuntes", f.dataset.id, "mejoras"), { autor: AP.uid, nota: f.elements.nota.value.trim(), md: md.slice(0, 60000), estado: "pendiente", t: Date.now() })
-      .then(() => { admCerrar(); toast("Mejora enviada. ¡Gracias!"); }).catch(e => toast("No se ha podido (" + (e.code || "error") + ")."));
+      .then(() => { admCerrar(); toast("Mejora enviada. ¡Gracias!"); if (a && a.autor !== AP.uid) enviarPush({ tipo: "mejora", a: [a.autor], extra: a.titulo, url: "#apunte-" + a.id }); }).catch(e => toast("No se ha podido (" + (e.code || "error") + ")."));
   }
 });
 document.addEventListener("input", ev => {

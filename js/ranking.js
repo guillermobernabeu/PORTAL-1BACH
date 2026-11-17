@@ -7,7 +7,8 @@ function hoyStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMont
 // Topes (contra trampas editando la base de datos): como mucho 100 por app y día, 500 al día en total.
 const TOPE_DIA=100*APPS.length;
 function ganadoHoy(p,h){return Math.max(0,Math.round(APPS.reduce((s,[k])=>{const a=p&&p.apps&&p.apps[k];if(!a||a.dia!==h||!a.total)return s;return s+Math.min(1,Math.max(0,(a.ok-(a.ok0||0))/a.total))*100},0)))}
-function puntosHoy(p,h=hoyStr()){return Math.min(TOPE_DIA,Math.max(ganadoHoy(p,h),Math.min(TOPE_DIA,Number(((p&&p.dias)||{})[h])||0)))}
+const TOPE_BONUS=90,bonusDe=(p,h)=>Math.min(TOPE_BONUS,Math.max(0,Number(((p&&p.bonus)||{})[h])||0));
+function puntosHoy(p,h=hoyStr()){return Math.min(TOPE_DIA,Math.max(ganadoHoy(p,h),Math.min(TOPE_DIA,Number(((p&&p.dias)||{})[h])||0)))+bonusDe(p,h)}
 function isoD(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function diasSemana(atras=0){const n=new Date(),l=new Date(n.getFullYear(),n.getMonth(),n.getDate());l.setDate(l.getDate()-((l.getDay()+6)%7)-7*atras);return Array.from({length:7},(_,i)=>{const d=new Date(l);d.setDate(l.getDate()+i);return isoD(d)})}
 // Semana en la que empezaron los puntos diarios: se suman también los puntos que ya tenías antes (no se pierden)
