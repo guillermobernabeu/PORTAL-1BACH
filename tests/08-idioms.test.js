@@ -14,11 +14,11 @@ module.exports = {
     const r = await p.evaluate(() => {
       const g = id => IDIOMS.find(i => i.id === id);
       return [
-        corrige("It's raining cats and dogs", g("i03"), "es"), corrige("raining cats and dogs!", g("i03"), "es"),
-        corrige("hit the hay", g("i05"), "es"), corrige("busy as a bee", g("i08"), "es"),
-        corrige("llueve a cántaros", g("i03"), "en"), corrige("Pasarlo bomba", g("i15"), "en"),
-        corrige("afrontar las consecuensias", g("i02"), "en"), corrige("out of the blu", g("i16"), "es"),
-        corrige("ponerse a dormir", g("i10"), "en"), corrige("", g("i01"), "en"),
+        corrige("It's raining cats and dogs", g("d02"), "es"), corrige("raining cats and dogs!", g("d02"), "es"),
+        corrige("hit the hay", g("d17"), "es"), corrige("Don't beat around the bush", g("d15"), "es"),
+        corrige("llueve a mares", g("d02"), "en"), corrige("Planchar la oreja", g("d17"), "en"),
+        corrige("ganarse la bida", g("d11"), "en"), corrige("better late then never", g("d16"), "es"),
+        corrige("ponerse a dormir", g("d06"), "en"), corrige("", g("d04"), "en"),
       ];
     });
     assert.deepEqual(r, [2, 2, 2, 2, 2, 2, 1, 1, 0, 0]);
@@ -36,11 +36,11 @@ module.exports = {
     await p.evaluate(() => { const q = R.qs[R.n]; document.querySelector(`[data-op="${R.opts.findIndex(o => o.id === q.i.id)}"]`).click(); });
     assert.ok(/Correcto/.test(await A.texto(p, ".fb")));
     // marca un idiom como dominado (2 seguidas en cada sentido) y avisa
-    await p.evaluate(() => { S.s.i01 = { en: { a: 2, f: 0, r: 2 }, es: { a: 2, f: 0, r: 2 } }; window.dispatchEvent(new Event("idioms-cambio")); });
+    await p.evaluate(() => { S.s.d01 = { en: { a: 2, f: 0, r: 2 }, es: { a: 2, f: 0, r: 2 } }; window.dispatchEvent(new Event("idioms-cambio")); });
     await p.waitForTimeout(1200);
     const d = await A.datos(p);
     const a = d.progreso.u2.apps.idioms;
-    assert.ok(a && a.total === 16 && a.ok >= 1, "progreso de idioms: " + JSON.stringify(a));
+    assert.ok(a && a.total === 20 && a.ok >= 1, "progreso de idioms: " + JSON.stringify(a));
   },
 
   "idioms: escribir, fallar y 'lo he dicho con otras palabras'": async (A, ctx) => {
@@ -55,8 +55,8 @@ module.exports = {
     await p.click("[data-sig]"); assert.ok(/2 \/ 10/.test(await A.texto(p, ".ronda-t")));
   },
 
-  "idioms: lista con los 16": async (A, ctx) => {
+  "idioms: lista con los 20": async (A, ctx) => {
     const p = await abrir(A, ctx, "#lista");
-    assert.equal(await p.evaluate(() => document.querySelectorAll(".lista .row").length), 16);
+    assert.equal(await p.evaluate(() => document.querySelectorAll(".lista .row").length), 20);
   },
 };

@@ -56,14 +56,14 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 @media (max-width:480px){.dominio{grid-template-columns:1fr}.pts-v{grid-row:auto;flex-direction:row;gap:6px;width:auto;height:auto;border-radius:12px;padding:6px 12px;justify-self:start}.row{grid-template-columns:1fr}}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
-<section id="start"><a href="../" class="back vback1" style="position:fixed;top:56px;left:12px">← Volver</a><h1>Idioms</h1><p>Inglés ↔ español. Domina las 16 expresiones del global de inglés: cada una vale puntos para el ranking.</p><button class="go" id="go" type="button">Empezar</button></section>
+<section id="start"><a href="../" class="back vback1" style="position:fixed;top:56px;left:12px">← Volver</a><h1>Idioms</h1><p>Inglés ↔ español. Domina los 20 idioms del global de inglés: cada una vale puntos para el ranking.</p><button class="go" id="go" type="button">Empezar</button></section>
 <div class="wrap" id="app" hidden>
 <header><p style="margin:0 0 6px"><a href="../" class="back vback1">← Volver</a></p><h1><small>Inglés · 1.º Bachillerato</small>Idioms</h1></header>
 <div class="tabs" id="tabs"><button type="button" data-tab="jugar" aria-pressed="true">🎮 Jugar</button><button type="button" data-tab="lista" aria-pressed="false">📋 Lista</button></div>
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="datos.js?v=1794947791"></script>
+<script src="datos.js?v=1794950965"></script>
 <script>
 const TOTAL = IDIOMS.length, RACHA_DOM = 2, KEY = "idioms_v1", RONDA = 10;
 
@@ -86,7 +86,7 @@ const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/
 const azar = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 let tab = "jugar", R = null; // R = ronda en curso
 const preguntaTxt = (q) => q.dir === "en" ? q.i.en : q.i.es;
-const solucionTxt = (q) => q.dir === "en" ? q.i.es : q.i.en + (q.i.id === "i05" ? " / hit the hay" : "");
+const solucionTxt = (q) => q.dir === "en" ? q.i.es : q.i.en;
 
 function prioridad(i, d) { const x = ((S.s[i.id] || {})[d]) || { a: 0, f: 0, r: 0 }; return (x.r >= RACHA_DOM ? 0 : 10) + x.f * 2 - x.r * 3 + (x.a + x.f === 0 ? 5 : 0) + Math.random() * 4; }
 function nuevaRonda() {
@@ -157,7 +157,7 @@ function htmlFin() {
 }
 function htmlLista() {
   const dot = (id, d) => { const x = ((S.s[id] || {})[d]) || { r: 0 }; return `<i class="${x.r >= RACHA_DOM ? "d" : x.r > 0 ? "m" : ""}"></i>`; };
-  return `<p class="nota">🟢 dominado en ese sentido · 🟡 lo vas sacando · ⚪ sin acertar todavía</p><div class="lista">${IDIOMS.map(i => `<div class="card row"><div><div class="en">${H(i.en)}${i.enOk.length && i.id === "i05" ? " / hit the hay" : ""}</div><div class="es">${H(i.es)}</div></div>
+  return `<p class="nota">🟢 dominado en ese sentido · 🟡 lo vas sacando · ⚪ sin acertar todavía</p><div class="lista">${IDIOMS.map(i => `<div class="card row"><div><div class="en">${H(i.en)}</div><div class="es">${H(i.es)}</div></div>
   <div class="dots"><span title="English → Español">EN→ES ${dot(i.id, "en")}</span><span title="Español → English">ES→EN ${dot(i.id, "es")}</span></div><div class="ex">${H(i.ej)}</div></div>`).join("")}</div>`;
 }
 
@@ -192,9 +192,9 @@ if (location.hash === "#lista") { tab = "lista"; $("#start").hidden = true; $("#
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794947791";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794950965";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1794947791";
+import { iniciarLateral } from "../shared/lateral.js?v=1794950965";
 copiaEnLaNube("idioms", () => ["idioms_v1"]);
 let ult = "", t = null;
 function enviar() { const r = [nDom(), TOTAL], k = r.join("/"); if (k === ult) return; ult = k; guardarProgreso("idioms", r[0], r[1]); }
