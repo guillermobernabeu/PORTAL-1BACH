@@ -67,7 +67,7 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 .vl li{counter-increment:v;display:flex;gap:6px;align-items:baseline;font-size:14.5px;padding:3px 0;border-bottom:1px dashed var(--rule)}
 .vl li::before{content:counter(v);font:700 11px system-ui;color:var(--ink2);min-width:18px}.vl li span{color:var(--ink2);font-size:13px}
 .ojo{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--warnbg);color:var(--warn);font-size:14px;line-height:1.5}
-.par{margin-top:6px}
+.par{margin-top:6px}.pasos{margin:4px 0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
 .teo table{width:100%;border-collapse:collapse;font-size:14px}.teo th,.teo td{border:1px solid var(--rule);padding:7px 8px;text-align:left;vertical-align:top}.teo th{background:var(--bg)}
 .inp.larga{flex-wrap:wrap}.inp.larga input{flex-basis:100%}
 </style></head><body>
@@ -75,14 +75,14 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="wrap" id="app">
 <header><p style="margin:0 0 6px"><a href="../" class="back vback1">← Volver</a></p><h1><small>Inglés · Global del 19 de noviembre</small>Global de Inglés</h1></header>
 <div class="tabs" id="tabs">
-<button type="button" data-tab="def">📖 Definitions</button><button type="button" data-tab="trad">🔁 Translate</button><button type="button" data-tab="past">⏪ Past simple</button><button type="button" data-tab="preg">❓ Make questions</button><a class="tabl" href="../idioms/">💬 Idioms</a><button type="button" data-tab="examen">📝 Examen: todo junto</button>
+<button type="button" data-tab="def">📖 Definitions</button><button type="button" data-tab="trad">🔁 Translate</button><button type="button" data-tab="past">🔄 Passive voice</button><button type="button" data-tab="preg">❓ Make questions</button><a class="tabl" href="../idioms/">💬 Idioms</a><button type="button" data-tab="examen">📝 Examen: todo junto</button>
 </div>
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="../vocabulary/palabras.js?v=1795010136"></script>
-<script src="../idioms/datos.js?v=1795010136"></script>
-<script src="datos.js?v=1795010136"></script>
+<script src="../vocabulary/palabras.js?v=1795012318"></script>
+<script src="../idioms/datos.js?v=1795012318"></script>
+<script src="datos.js?v=1795012318"></script>
 <script>
 // ---------- Juegos del global de Inglés ----------
 const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -125,10 +125,10 @@ const JUEGOS = {
       : g.t === "es"
         ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(g.f), oks: g.ok, sol: g.ok[0], tipo: "esc", frase: true, propias: true }
         : { tag: "English → Español", ask: "Tradúcelo al español", html: H(g.f), oks: g.ok, sol: g.ok[0], tipo: "esc", frase: true, propias: true } },
-  past: { app: "past", titulo: "Past simple", items: () => PAST, nota: "Afirmativa, negativa y preguntas en past simple (verbos regulares e irregulares).",
+  past: { app: "past", titulo: "Passive voice", items: () => PASIVA, nota: "Pon el verbo en pasiva y pasa frases de activa a pasiva (present, past, perfect, will, continuous y modales).",
     q: (p) => p.t === "v"
-      ? { tag: "Past simple", ask: p.v ? `Escribe el verbo <b>${H(p.v)}</b> en past simple` : "Escribe el verbo en past simple", html: H(p.f).replace("___", '<span class="hueco">_____</span>'), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true }
-      : { tag: p.t === "neg" ? "Negativa" : "Pregunta", ask: p.t === "neg" ? "Pásala a negativa" : "Pásala a pregunta", html: H(p.f), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true } },
+      ? { tag: "Passive · " + p.tiempo, ask: `Pon <b>${H(p.v)}</b> en pasiva (${H(p.tiempo)})${p.hueco2 ? ": escribe las dos partes seguidas" : ""}`, html: H(p.f).replaceAll("___", '<span class="hueco">_____</span>'), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true }
+      : { tag: "Active → passive", ask: "Pásala a pasiva", html: H(p.f), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true, propias: true } },
   preg: { app: "preg", titulo: "Make questions", items: () => PREGS, racha: 1, nota: "Escribe la pregunta cuya respuesta es la parte subrayada. Siempre salen frases nuevas; las falladas, en «Repasar falladas».",
     q: (p) => ({ tag: "Make questions", ask: "Haz la pregunta: la respuesta es lo <u>subrayado</u>", html: H(p.f).replace(/\[(.+?)\]/, "<u>$1</u>"), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true, propias: true }) },
   idioms: { app: "idioms", titulo: "Idioms", items: () => IDIOMS, externo: true,
@@ -231,9 +231,36 @@ const TEORIA_GI = `<article class="teo">
 <tr><td colspan="2"><b>stop / forget / remember:</b> to = después · -ing = antes (ya pasó)</td></tr></table>
 <div class="acts"><button type="button" class="btn" data-tab="gi">Practicar ahora →</button></div></section>
 </article>`;
+const TEORIA_PV = `<article class="teo">
+<p class="teo-i">En la pasiva lo importante es <b>lo que recibe la acción</b>, no quién la hace. El objeto de la activa pasa a ser el sujeto.</p>
+<section class="card teo-b inf"><h2>Cómo se forma</h2>
+<p class="ej" style="font-size:17px"><b>sujeto + be</b> (en el tiempo de la activa) <b>+ participio</b> (3.ª columna) <b>(+ by + quien lo hace)</b></p>
+<p class="ej">Shakespeare <b>wrote</b> Hamlet. → Hamlet <b>was written</b> by Shakespeare.</p>
+<h3>Pasos para pasar de activa a pasiva</h3>
+<ol class="pasos"><li>El <b>objeto</b> de la activa pasa a ser el <b>sujeto</b>.</li><li>Pon <b>be</b> en el <b>mismo tiempo</b> que el verbo de la activa.</li><li>Añade el <b>participio</b> del verbo principal.</li><li>El sujeto de la activa va detrás de <b>by</b>, solo si importa. Si es <i>people, they, someone</i>… se quita.</li></ol></section>
+<section class="card teo-b ger"><h2>Tabla de tiempos</h2><div style="overflow-x:auto"><table>
+<tr><th>Tiempo</th><th>Activa</th><th>Pasiva</th></tr>
+<tr><td>Present simple</td><td>They <b>make</b> cars</td><td>Cars <b>are made</b></td></tr>
+<tr><td>Present continuous</td><td>They <b>are making</b> cars</td><td>Cars <b>are being made</b></td></tr>
+<tr><td>Past simple</td><td>They <b>made</b> cars</td><td>Cars <b>were made</b></td></tr>
+<tr><td>Past continuous</td><td>They <b>were making</b> cars</td><td>Cars <b>were being made</b></td></tr>
+<tr><td>Present perfect</td><td>They <b>have made</b> cars</td><td>Cars <b>have been made</b></td></tr>
+<tr><td>Past perfect</td><td>They <b>had made</b> cars</td><td>Cars <b>had been made</b></td></tr>
+<tr><td>Future (will)</td><td>They <b>will make</b> cars</td><td>Cars <b>will be made</b></td></tr>
+<tr><td>Going to</td><td>They <b>are going to make</b> cars</td><td>Cars <b>are going to be made</b></td></tr>
+<tr><td>Modales</td><td>They <b>must / can make</b> cars</td><td>Cars <b>must / can be made</b></td></tr>
+</table></div></section>
+<section class="card teo-b cam"><h2>Negativas y preguntas</h2>
+<p class="ej">I <b>wasn't invited</b> to the party. <span>No me invitaron a la fiesta.</span></p>
+<p class="ej"><b>Was</b> your house <b>damaged</b> by the flood? <span>¿La inundación dañó tu casa?</span></p>
+<p class="ej">Who <b>was</b> this letter <b>written</b> by? <span>¿Quién escribió esta carta?</span></p>
+<div class="ojo"><b>💡 Ojo:</b> be concuerda con el <b>nuevo sujeto</b>: <i>The letter <b>was</b> sent</i> / <i>The letters <b>were</b> sent</i>. Y el participio de los irregulares es la 3.ª columna: write → <b>written</b>, steal → <b>stolen</b>, build → <b>built</b>.</div>
+<div class="acts"><button type="button" class="btn" data-tab="past">Practicar ahora →</button></div></section>
+</article>`;
 function htmlJuego() {
-  const modos = tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi" && !teoGI}">🔀 Gerund & infinitive</button><button type="button" class="chip" data-teo aria-pressed="${tab === "gi" && teoGI}">📘 Teoría</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
+  const modos = tab === "past" ? `<div class="filt"><span class="lb">Passive</span><button type="button" class="chip" data-tab="past" aria-pressed="${!teoGI}">✍️ Ejercicios</button><button type="button" class="chip" data-teopv aria-pressed="${teoGI}">📘 Teoría</button></div>` : tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi" && !teoGI}">🔀 Gerund & infinitive</button><button type="button" class="chip" data-teo aria-pressed="${tab === "gi" && teoGI}">📘 Teoría</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
   if (tab === "gi" && teoGI) return modos + TEORIA_GI;
+  if (tab === "past" && teoGI) return modos + TEORIA_PV;
   if (!R.qs.length) return modos + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
   if (R.n >= R.qs.length) return modos + htmlFin();
   const q = R.qs[R.n], r = R.resp;
@@ -266,6 +293,7 @@ function responder(v, extra) {
 }
 document.addEventListener("click", (e) => {
   const t = e.target.closest("button"); if (!t) return;
+  if (t.hasAttribute("data-teopv")) { tab = "past"; teoGI = true; R = null; history.replaceState(null, "", "#past-teoria"); render(); scrollTo(0, 0); return; }
   if (t.hasAttribute("data-teo")) { tab = "gi"; teoGI = true; R = null; history.replaceState(null, "", "#gi-teoria"); render(); scrollTo(0, 0); return; }
   if (t.dataset.tab) { tab = t.dataset.tab; teoGI = false; R = null; history.replaceState(null, "", "#" + tab); render(); return; }
   if (t.dataset.mp) { modoPreg = t.dataset.mp; R = null; render(); return; }
@@ -280,14 +308,14 @@ document.addEventListener("submit", (e) => {
   responder(corr(txt, q.oks, q.estricto), { txt });
 });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && R && R.resp) { const b = $("[data-sig]"); if (b) { e.preventDefault(); b.click(); } } });
-{ const h = location.hash.slice(1); if (h === "gi-teoria") { tab = "gi"; teoGI = true; } if (JUEGOS[h] && h !== "idioms" || h === "examen") tab = h; }
+{ const h = location.hash.slice(1); if (h === "gi-teoria") { tab = "gi"; teoGI = true; } if (h === "past-teoria") { tab = "past"; teoGI = true; } if (JUEGOS[h] && h !== "idioms" || h === "examen") tab = h; }
 render();
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795010136";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795012318";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1795010136";
+import { iniciarLateral } from "../shared/lateral.js?v=1795012318";
 copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
 const ult = {}; let t = null;
 function enviar() { for (const j of ["def", "trad", "gi", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }

@@ -215,8 +215,8 @@
    "tipo": "app",
    "cat": "App",
    "claude": true,
-   "titulo": "Past simple · ejercicios",
-   "nota": "Verbos, negativas y preguntas",
+   "titulo": "Passive voice · ejercicios",
+   "nota": "Verbos en pasiva y de activa a pasiva, con teoría",
    "url": "ingles/#past",
    "pub": 1794947433604,
    "app": "past",
@@ -283,7 +283,7 @@
    "nota": null
   },
   {
-   "alcance": "Definitions, translate, grammar (past simple y make questions) e idioms",
+   "alcance": "Definitions, translate, grammar (passive voice y make questions) e idioms",
    "asig": "ingles",
    "fecha": "2026-11-19",
    "hecho": false,
@@ -300,7 +300,7 @@
    "entra": [
     "Definitions",
     "Translate",
-    "Grammar: past simple",
+    "Grammar: passive voice",
     "Grammar: make questions",
     "Idioms"
    ]
