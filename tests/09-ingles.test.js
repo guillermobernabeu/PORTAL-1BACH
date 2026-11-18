@@ -12,7 +12,7 @@ module.exports = {
     const r = await p.evaluate(() => {
       const q = id => PREGS.find(x => x.id === id).ok, s = id => PASIVA.find(x => x.id === id).ok;
       return [corr("when did she go to London", q("q01"), true), corr("Who did you see at the supermarket?", q("q13"), true), corr("Whom did you see at the supermarket?", q("q13"), true),
-        corr("When she went to London?", q("q01"), true), corr("was build", s("v01"), true) , corr("isn't spoken", s("v25"), true), corr("Hamlet was written by Shakespeare", s("a01"), true)];
+        corr("When she went to London?", q("q01"), true), corr("The source code is written", s("pv01"), true) , corr("The database isn't being updated by the system administrator at the moment", s("pv02"), true), corr("Was the software bug fixed by the programmer yesterday?", s("pv03"), true)];
     });
     assert.deepEqual(r, [2, 2, 2, 0, 0, 2, 2]);
     assert.ok(/subrayado/.test(await A.texto(p, ".ask")) && await A.hay(p, ".prompt u"), "sale la parte subrayada");
@@ -25,7 +25,7 @@ module.exports = {
     await p.evaluate(() => { PASIVA.slice(0, 5).forEach(x => S.past[x.id] = { a: 2, f: 0, r: 2 }); window.dispatchEvent(new Event("ingles-cambio")); });
     await p.waitForTimeout(1200);
     const d = await A.datos(p);
-    assert.ok(d.progreso.u2.apps.past && d.progreso.u2.apps.past.ok >= 5 && d.progreso.u2.apps.past.total === 54, JSON.stringify(d.progreso.u2.apps));
+    assert.ok(d.progreso.u2.apps.past && d.progreso.u2.apps.past.ok >= 5 && d.progreso.u2.apps.past.total === 80, JSON.stringify(d.progreso.u2.apps));
     await p.click("[data-tab=examen]"); await p.waitForTimeout(300);
     const js = await p.evaluate(() => [...new Set(R.qs.map(q => q.j))].sort());
     assert.deepEqual(js, ["def", "gi", "idioms", "past", "preg", "trad"]); assert.equal(await p.evaluate(() => R.qs.length), 20);
@@ -41,6 +41,12 @@ module.exports = {
     await p.click("[data-mp=nuevas]"); await p.waitForTimeout(200);
     const r2 = await p.evaluate(() => R.qs.map(q => q.x.id));
     assert.ok(!r2.includes(r1[0]), "no repite la ya vista");
+    // gerund & infinitive también: falladas solo si se eligen
+    await p.click("[data-tab=trad]"); await p.click(".filt [data-tab=gi]"); await p.waitForTimeout(200);
+    const g1 = await p.evaluate(() => R.qs[0].x.id);
+    await p.fill("#fEsc input", "zzz"); await p.click("#fEsc .btn"); await p.waitForTimeout(150); await p.click("[data-sig]");
+    await p.click("[data-mp=falladas]"); await p.waitForTimeout(200);
+    assert.deepEqual(await p.evaluate(() => R.qs.map(q => q.x.id)), [g1]);
   },
   "translate: apartado de gerund & infinitive": async (A, ctx) => {
     const p = await abrir(A, ctx, "#trad");

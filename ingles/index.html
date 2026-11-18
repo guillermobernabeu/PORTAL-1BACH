@@ -80,9 +80,9 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="../vocabulary/palabras.js?v=1795028832"></script>
-<script src="../idioms/datos.js?v=1795028832"></script>
-<script src="datos.js?v=1795028832"></script>
+<script src="../vocabulary/palabras.js?v=1795029167"></script>
+<script src="../idioms/datos.js?v=1795029167"></script>
+<script src="datos.js?v=1795029167"></script>
 <script>
 // ---------- Juegos del global de Inglés ----------
 const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -98,7 +98,7 @@ const enOk = (w) => [w.en, sinTo(w.en), ...w.en.split("/"), ...(w.ok || [])].map
 const esOk = (w) => w.es.split(/[,/]/).map(s => s.replace(/\(.*?\)/g, "").trim()).filter(Boolean).concat([w.es.replace(/\(.*?\)/g, "").trim()]);
 
 // --- corrección ---
-const CONTR = [[/\bdidnt\b/g, "did not"], [/\bdoesnt\b/g, "does not"], [/\bdont\b/g, "do not"], [/\bwasnt\b/g, "was not"], [/\bwerent\b/g, "were not"], [/\bwhats\b/g, "what is"], [/\bwhos\b/g, "who is"], [/\bwheres\b/g, "where is"], [/\bhows\b/g, "how is"], [/\bwhom\b/g, "who"], [/\bisnt\b/g, "is not"], [/\barent\b/g, "are not"]];
+const CONTR = [[/\bdidnt\b/g, "did not"], [/\bdoesnt\b/g, "does not"], [/\bdont\b/g, "do not"], [/\bwasnt\b/g, "was not"], [/\bwerent\b/g, "were not"], [/\bwhats\b/g, "what is"], [/\bwhos\b/g, "who is"], [/\bwheres\b/g, "where is"], [/\bhows\b/g, "how is"], [/\bwhom\b/g, "who"], [/\bisnt\b/g, "is not"], [/\barent\b/g, "are not"], [/\bwont\b/g, "will not"], [/\bhasnt\b/g, "has not"], [/\bhavent\b/g, "have not"], [/\bhadnt\b/g, "had not"], [/\bcant\b/g, "cannot"], [/\bcan not\b/g, "cannot"], [/\bshouldnt\b/g, "should not"], [/\bmustnt\b/g, "must not"]];
 function nrm(t) { let s = norm(t); for (const [r, v] of CONTR) s = s.replace(r, v); return s; }
 // 2 bien · 1 casi (ortografía) · 0 mal. estricto: gramática (sin "casi")
 function corr(resp, oks, estricto) {
@@ -119,16 +119,14 @@ const JUEGOS = {
     q: (w) => Math.random() < 0.5
       ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(w.es), oks: enOk(w), sol: w.en, tipo: "esc" }
       : { tag: "English → Español", ask: "Tradúcelo al español", html: H(w.en), oks: esOk(w), sol: w.es, tipo: "esc", propias: true } },
-  gi: { app: "gi", titulo: "Gerund & infinitive", items: () => GI, nota: "Text 3: 300 ejercicios (100 de cada tipo): traducir en los dos sentidos y elegir -ing o to.",
+  gi: { app: "gi", titulo: "Gerund & infinitive", items: () => GI, racha: 1, nota: "Text 3: 300 ejercicios. Siempre salen nuevos; los que fallas, en «Repasar falladas». Cada acierto cuenta.",
     q: (g) => g.t === "gap"
       ? { tag: "Gerund or infinitive", ask: `¿-ing o to? Usa el verbo <b>${H(g.v)}</b>`, html: H(g.f).replace("___", '<span class="hueco">_____</span>'), oks: g.ok, sol: g.ok[0], tipo: "esc", estricto: true }
       : g.t === "es"
         ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(g.f), oks: g.ok, sol: g.ok[0], tipo: "esc", frase: true, propias: true }
         : { tag: "English → Español", ask: "Tradúcelo al español", html: H(g.f), oks: g.ok, sol: g.ok[0], tipo: "esc", frase: true, propias: true } },
-  past: { app: "past", titulo: "Passive voice", items: () => PASIVA, nota: "Pon el verbo en pasiva y pasa frases de activa a pasiva (present, past, perfect, will, continuous y modales).",
-    q: (p) => p.t === "v"
-      ? { tag: "Passive · " + p.tiempo, ask: `Pon <b>${H(p.v)}</b> en pasiva (${H(p.tiempo)})${p.hueco2 ? ": escribe las dos partes seguidas" : ""}`, html: H(p.f).replaceAll("___", '<span class="hueco">_____</span>'), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true }
-      : { tag: "Active → passive", ask: "Pásala a pasiva", html: H(p.f), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true, propias: true } },
+  past: { app: "past", titulo: "Passive voice", items: () => PASIVA, nota: "Transform into the passive voice: afirmativas, negativas y preguntas en todos los tiempos, como en la ficha de clase (que sale primero).",
+    q: (p) => ({ tag: "Transform into the passive voice", ask: "Pásala a pasiva", html: H(p.f), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true, propias: true }) },
   preg: { app: "preg", titulo: "Make questions", items: () => PREGS, racha: 1, nota: "Escribe la pregunta cuya respuesta es la parte subrayada. Siempre salen frases nuevas; las falladas, en «Repasar falladas».",
     q: (p) => ({ tag: "Make questions", ask: "Haz la pregunta: la respuesta es lo <u>subrayado</u>", html: H(p.f).replace(/\[(.+?)\]/, "<u>$1</u>"), oks: p.ok, sol: p.ok[0], tipo: "esc", estricto: true, frase: true, propias: true }) },
   idioms: { app: "idioms", titulo: "Idioms", items: () => IDIOMS, externo: true,
@@ -154,18 +152,19 @@ const pts = (j) => Math.round(nDom(j) / total(j) * 100);
 // --- rondas ---
 let tab = "def", R = null;
 function prio(j, x) { const s = j === "idioms" ? { r: Math.min(...["en", "es"].map(d => ((ID.s[x.id] || {})[d] || {}).r || 0)), f: 0 } : (S[j][x.id] || { r: 0, f: 0, a: 0 }); return (s.r >= RACHA ? 0 : 10) + (s.f || 0) * 2 - s.r * 3 + Math.random() * 5; }
-let modoPreg = "nuevas";
-const falladasPreg = () => PREGS.filter(x => { const s = S.preg[x.id]; return s && s.f > 0 && !(s.r > 0); });
+// Make questions y Gerund & infinitive: siempre salen nuevas; las falladas solo si eliges "Repasar falladas". Las acertadas quedan hechas.
+const modoRep = { preg: "nuevas", gi: "nuevas" };
 let modoGI = "mix";
+const itemsDe = (j) => j === "gi" && tab === "gi" && modoGI !== "mix" ? GI.filter(x => x.t === modoGI) : JUEGOS[j].items();
+const falladas = (j) => itemsDe(j).filter(x => { const s = S[j][x.id]; return s && s.f > 0 && !(s.r > 0); });
 function elegir(j, n) {
-  if (j === "gi" && tab === "gi" && modoGI !== "mix") return azar(GI.filter(x => x.t === modoGI).map(x => [x, prio(j, x)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(([x]) => ({ j, x, ...JUEGOS[j].q(x) })));
-  if (j === "preg") {
-    // siempre nuevas: primero las que no has visto nunca, luego las que aún no has acertado; "falladas": solo las falladas
-    const vis = (x) => S.preg[x.id], L = modoPreg === "falladas" && tab === "preg" ? azar(falladasPreg())
-      : [...azar(PREGS.filter(x => x.clase && !vis(x))), ...azar(PREGS.filter(x => !x.clase && !vis(x))), ...azar(PREGS.filter(x => vis(x) && !dom("preg", x.id))), ...azar(PREGS.filter(x => dom("preg", x.id)))];
+  if (j === "preg" || j === "gi") {
+    const I = itemsDe(j), vis = (x) => S[j][x.id];
+    const L = modoRep[j] === "falladas" && tab === j ? azar(falladas(j))
+      : [...azar(I.filter(x => x.clase && !vis(x))), ...azar(I.filter(x => !x.clase && !vis(x))), ...azar(I.filter(x => vis(x) && !dom(j, x.id))), ...azar(I.filter(x => dom(j, x.id)))];
     return L.slice(0, n).map(x => ({ j, x, ...JUEGOS[j].q(x) }));
   }
-  return JUEGOS[j].items().map(x => [x, prio(j, x)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(([x]) => ({ j, x, ...JUEGOS[j].q(x) })); }
+  return JUEGOS[j].items().map(x => [x, prio(j, x) + (x.clase && !S[j][x.id] ? 4 : 0)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(([x]) => ({ j, x, ...JUEGOS[j].q(x) })); }
 function nuevaRonda() {
   const qs = tab === "examen" ? azar(Object.entries(MEZCLA).flatMap(([j, n]) => elegir(j, n))) : azar(elegir(tab, 10));
   R = { qs, n: 0, bien: 0, d0: Object.fromEntries(Object.keys(JUEGOS).map(j => [j, nDom(j)])), resp: null };
@@ -249,21 +248,25 @@ const TEORIA_PV = `<article class="teo">
 <tr><td>Present perfect</td><td>They <b>have made</b> cars</td><td>Cars <b>have been made</b></td></tr>
 <tr><td>Past perfect</td><td>They <b>had made</b> cars</td><td>Cars <b>had been made</b></td></tr>
 <tr><td>Future (will)</td><td>They <b>will make</b> cars</td><td>Cars <b>will be made</b></td></tr>
+<tr><td>Future perfect</td><td>They <b>will have made</b> cars</td><td>Cars <b>will have been made</b></td></tr>
 <tr><td>Going to</td><td>They <b>are going to make</b> cars</td><td>Cars <b>are going to be made</b></td></tr>
 <tr><td>Modales</td><td>They <b>must / can make</b> cars</td><td>Cars <b>must / can be made</b></td></tr>
 </table></div></section>
 <section class="card teo-b cam"><h2>Negativas y preguntas</h2>
+<p class="ej">The database <b>is not being updated</b> by the system administrator.</p>
+<p class="ej"><b>Has</b> the new operating system <b>been installed</b> by the technicians yet?</p>
 <p class="ej">I <b>wasn't invited</b> to the party. <span>No me invitaron a la fiesta.</span></p>
 <p class="ej"><b>Was</b> your house <b>damaged</b> by the flood? <span>¿La inundación dañó tu casa?</span></p>
 <p class="ej">Who <b>was</b> this letter <b>written</b> by? <span>¿Quién escribió esta carta?</span></p>
 <div class="ojo"><b>💡 Ojo:</b> be concuerda con el <b>nuevo sujeto</b>: <i>The letter <b>was</b> sent</i> / <i>The letters <b>were</b> sent</i>. Y el participio de los irregulares es la 3.ª columna: write → <b>written</b>, steal → <b>stolen</b>, build → <b>built</b>.</div>
 <div class="acts"><button type="button" class="btn" data-tab="past">Practicar ahora →</button></div></section>
 </article>`;
+const chipsRep = (j) => `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoRep[j] === "nuevas"}">🆕 Nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoRep[j] === "falladas"}">🔁 Repasar falladas (${falladas(j).length})</button></div>`;
 function htmlJuego() {
-  const modos = tab === "past" ? `<div class="filt"><span class="lb">Passive</span><button type="button" class="chip" data-tab="past" aria-pressed="${!teoGI}">✍️ Ejercicios</button><button type="button" class="chip" data-teopv aria-pressed="${teoGI}">📘 Teoría</button></div>` : tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi" && !teoGI}">🔀 Gerund & infinitive</button><button type="button" class="chip" data-teo aria-pressed="${tab === "gi" && teoGI}">📘 Teoría</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
+  const modos = tab === "past" ? `<div class="filt"><span class="lb">Passive</span><button type="button" class="chip" data-tab="past" aria-pressed="${!teoGI}">✍️ Ejercicios</button><button type="button" class="chip" data-teopv aria-pressed="${teoGI}">📘 Teoría</button></div>` : tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi" && !teoGI}">🔀 Gerund & infinitive</button><button type="button" class="chip" data-teo aria-pressed="${tab === "gi" && teoGI}">📘 Teoría</button></div>` : tab === "preg" ? chipsRep("preg") : "";
   if (tab === "gi" && teoGI) return modos + TEORIA_GI;
   if (tab === "past" && teoGI) return modos + TEORIA_PV;
-  const mgi = tab === "gi" ? `<div class="filt"><span class="lb">Practicar</span>${[["mix", "🔀 Mezcla"], ["es", "🇪🇸 → 🇬🇧"], ["en", "🇬🇧 → 🇪🇸"], ["gap", "-ing o to"]].map(([k, t]) => `<button type="button" class="chip" data-mgi="${k}" aria-pressed="${modoGI === k}">${t}</button>`).join("")}</div>` : "";
+  const mgi = tab === "gi" ? chipsRep("gi") + `<div class="filt"><span class="lb">Practicar</span>${[["mix", "🔀 Mezcla"], ["es", "🇪🇸 → 🇬🇧"], ["en", "🇬🇧 → 🇪🇸"], ["gap", "-ing o to"]].map(([k, t]) => `<button type="button" class="chip" data-mgi="${k}" aria-pressed="${modoGI === k}">${t}</button>`).join("")}</div>` : "";
   if (!R.qs.length) return modos + mgi + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
   if (R.n >= R.qs.length) return modos + mgi + htmlFin();
   const q = R.qs[R.n], r = R.resp;
@@ -285,7 +288,7 @@ function htmlFin() {
   const p = Object.keys(JUEGOS).reduce((s, j) => s + Math.round(Math.max(0, nDom(j) - R.d0[j]) / total(j) * 100), 0);
   const msg = R.bien === R.qs.length ? "¡Perfecto! 🎉" : R.bien >= R.qs.length * .7 ? "¡Muy bien! 💪" : "Sigue practicando 📚";
   return `<div class="card fin"><h2>${msg}</h2><p class="big">${R.bien} / ${R.qs.length}</p>
-  <p>${ganados > 0 ? `<span class="mas">+${ganados} dominado${ganados > 1 ? "s" : ""} · ≈ +${p} puntos</span>` : `Esta ronda no has dominado ninguno nuevo: ${tab === "preg" ? "cada frase cuenta cuando la aciertas." : `hacen falta ${RACHA} aciertos seguidos.`}`}</p>
+  <p>${ganados > 0 ? `<span class="mas">+${ganados} dominado${ganados > 1 ? "s" : ""} · ≈ +${p} puntos</span>` : `Esta ronda no has dominado ninguno nuevo: ${tab === "preg" || tab === "gi" ? "cada ejercicio cuenta cuando lo aciertas." : `hacen falta ${RACHA} aciertos seguidos.`}`}</p>
   ${tab === "examen" ? `<p>Nota de este examen de prueba: <b>${Math.round(R.bien / R.qs.length * 100) / 10}</b></p>` : ""}
   <div class="acts"><button type="button" class="btn" data-otra>Otra ronda</button></div></div>`;
 }
@@ -300,7 +303,7 @@ document.addEventListener("click", (e) => {
   if (t.hasAttribute("data-teo")) { tab = "gi"; teoGI = true; R = null; history.replaceState(null, "", "#gi-teoria"); render(); scrollTo(0, 0); return; }
   if (t.dataset.tab) { tab = t.dataset.tab; teoGI = false; R = null; history.replaceState(null, "", "#" + tab); render(); return; }
   if (t.dataset.mgi) { modoGI = t.dataset.mgi; R = null; render(); return; }
-  if (t.dataset.mp) { modoPreg = t.dataset.mp; R = null; render(); return; }
+  if (t.dataset.mp) { modoRep[tab] = t.dataset.mp; R = null; render(); return; }
   if (t.hasAttribute("data-op") && R && !R.resp) { const k = +t.dataset.op; responder(R.qs[R.n].opts[k].ok ? 2 : 0, { elegida: k }); return; }
   if (t.hasAttribute("data-sig")) { R.n++; R.resp = null; render(); return; }
   if (t.hasAttribute("data-otra")) { R = null; render(); return; }
@@ -317,9 +320,9 @@ render();
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795028832";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795029167";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1795028832";
+import { iniciarLateral } from "../shared/lateral.js?v=1795029167";
 copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
 const ult = {}; let t = null;
 function enviar() { for (const j of ["def", "trad", "gi", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }

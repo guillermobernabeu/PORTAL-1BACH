@@ -1,9 +1,9 @@
 // 1 BACH · Portada: pestañas del admin, compañeros, novedades, recomendaciones, resumen
 // (parte del antiguo script de index.html; los archivos js/ se cargan en orden y comparten las variables)
 // ---------- portal del administrador: Mi panel · Clase · Compañeros ----------
-function cargarApuntes(){if(window.__apCargando)return;window.__apCargando=1;import("../shared/apuntes.js?v=1795028832").then(()=>render()).catch(()=>{window.__apCargando=0})}
-function cargarPrep(){if(window.__prCargando)return;window.__prCargando=1;import("../shared/prep.js?v=1795028832").then(()=>render()).catch(()=>{window.__prCargando=0;toast("No se ha podido abrir.")})}
-function cargarMiPanel(){if(!S.esAdmin||window.__mpCargando)return;window.__mpCargando=1;import("../shared/mipanel.js?v=1795028832").then(()=>render()).catch(()=>{window.__mpCargando=0;toast("No se ha podido abrir tu panel.")})}
+function cargarApuntes(){if(window.__apCargando)return;window.__apCargando=1;import("../shared/apuntes.js?v=1795029167").then(()=>render()).catch(()=>{window.__apCargando=0})}
+function cargarPrep(){if(window.__prCargando)return;window.__prCargando=1;import("../shared/prep.js?v=1795029167").then(()=>render()).catch(()=>{window.__prCargando=0;toast("No se ha podido abrir.")})}
+function cargarMiPanel(){if(!S.esAdmin||window.__mpCargando)return;window.__mpCargando=1;import("../shared/mipanel.js?v=1795029167").then(()=>render()).catch(()=>{window.__mpCargando=0;toast("No se ha podido abrir tu panel.")})}
 function admTabs(r){document.querySelector(".admtabs")?.remove();if(!S.esAdmin||!S.uid)return;const v=$("#view"),a=r.startsWith("mipanel")?"mp":r==="companeros"?"co":"cl";
   v.insertAdjacentHTML("afterbegin",`<nav class="admtabs" aria-label="Portal del administrador"><a href="#mipanel" aria-current="${a==="mp"}">🗂 Mi panel</a><a href="#" data-go="resumen" aria-current="${a==="cl"}">👥 Clase</a><a href="#companeros" aria-current="${a==="co"}">🧑‍🤝‍🧑 Compañeros</a></nav>`)}
 function renderCompaneros(){if(!S.esAdmin)return `<div class="sheet"><b>Esto es solo para el administrador.</b></div>`;
