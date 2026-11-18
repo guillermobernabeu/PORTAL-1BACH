@@ -47,8 +47,11 @@ module.exports = {
     await p.click(".filt [data-tab=gi]"); await p.waitForTimeout(200);
     assert.ok(/gerund|english|español/i.test(await A.texto(p, ".tag")));
     assert.equal(await p.evaluate(() => R.qs.every(q => q.j === "gi")), true);
-    const r = await p.evaluate(() => { const g = id => GI.find(x => x.id === id).ok; return [corr("to buy", g("g43"), true), corr("buying", g("g43"), true), corr("I can't help laughing", g("g03")), corr("Paré para comprar pan", g("g31"))]; });
+    const r = await p.evaluate(() => { const g = id => GI.find(x => x.id === id).ok; return [corr("to buy", g("g001"), true), corr("buying", g("g001"), true), corr("I can't help laughing", g("e003")), corr("Paré para comprar pan", g("n001"))]; });
     assert.deepEqual(r, [2, 0, 2, 2]);
+    assert.equal(await p.evaluate(() => GI.length), 300);
+    await p.click("[data-mgi=gap]"); await p.waitForTimeout(200);
+    assert.ok(await p.evaluate(() => R.qs.length === 10 && R.qs.every(q => q.x.t === "gap")), "solo -ing o to");
   },
   "gerund & infinitive: teoría ordenada y botón para practicar": async (A, ctx) => {
     const p = await abrir(A, ctx, "#gi-teoria");

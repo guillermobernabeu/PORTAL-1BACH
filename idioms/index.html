@@ -63,7 +63,7 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="datos.js?v=1795012318"></script>
+<script src="datos.js?v=1795028832"></script>
 <script>
 const TOTAL = IDIOMS.length, RACHA_DOM = 2, KEY = "idioms_v1", RONDA = 10;
 
@@ -192,9 +192,9 @@ if (location.hash === "#lista") { tab = "lista"; $("#start").hidden = true; $("#
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795012318";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795028832";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1795012318";
+import { iniciarLateral } from "../shared/lateral.js?v=1795028832";
 copiaEnLaNube("idioms", () => ["idioms_v1"]);
 let ult = "", t = null;
 function enviar() { const r = [nDom(), TOTAL], k = r.join("/"); if (k === ult) return; ult = k; guardarProgreso("idioms", r[0], r[1]); }

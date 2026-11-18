@@ -80,9 +80,9 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="../vocabulary/palabras.js?v=1795012318"></script>
-<script src="../idioms/datos.js?v=1795012318"></script>
-<script src="datos.js?v=1795012318"></script>
+<script src="../vocabulary/palabras.js?v=1795028832"></script>
+<script src="../idioms/datos.js?v=1795028832"></script>
+<script src="datos.js?v=1795028832"></script>
 <script>
 // ---------- Juegos del global de Inglés ----------
 const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -119,7 +119,7 @@ const JUEGOS = {
     q: (w) => Math.random() < 0.5
       ? { tag: "Español → English", ask: "Tradúcelo al inglés", html: H(w.es), oks: enOk(w), sol: w.en, tipo: "esc" }
       : { tag: "English → Español", ask: "Tradúcelo al español", html: H(w.en), oks: esOk(w), sol: w.es, tipo: "esc", propias: true } },
-  gi: { app: "gi", titulo: "Gerund & infinitive", items: () => GI, nota: "Text 3: traduce frases con gerundio o infinitivo y elige -ing o to + verbo.",
+  gi: { app: "gi", titulo: "Gerund & infinitive", items: () => GI, nota: "Text 3: 300 ejercicios (100 de cada tipo): traducir en los dos sentidos y elegir -ing o to.",
     q: (g) => g.t === "gap"
       ? { tag: "Gerund or infinitive", ask: `¿-ing o to? Usa el verbo <b>${H(g.v)}</b>`, html: H(g.f).replace("___", '<span class="hueco">_____</span>'), oks: g.ok, sol: g.ok[0], tipo: "esc", estricto: true }
       : g.t === "es"
@@ -156,7 +156,9 @@ let tab = "def", R = null;
 function prio(j, x) { const s = j === "idioms" ? { r: Math.min(...["en", "es"].map(d => ((ID.s[x.id] || {})[d] || {}).r || 0)), f: 0 } : (S[j][x.id] || { r: 0, f: 0, a: 0 }); return (s.r >= RACHA ? 0 : 10) + (s.f || 0) * 2 - s.r * 3 + Math.random() * 5; }
 let modoPreg = "nuevas";
 const falladasPreg = () => PREGS.filter(x => { const s = S.preg[x.id]; return s && s.f > 0 && !(s.r > 0); });
+let modoGI = "mix";
 function elegir(j, n) {
+  if (j === "gi" && tab === "gi" && modoGI !== "mix") return azar(GI.filter(x => x.t === modoGI).map(x => [x, prio(j, x)]).sort((a, b) => b[1] - a[1]).slice(0, n).map(([x]) => ({ j, x, ...JUEGOS[j].q(x) })));
   if (j === "preg") {
     // siempre nuevas: primero las que no has visto nunca, luego las que aún no has acertado; "falladas": solo las falladas
     const vis = (x) => S.preg[x.id], L = modoPreg === "falladas" && tab === "preg" ? azar(falladasPreg())
@@ -261,8 +263,9 @@ function htmlJuego() {
   const modos = tab === "past" ? `<div class="filt"><span class="lb">Passive</span><button type="button" class="chip" data-tab="past" aria-pressed="${!teoGI}">✍️ Ejercicios</button><button type="button" class="chip" data-teopv aria-pressed="${teoGI}">📘 Teoría</button></div>` : tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi" && !teoGI}">🔀 Gerund & infinitive</button><button type="button" class="chip" data-teo aria-pressed="${tab === "gi" && teoGI}">📘 Teoría</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
   if (tab === "gi" && teoGI) return modos + TEORIA_GI;
   if (tab === "past" && teoGI) return modos + TEORIA_PV;
-  if (!R.qs.length) return modos + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
-  if (R.n >= R.qs.length) return modos + htmlFin();
+  const mgi = tab === "gi" ? `<div class="filt"><span class="lb">Practicar</span>${[["mix", "🔀 Mezcla"], ["es", "🇪🇸 → 🇬🇧"], ["en", "🇬🇧 → 🇪🇸"], ["gap", "-ing o to"]].map(([k, t]) => `<button type="button" class="chip" data-mgi="${k}" aria-pressed="${modoGI === k}">${t}</button>`).join("")}</div>` : "";
+  if (!R.qs.length) return modos + mgi + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
+  if (R.n >= R.qs.length) return modos + mgi + htmlFin();
   const q = R.qs[R.n], r = R.resp;
   let cuerpo;
   if (q.tipo === "opc") cuerpo = `<div class="opts">${q.opts.map((o, k) => `<button type="button" data-op="${k}" class="${r ? (o.ok ? "ok" : r.elegida === k ? "ko" : "") : ""}" ${r ? "disabled" : ""}>${H(o.t)}</button>`).join("")}</div>`;
@@ -274,7 +277,7 @@ function htmlJuego() {
     else fb = `<div class="fb ko">❌ <b>No.</b> ${q.tipo === "opc" ? "Era la marcada en verde." : "Era: <b>" + H(q.sol) + "</b>"}</div>${q.propias && !r.revisado ? `<div class="acts"><button type="button" class="btn sec" data-valia>Lo he puesto de otra forma correcta: cuenta como bien</button></div>` : ""}`;
     fb += `<div class="acts"><button type="button" class="btn" data-sig>${R.n + 1 >= R.qs.length ? "Ver resultado" : "Siguiente →"}</button></div>`;
   }
-  return modos + `<div class="card"><div class="ronda-t"><span>${R.n + 1} / ${R.qs.length}</span><div class="rb"><i style="width:${R.n / R.qs.length * 100}%"></i></div><span>✅ ${R.bien}</span></div>
+  return modos + mgi + `<div class="card"><div class="ronda-t"><span>${R.n + 1} / ${R.qs.length}</span><div class="rb"><i style="width:${R.n / R.qs.length * 100}%"></i></div><span>✅ ${R.bien}</span></div>
   <span class="tag">${tab === "examen" ? H(JUEGOS[q.j].titulo) + " · " : ""}${H(q.tag)}</span><p class="ask">${q.ask}</p><p class="prompt${q.frase || q.j === "def" && q.tipo === "esc" ? " med" : ""}">${q.html}</p>${cuerpo}${fb}</div>`;
 }
 function htmlFin() {
@@ -296,6 +299,7 @@ document.addEventListener("click", (e) => {
   if (t.hasAttribute("data-teopv")) { tab = "past"; teoGI = true; R = null; history.replaceState(null, "", "#past-teoria"); render(); scrollTo(0, 0); return; }
   if (t.hasAttribute("data-teo")) { tab = "gi"; teoGI = true; R = null; history.replaceState(null, "", "#gi-teoria"); render(); scrollTo(0, 0); return; }
   if (t.dataset.tab) { tab = t.dataset.tab; teoGI = false; R = null; history.replaceState(null, "", "#" + tab); render(); return; }
+  if (t.dataset.mgi) { modoGI = t.dataset.mgi; R = null; render(); return; }
   if (t.dataset.mp) { modoPreg = t.dataset.mp; R = null; render(); return; }
   if (t.hasAttribute("data-op") && R && !R.resp) { const k = +t.dataset.op; responder(R.qs[R.n].opts[k].ok ? 2 : 0, { elegida: k }); return; }
   if (t.hasAttribute("data-sig")) { R.n++; R.resp = null; render(); return; }
@@ -313,9 +317,9 @@ render();
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795012318";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795028832";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1795012318";
+import { iniciarLateral } from "../shared/lateral.js?v=1795028832";
 copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
 const ult = {}; let t = null;
 function enviar() { for (const j of ["def", "trad", "gi", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }
