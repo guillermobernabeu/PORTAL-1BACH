@@ -50,4 +50,12 @@ module.exports = {
     const r = await p.evaluate(() => { const g = id => GI.find(x => x.id === id).ok; return [corr("to buy", g("g43"), true), corr("buying", g("g43"), true), corr("I can't help laughing", g("g03")), corr("Paré para comprar pan", g("g31"))]; });
     assert.deepEqual(r, [2, 0, 2, 2]);
   },
+  "gerund & infinitive: teoría ordenada y botón para practicar": async (A, ctx) => {
+    const p = await abrir(A, ctx, "#gi-teoria");
+    const t = await A.texto(p, ".teo");
+    assert.ok(/Gerundio/.test(t) && /Infinitivo con to/.test(t) && /Cambian de significado/.test(t) && /can't afford/.test(t));
+    assert.equal(await p.evaluate(() => document.querySelectorAll(".teo-b.ger .vl li").length), 28);
+    await p.click(".teo [data-tab=gi]"); await p.waitForTimeout(200);
+    assert.ok(await A.hay(p, "#fEsc") && !(await A.hay(p, ".teo")));
+  },
 };

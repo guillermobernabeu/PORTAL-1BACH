@@ -58,6 +58,17 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 .prompt.med{font-size:clamp(18px,4.2vw,23px);font-weight:700}
 .prompt u{text-decoration-thickness:3px;text-underline-offset:4px;text-decoration-color:var(--acc)}
 .hueco{color:var(--acc);letter-spacing:.1em}
+.teo{display:flex;flex-direction:column;gap:12px}.teo-i{margin:0 0 2px;color:var(--ink2)}
+.teo-b h2{margin:0 0 6px;font-size:21px}.teo-b h3{margin:16px 0 4px;font-size:16px}.teo-b p{margin:4px 0}
+.teo-b.ger{border-top:5px solid var(--ok)}.teo-b.inf{border-top:5px solid var(--acc)}.teo-b.cam{border-top:5px solid var(--gold)}
+.ej{padding:6px 10px;border-left:3px solid var(--rule);background:var(--bg);border-radius:0 8px 8px 0;font-size:15px}.ej span{display:block;color:var(--ink2);font-size:13.5px}
+.ej.mal{color:var(--ko);text-decoration:line-through}
+.vl{list-style:none;margin:6px 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 14px;counter-reset:v}
+.vl li{counter-increment:v;display:flex;gap:6px;align-items:baseline;font-size:14.5px;padding:3px 0;border-bottom:1px dashed var(--rule)}
+.vl li::before{content:counter(v);font:700 11px system-ui;color:var(--ink2);min-width:18px}.vl li span{color:var(--ink2);font-size:13px}
+.ojo{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--warnbg);color:var(--warn);font-size:14px;line-height:1.5}
+.par{margin-top:6px}
+.teo table{width:100%;border-collapse:collapse;font-size:14px}.teo th,.teo td{border:1px solid var(--rule);padding:7px 8px;text-align:left;vertical-align:top}.teo th{background:var(--bg)}
 .inp.larga{flex-wrap:wrap}.inp.larga input{flex-basis:100%}
 </style></head><body>
 <span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
@@ -69,9 +80,9 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="../vocabulary/palabras.js?v=1794956098"></script>
-<script src="../idioms/datos.js?v=1794956098"></script>
-<script src="datos.js?v=1794956098"></script>
+<script src="../vocabulary/palabras.js?v=1795010136"></script>
+<script src="../idioms/datos.js?v=1795010136"></script>
+<script src="datos.js?v=1795010136"></script>
 <script>
 // ---------- Juegos del global de Inglés ----------
 const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -173,8 +184,56 @@ function pintarDominio() {
   const d = nDom(tab), T = total(tab);
   $("#dominio").innerHTML = `<div class="t"><b>${d}</b> de ${T} dominados · ${enPractica(tab)} en práctica<br><span style="font-size:12.5px">${H(JUEGOS[tab].nota)}</span></div><div class="pts-v"><b>${pts(tab)}</b><span>puntos</span></div><div class="bar"><i style="width:${d / T * 100}%"></i></div>`;
 }
+let teoGI = false;
+const _V = (l) => `<ol class="vl">${l.map(([v, t]) => `<li><b>${v}</b><span>${t}</span></li>`).join("")}</ol>`;
+const TEORIA_GI = `<article class="teo">
+<p class="teo-i">En inglés, cuando un verbo va seguido de otra acción, esa segunda acción va en <b>gerundio (-ing)</b> o en <b>infinitivo con to</b>. No se elige al azar: depende de dónde va y de qué verbo va delante.</p>
+
+<section class="card teo-b ger"><h2>1 · Gerundio (-ing)</h2>
+<h3>① Como sujeto de la oración</h3><p>Cuando el verbo hace de sustantivo (en español suele ir en infinitivo).</p>
+<p class="ej"><b>Smoking</b> is bad. <span>Fumar es malo.</span></p><p class="ej">Most people think that <b>smoking</b> is bad.</p>
+<h3>② Después de una preposición</h3><p>for, of, about, in, at, without, before, after… + <b>-ing</b>, siempre.</p>
+<p class="ej">Thanks for <b>coming</b>. <span>Gracias por venir.</span></p><p class="ej">She left without <b>saying</b> goodbye.</p>
+<h3>③ Después de estos 28 verbos</h3>${_V([["admit", "admitir"], ["advise *", "aconsejar"], ["allow *", "permitir"], ["avoid", "evitar"], ["be worth", "merecer la pena"], ["can't help", "no poder evitar"], ["can't stand", "no soportar"], ["celebrate", "celebrar"], ["confess", "confesar"], ["consider", "considerar"], ["defend", "defender"], ["dislike", "no gustar"], ["like", "gustar"], ["enjoy", "disfrutar"], ["explain", "explicar"], ["fancy", "apetecer, molar"], ["feel like", "apetecer"], ["finish", "terminar"], ["forgive", "perdonar"], ["give up", "dejar, abandonar"], ["keep (on)", "seguir, no parar de"], ["mind", "importar"], ["miss", "echar de menos"], ["permit *", "permitir"], ["practise", "practicar"], ["recommend *", "recomendar"], ["suggest", "sugerir"], ["understand", "entender"]])}
+<p class="ej">I enjoy <b>reading</b>. · I can't help <b>laughing</b>. · It's not worth <b>waiting</b>. · Do you mind <b>closing</b> the window?</p>
+<div class="ojo"><b>⚠️ * advise, allow, permit, recommend</b><br>Sin persona detrás → <b>-ing</b>: They don't allow <b>smoking</b> here.<br>Con persona detrás → <b>to</b>: They allowed <b>me to go</b>. · I advise <b>you to study</b>.</div>
+</section>
+
+<section class="card teo-b inf"><h2>2 · Infinitivo con to</h2>
+<h3>① Después de un adjetivo</h3>
+<p class="ej">Nice <b>to meet</b> you. · Pleased <b>to meet</b> you. · I am very happy <b>to come</b> here.</p>
+<h3>② Para expresar finalidad («para»)</h3><p>En inglés «para + verbo» es <b>to + verbo</b>. Nunca <s>for + -ing</s>.</p>
+<p class="ej">I came here <b>to see</b> you. <span>Vine para verte.</span></p><p class="ej mal">✗ I came here for seeing you.</p>
+<h3>③ Después de estos verbos</h3>${_V([["agree", "estar de acuerdo, acordar"], ["appear / seem", "aparecer, parecer"], ["ask", "pedir, preguntar"], ["attempt = intend", "intentar"], ["beg", "rogar"], ["can / can't afford", "(no) poder permitirse"], ["can / can't wait", "(no) poder esperar"], ["choose", "elegir"], ["claim", "reclamar, afirmar"], ["dare", "atreverse"], ["decide", "decidir"], ["deserve", "merecer"], ["fail", "fallar, no conseguir"], ["hope", "esperar (esperanza)"], ["expect", "esperar (expectativa)"], ["learn", "aprender"], ["mean", "querer decir, pretender"], ["need", "necesitar"], ["offer", "ofrecer"], ["plan", "planear"], ["prepare", "prepararse"], ["promise", "prometer"], ["refuse", "negarse, rechazar"], ["struggle", "luchar, esforzarse"], ["tell", "decir, ordenar"], ["tend", "tender a"], ["threaten", "amenazar"], ["wait", "esperar (tiempo)"], ["want", "querer"], ["wish", "desear"], ["would like", "querer, gustaría"]])}
+<p class="ej">She refused <b>to pay</b>. · We can't afford <b>to buy</b> it. · I'd like <b>to go</b>. · He promised <b>to help</b> me.</p>
+</section>
+
+<section class="card teo-b cam"><h2>3 · Cambian de significado</h2><p>Estos tres verbos llevan las dos formas, pero no significan lo mismo.</p>
+<div class="par"><h3>stop</h3>
+<p class="ej">I stopped <b>to call</b> you. <span>Paré <b>para</b> llamarte.</span></p>
+<p class="ej">I stopped <b>calling</b> you. <span><b>Dejé de</b> llamarte.</span></p>
+<p class="ej">Yesterday I stopped <b>to smoke</b> at the station. <span>Paré para fumar.</span></p>
+<p class="ej">Yesterday I stopped <b>smoking</b> forever. <span>Dejé de fumar.</span></p></div>
+<div class="par"><h3>forget</h3>
+<p class="ej">I forgot <b>to meet</b> him. <span><b>Se me olvidó</b> quedar con él (no lo hice).</span></p>
+<p class="ej">I forgot <b>meeting</b> him. <span><b>Olvidé haberlo hecho</b> (sí quedé).</span></p></div>
+<div class="par"><h3>remember</h3>
+<p class="ej">She remembered <b>to visit</b> her grandmother. <span><b>Se acordó de</b> ir a verla.</span></p>
+<p class="ej">She remembered <b>visiting</b> her grandmother. <span><b>Recordaba haberlo hecho.</b></span></p></div>
+<div class="ojo"><b>💡 Truco:</b> con <b>to</b> la acción viene <b>después</b> (algo que hay que hacer); con <b>-ing</b> la acción ya <b>había pasado</b>.</div>
+</section>
+
+<section class="card teo-b res"><h2>Resumen rápido</h2>
+<table><tr><th>-ing</th><th>to + verbo</th></tr>
+<tr><td>Sujeto: <i>Smoking is bad</i></td><td>Después de adjetivo: <i>Nice to meet you</i></td></tr>
+<tr><td>Después de preposición: <i>Thanks for coming</i></td><td>Finalidad («para»): <i>I came to see you</i></td></tr>
+<tr><td>enjoy, avoid, finish, mind, can't stand, give up, keep, suggest…</td><td>want, decide, hope, refuse, promise, can't afford, would like…</td></tr>
+<tr><td colspan="2"><b>stop / forget / remember:</b> to = después · -ing = antes (ya pasó)</td></tr></table>
+<div class="acts"><button type="button" class="btn" data-tab="gi">Practicar ahora →</button></div></section>
+</article>`;
 function htmlJuego() {
-  const modos = tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi"}">🔀 Gerund & infinitive</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
+  const modos = tab === "trad" || tab === "gi" ? `<div class="filt"><span class="lb">Translate</span><button type="button" class="chip" data-tab="trad" aria-pressed="${tab === "trad"}">📚 Vocabulario</button><button type="button" class="chip" data-tab="gi" aria-pressed="${tab === "gi" && !teoGI}">🔀 Gerund & infinitive</button><button type="button" class="chip" data-teo aria-pressed="${tab === "gi" && teoGI}">📘 Teoría</button></div>` : tab === "preg" ? `<div class="filt"><span class="lb">Modo</span><button type="button" class="chip" data-mp="nuevas" aria-pressed="${modoPreg === "nuevas"}">🆕 Frases nuevas</button><button type="button" class="chip" data-mp="falladas" aria-pressed="${modoPreg === "falladas"}">🔁 Repasar falladas (${falladasPreg().length})</button></div>` : "";
+  if (tab === "gi" && teoGI) return modos + TEORIA_GI;
   if (!R.qs.length) return modos + `<div class="card fin"><h2>No tienes falladas 🎉</h2><p>Cuando falles alguna, aparecerá aquí para repasarla.</p></div>`;
   if (R.n >= R.qs.length) return modos + htmlFin();
   const q = R.qs[R.n], r = R.resp;
@@ -207,7 +266,8 @@ function responder(v, extra) {
 }
 document.addEventListener("click", (e) => {
   const t = e.target.closest("button"); if (!t) return;
-  if (t.dataset.tab) { tab = t.dataset.tab; R = null; history.replaceState(null, "", "#" + tab); render(); return; }
+  if (t.hasAttribute("data-teo")) { tab = "gi"; teoGI = true; R = null; history.replaceState(null, "", "#gi-teoria"); render(); scrollTo(0, 0); return; }
+  if (t.dataset.tab) { tab = t.dataset.tab; teoGI = false; R = null; history.replaceState(null, "", "#" + tab); render(); return; }
   if (t.dataset.mp) { modoPreg = t.dataset.mp; R = null; render(); return; }
   if (t.hasAttribute("data-op") && R && !R.resp) { const k = +t.dataset.op; responder(R.qs[R.n].opts[k].ok ? 2 : 0, { elegida: k }); return; }
   if (t.hasAttribute("data-sig")) { R.n++; R.resp = null; render(); return; }
@@ -220,14 +280,14 @@ document.addEventListener("submit", (e) => {
   responder(corr(txt, q.oks, q.estricto), { txt });
 });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && R && R.resp) { const b = $("[data-sig]"); if (b) { e.preventDefault(); b.click(); } } });
-{ const h = location.hash.slice(1); if (JUEGOS[h] && h !== "idioms" || h === "examen") tab = h; }
+{ const h = location.hash.slice(1); if (h === "gi-teoria") { tab = "gi"; teoGI = true; } if (JUEGOS[h] && h !== "idioms" || h === "examen") tab = h; }
 render();
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1794956098";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795010136";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1794956098";
+import { iniciarLateral } from "../shared/lateral.js?v=1795010136";
 copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
 const ult = {}; let t = null;
 function enviar() { for (const j of ["def", "trad", "gi", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }
