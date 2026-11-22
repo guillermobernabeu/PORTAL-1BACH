@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tema 3 · El dinero y el sistema financiero · 1 BACH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f8f3; --paper:#ffffff; --ink:#1d2a24; --soft:#5a6a62; --line:#dfe6dc;
+  --a1:#2e8b57; --a2:#2f6fb5; --a3:#e2a929; --a4:#c0503a; --a5:#7a5cc2;
+  --tint1:#e6f4ec; --tint2:#e5eefa; --tint3:#fdf3d9; --tint4:#fbe8e3; --tint5:#efeafa;
+}
+html.noche{
+  --bg:#000; --paper:#0b0000; --ink:#d42a1a; --soft:#9c1f12; --line:#3a0a05;
+  --a1:#ff3b24; --a2:#c22414; --a3:#e0331f; --a4:#a81c10; --a5:#c92816;
+  --tint1:#1a0302; --tint2:#140201; --tint3:#1a0302; --tint4:#140201; --tint5:#1a0302;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-size:17px;line-height:1.6;transition:background .3s,color .3s}
+.wrap{max-width:860px;margin:0 auto;padding:28px 18px 80px}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0 0 6px;font-weight:800}
+.sub{color:var(--soft);margin:0}
+button.modo{font:inherit;font-weight:700;font-size:14px;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
+nav.indice{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 30px}
+nav.indice a{text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600}
+section{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px 24px 20px;margin:0 0 26px}
+section h2{display:flex;align-items:center;gap:12px;font-size:23px;margin:0 0 14px;line-height:1.2}
+.num{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:17px;font-weight:800}
+html.noche .num{color:#000}
+h3{font-size:18px;margin:22px 0 6px}
+p{margin:0 0 10px}
+.fig{margin:14px 0 18px;text-align:center}
+.fig svg{width:100%;height:auto;max-width:680px}
+.fig figcaption{font-family:Caveat,cursive;font-size:21px;color:var(--soft);margin-top:2px}
+.clave{border-radius:12px;padding:12px 16px;margin:14px 0 4px;font-weight:600}
+.clave b.tag{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:2px}
+.nota{font-size:15px;color:var(--soft);border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:10px 0}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.card h4{margin:0 0 4px;font-size:16px}
+ul{margin:4px 0 10px;padding-left:22px}
+li{margin:3px 0}
+table.t{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}
+table.t th,table.t td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+table.t th{background:var(--tint1)}
+.tabla{overflow-x:auto}
+.formula{font:800 17px/1.4 ui-monospace,Menlo,monospace;background:var(--tint3);border-radius:10px;padding:10px 14px;margin:10px 0;text-align:center}
+details.sol{border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--paper)}
+details.sol summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:700}
+details.sol summary::-webkit-details-marker{display:none}
+details.sol summary .ver{float:right;font-size:13px;font-weight:800;color:var(--a1);border:1.5px solid var(--a1);border-radius:999px;padding:2px 10px;margin-left:8px}
+details.sol[open] summary .ver{background:var(--a1);color:var(--paper)}
+details.sol .res{padding:2px 16px 12px;border-top:1px dashed var(--line);font-size:16px}
+details.sol .res .ok{font-weight:800;color:var(--a1)}
+.botones{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.botones button{font:inherit;font-size:14px;font-weight:700;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.volver{display:inline-block;margin:0 0 14px;font-weight:800;font-size:15px;color:var(--ink);text-decoration:none}
+.orig{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--tint2);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:0 0 22px;font-weight:600;font-size:15px}
+.orig a{color:var(--ink);font-weight:800}
+.marca{position:fixed;right:12px;bottom:12px;z-index:9;font:700 11px/1 system-ui,sans-serif;padding:4px 10px;border:1.4px solid #c3132b;color:#c3132b;border-radius:999px;background:rgba(255,255,255,.95)}
+@media(max-width:620px){.duo,.trio{grid-template-columns:1fr}section{padding:20px 16px}}
+/* estilos de los dibujos */
+svg .k{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+svg .kt{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+svg .d{fill:none;stroke:var(--soft);stroke-width:2;stroke-dasharray:5 5;stroke-linecap:round}
+svg .t{fill:var(--ink);font-family:Caveat,cursive;font-size:22px;font-weight:700}
+svg .ts{fill:var(--soft);font-family:Caveat,cursive;font-size:18px;font-weight:600}
+svg .w{fill:var(--paper)}
+svg .f1{fill:var(--a1)} svg .f2{fill:var(--a2)} svg .f3{fill:var(--a3)} svg .f4{fill:var(--a4)} svg .f5{fill:var(--a5)}
+svg .g1{fill:var(--tint1)} svg .g2{fill:var(--tint2)} svg .g3{fill:var(--tint3)} svg .g4{fill:var(--tint4)} svg .g5{fill:var(--tint5)}
+svg .s1{stroke:var(--a1)} svg .s2{stroke:var(--a2)} svg .s3{stroke:var(--a3)} svg .s4{stroke:var(--a4)} svg .s5{stroke:var(--a5)}
+svg .ink{fill:var(--ink)}
+footer{color:var(--soft);font-size:14px;text-align:center;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a href="../" class="volver" id="volver">← Volver al portal</a>
+
+<header class="top">
+  <div>
+    <h1>Tema 3: El dinero y el sistema financiero</h1>
+    <p class="sub">Apuntes de Economía ordenados y con dibujos · con los ejercicios del tema resueltos</p>
+  </div>
+  <button class="modo" id="modo" type="button">🌙 Modo noche (rojo)</button>
+</header>
+
+<nav class="indice">
+  <a href="#dinero">1 · El dinero</a><a href="#activos">2 · Activos financieros</a><a href="#caracteristicas">3 · Liquidez, rentabilidad y riesgo</a><a href="#creacion">4 · Creación de dinero</a><a href="#cuentas">5 · Cuentas y medios de pago</a><a href="#ahorro">6 · Instrumentos de ahorro</a><a href="#sistema">7 · Sistema financiero</a><a href="#mercados">8 · Mercados y bolsa</a><a href="#rentabilidad">9 · Calcular la rentabilidad</a><a href="#ejercicios">✎ Ejercicios resueltos</a>
+</nav>
+
+<div class="orig"><span>📄 ¿Quieres los apuntes originales del tema 3, tal cual (16 páginas)?</span><a href="tema3-original.pdf" target="_blank" rel="noopener">Abrir el PDF →</a></div>
+
+<!-- 1 DINERO -->
+<section id="dinero">
+  <h2><span class="num" style="background:var(--a1)">1</span>El dinero: concepto, funciones, condiciones y clases</h2>
+  <p>El <b>dinero</b> es cualquier instrumento que todos aceptan gracias a la <b>confianza</b> que le dan los usuarios. Tiene <b>tres funciones</b>:</p>
+  <figure class="fig">
+  <svg viewBox="0 0 680 200" role="img" aria-label="Las tres funciones del dinero: medio de pago, unidad de cuenta y depósito de valor">
+    <rect class="k g1" x="15" y="15" width="200" height="140" rx="16"/>
+    <rect class="k w" x="55" y="55" width="70" height="42" rx="5"/><circle class="k f1" cx="90" cy="76" r="10"/>
+    <path class="k" d="M135 76 h40"/><path class="k" d="M167 68 l10 8 -10 8"/>
+    <path class="k g3" d="M165 100 l25 -12 0 30 -25 0z"/>
+    <text class="ts" x="45" y="130">pago y me lo aceptan</text>
+    <text class="t" x="40" y="185">medio de pago</text>
+    <rect class="k g2" x="240" y="15" width="200" height="140" rx="16"/>
+    <path class="k w" d="M285 50 h60 l25 25 -25 25 h-60z"/><circle class="k" cx="300" cy="75" r="5"/>
+    <text class="t" x="315" y="82">2 €</text>
+    <text class="ts" x="262" y="130">sirve para poner precios</text>
+    <text class="t" x="262" y="185">unidad de cuenta</text>
+    <rect class="k g3" x="465" y="15" width="200" height="140" rx="16"/>
+    <path class="k w" d="M520 115 v-40 q0 -22 45 -22 q45 0 45 22 v40 z"/><path class="k" d="M550 62 h30"/>
+    <circle class="k f3" cx="545" cy="98" r="10"/><circle class="k f3" cx="565" cy="94" r="10"/><circle class="k f3" cx="585" cy="100" r="10"/>
+    <text class="ts" x="490" y="140">guardo riqueza para luego</text>
+    <text class="t" x="485" y="185">depósito de valor</text>
+  </svg>
+  <figcaption>pagar · poner precios · ahorrar</figcaption>
+  </figure>
+
+  <h3>De dónde viene el dinero: su evolución</h3>
+  <p>El dinero nace para <b>superar los inconvenientes del trueque</b> (cambiar unas cosas por otras).</p>
+  <figure class="fig">
+  <svg viewBox="0 0 680 230" role="img" aria-label="Evolución: trueque, dinero mercancía, metales y monedas, dinero papel, dinero bancario y dinero fiduciario">
+    <path class="k" d="M20 120 H650"/><path class="k" d="M640 112 l12 8 -12 8"/>
+    <!-- trueque -->
+    <circle class="k g4" cx="60" cy="70" r="14"/><path class="k" d="M44 92 l16 -8 16 8"/><path class="kt" d="M50 52 q10 -12 22 0"/><path class="kt" d="M68 52 l4 0 -2 -4"/>
+    <text class="t" x="30" y="150">trueque</text><text class="ts" x="20" y="172">cambio cosas</text>
+    <!-- mercancía -->
+    <path class="k g1" d="M130 82 q0 -20 25 -20 q30 0 30 20 v10 h-55z"/><path class="k" d="M136 92 v10 M178 92 v10"/><circle class="ink" cx="176" cy="70" r="2.5"/>
+    <text class="t" x="128" y="150">mercancía</text><text class="ts" x="125" y="172">ganado, sal</text>
+    <!-- metales -->
+    <circle class="k f3" cx="252" cy="80" r="16"/><circle class="k g3" cx="275" cy="72" r="16"/><text class="ts" x="268" y="78">Au</text>
+    <text class="t" x="225" y="150">oro y plata</text><text class="ts" x="225" y="172">→ monedas</text>
+    <!-- papel -->
+    <rect class="k w" x="340" y="55" width="58" height="40" rx="3"/><path class="kt" d="M348 67 h40 M348 77 h30 M348 87 h22"/>
+    <text class="t" x="330" y="150">papel</text><text class="ts" x="320" y="172">letras de cambio</text>
+    <!-- bancario -->
+    <path class="k g2" d="M440 98 h70 M445 98 v-28 M465 98 v-28 M485 98 v-28 M505 98 v-28 M438 70 h74 l-37 -20 z"/>
+    <text class="t" x="438" y="150">bancario</text><text class="ts" x="425" y="172">préstamos con interés</text>
+    <!-- fiduciario -->
+    <path class="k g1" d="M575 62 q20 -12 40 0 v18 q0 18 -20 26 q-20 -8 -20 -26z"/><path class="k s1" d="M585 78 l8 8 14 -16"/>
+    <text class="t" x="560" y="150">fiduciario</text><text class="ts" x="545" y="172">hoy: es confianza</text>
+    <text class="ts" x="20" y="215">el dinero fiduciario no necesita un bien que lo respalde: vale porque confiamos en que los demás lo aceptarán</text>
+  </svg>
+  </figure>
+  <ul>
+    <li><b>Dinero mercancía:</b> bienes con <b>valor intrínseco</b> (ganado, sal). Luego, mercancías no perecederas, divisibles y valiosas: <b>oro y plata</b>, con los que se acuñaron <b>monedas</b>.</li>
+    <li><b>Dinero papel:</b> los prestamistas que guardaban monedas daban <b>letras de cambio</b> (recibos para devolver el depósito). Cuando se emitieron <b>al portador</b>, empezaron a valer como dinero.</li>
+    <li><b>Dinero bancario:</b> el oro depositado se prestaba a cambio de un <b>tipo de interés</b>.</li>
+    <li><b>Hoy el dinero es fiduciario:</b> no hace falta un bien que lo respalde; se basa en la <b>confianza</b>. Hay dos tipos:
+      <ul><li><b>Dinero legal:</b> billetes y monedas que emiten los bancos centrales.</li>
+      <li><b>Dinero bancario:</b> el que está depositado como anotaciones en cuentas de los bancos.</li></ul></li>
+  </ul>
+
+  <h3>Condiciones para que algo sirva como dinero</h3>
+  <div class="tabla"><table class="t">
+    <tr><th>Condición</th><th>Qué significa</th></tr>
+    <tr><td><b>Escaso</b></td><td>No puede existir en cantidades ilimitadas.</td></tr>
+    <tr><td><b>Estable</b></td><td>Su valor se mantiene más o menos constante en el tiempo y en el espacio.</td></tr>
+    <tr><td><b>Cómodo</b></td><td>Fácil de almacenar, transportar y transferir.</td></tr>
+    <tr><td><b>Divisible</b></td><td>Se puede fraccionar en pequeñas cantidades.</td></tr>
+    <tr><td><b>Homogéneo</b></td><td>Cada unidad es tan buena como las demás.</td></tr>
+    <tr><td><b>Reconocible</b></td><td>Todo el mundo lo aprecia.</td></tr>
+    <tr><td><b>Infalsificable</b></td><td>Debe ser difícil de falsificar.</td></tr>
+  </table></div>
+  <p class="nota">Truco: <b>E</b>scaso, <b>E</b>stable, <b>C</b>ómodo, <b>D</b>ivisible, <b>H</b>omogéneo, <b>R</b>econocible, <b>I</b>nfalsificable → «<b>EE CDHRI</b>».</p>
+  <div class="clave" style="background:var(--tint1)"><b class="tag">Idea clave</b>Dinero = medio de pago + unidad de cuenta + depósito de valor. Trueque → mercancía → metales → papel → bancario → fiduciario (legal y bancario).</div>
+</section>
+
+<!-- 2 ACTIVOS -->
+<section id="activos">
+  <h2><span class="num" style="background:var(--a2)">2</span>El dinero como activo financiero</h2>
+  <p>Un <b>activo (o producto) financiero</b> es todo medio o documento que permite <b>acumular y transmitir fondos</b> y mantener riqueza. Son <b>títulos</b> que emiten los <b>prestatarios</b> y compran los <b>prestamistas</b>.</p>
+  <figure class="fig">
+  <svg viewBox="0 0 680 210" role="img" aria-label="El prestatario con déficit emite un título; el prestamista con superávit le da el dinero">
+    <rect class="k g4" x="20" y="20" width="230" height="150" rx="16"/>
+    <circle class="k w" cx="80" cy="70" r="18"/><path class="k" d="M50 125 q30 -45 60 0"/>
+    <path class="k w" d="M135 60 h80 v50 h-80z"/><text class="t" x="153" y="92">−€</text>
+    <text class="t" x="40" y="200">prestatario (déficit)</text>
+    <text class="ts" x="40" y="155">empresas, familias, Estado, bancos</text>
+    <path class="k s2" d="M265 70 H415"/><path class="k s2" d="M405 62 l12 8 -12 8"/>
+    <rect class="k w" x="305" y="40" width="70" height="44" rx="3"/><path class="kt" d="M313 52 h50 M313 62 h40 M313 72 h30"/>
+    <text class="ts" x="300" y="105">le da un título</text>
+    <path class="k s1" d="M415 140 H265"/><path class="k s1" d="M275 132 l-12 8 12 8"/>
+    <circle class="k f3" cx="340" cy="140" r="12"/><text class="ts" x="305" y="170">le presta dinero</text>
+    <rect class="k g1" x="430" y="20" width="230" height="150" rx="16"/>
+    <circle class="k w" cx="490" cy="70" r="18"/><path class="k" d="M460 125 q30 -45 60 0"/>
+    <path class="k w" d="M545 60 h80 v50 h-80z"/><text class="t" x="563" y="92">+€</text>
+    <text class="t" x="445" y="200">prestamista (superávit)</text>
+    <text class="ts" x="450" y="155">particulares, fondos de inversión</text>
+  </svg>
+  <figcaption>al que le falta dinero emite el título; al que le sobra, lo compra</figcaption>
+  </figure>
+  <div class="duo">
+    <div class="card"><h4>Prestatarios (con déficit)</h4>Sus ingresos no cubren sus gastos: <b>empresas, familias y sector público</b>, y también los <b>intermediarios financieros</b> (bancos y cajas), que emiten títulos para financiar su actividad.</div>
+    <div class="card"><h4>Prestamistas (con superávit)</h4>Les sobran ingresos: <b>particulares</b> o <b>inversión colectiva</b> (fondos de inversión).</div>
+  </div>
+  <h3>Tipos de activos financieros</h3>
+  <div class="trio">
+    <div class="card" style="background:var(--tint1)"><h4>🐷 De ahorro</h4>Planes de ahorro, <b>imposiciones a plazo fijo</b> (dinero depositado un tiempo a un interés prefijado, sin retirarlo hasta el vencimiento).</div>
+    <div class="card" style="background:var(--tint2)"><h4>📈 De inversión</h4><b>Letras, pagarés, obligaciones y acciones</b>. Las acciones son la <b>parte alícuota</b> del capital social de una empresa.</div>
+    <div class="card" style="background:var(--tint3)"><h4>🛡️ De cobertura de riesgos</h4>Los <b>seguros</b>: de vida, de vivienda, de vehículos…</div>
+  </div>
+  <div class="clave" style="background:var(--tint2)"><b class="tag">Idea clave</b>Activo financiero = documento para acumular y transmitir dinero. Lo emite quien tiene déficit (prestatario) y lo compra quien tiene superávit (prestamista). Tipos: ahorro, inversión y seguros.</div>
+</section>
+
+<!-- 3 CARACTERÍSTICAS -->
+<section id="caracteristicas">
+  <h2><span class="num" style="background:var(--a3)">3</span>Características de los activos: liquidez, rentabilidad y riesgo</h2>
+  <div class="trio">
+    <div class="card"><h4>💧 Liquidez</h4>Facilidad para convertirlo <b>en dinero a corto plazo</b>, rápido y con <b>bajos costes</b>. El activo más líquido es el propio <b>dinero</b>.</div>
+    <div class="card"><h4>💰 Rendimiento</h4>Lo que te pagan por el activo, en % sobre lo que pagaste. La <b>rentabilidad</b> es ese tipo de interés en tanto por ciento.</div>
+    <div class="card"><h4>⚠️ Riesgo</h4>Posibilidad de <b>no recuperar</b> todo o parte de lo invertido. El interés se completa con una <b>prima de riesgo</b>.</div>
+  </div>
+  <figure class="fig">
+  <svg viewBox="0 0 680 220" role="img" aria-label="Más riesgo significa más rentabilidad; más liquidez significa menos rentabilidad">
+    <rect class="k g4" x="20" y="15" width="300" height="175" rx="16"/>
+    <text class="t" x="40" y="45">riesgo ↑ → rentabilidad ↑</text>
+    <path class="k" d="M60 160 V70 M60 160 H290"/>
+    <path class="k s4" d="M70 150 Q170 130 280 70"/><circle class="k f4" cx="280" cy="70" r="6"/>
+    <text class="ts" x="215" y="180">riesgo</text><text class="ts" x="30" y="66">rent.</text>
+    <text class="ts" x="80" y="110">mismo sentido</text>
+    <rect class="k g2" x="360" y="15" width="300" height="175" rx="16"/>
+    <text class="t" x="380" y="45">liquidez ↑ → rentabilidad ↓</text>
+    <path class="k" d="M400 160 V70 M400 160 H630"/>
+    <path class="k s2" d="M410 75 Q510 95 620 150"/><circle class="k f2" cx="620" cy="150" r="6"/>
+    <text class="ts" x="545" y="180">liquidez</text><text class="ts" x="370" y="66">rent.</text>
+    <text class="ts" x="470" y="125">sentido contrario</text>
+    <text class="ts" x="40" y="212">si arriesgas más, te pagan más · si lo puedes recuperar muy fácil, te pagan menos</text>
+  </svg>
+  </figure>
+  <h3>Renta fija y renta variable</h3>
+  <div class="duo">
+    <div class="card" style="background:var(--tint1)"><h4>Renta fija</h4>Pagan unos <b>intereses prefijados</b>: obligaciones de deuda pública, pagarés de empresa, <b>empréstitos</b> (obligaciones de empresas privadas).</div>
+    <div class="card" style="background:var(--tint3)"><h4>Renta variable</h4>Lo que ganas <b>varía</b> según la cotización en el mercado o los beneficios que reparte la empresa (<b>dividendos</b>). El principal: las <b>acciones</b>.</div>
+  </div>
+  <div class="clave" style="background:var(--tint3)"><b class="tag">Idea clave</b>Más riesgo → más rentabilidad. Más liquidez → menos rentabilidad. Renta fija = interés prefijado; renta variable = acciones (dividendos y cotización).</div>
+</section>
+
+<!-- 4 CREACIÓN -->
+<section id="creacion">
+  <h2><span class="num" style="background:var(--a4)">4</span>Cómo los bancos crean dinero bancario</h2>
+  <p>Los bancos <b>no necesitan guardar todo</b> el dinero que depositan sus clientes. Solo reservan un porcentaje: el <b>coeficiente de reservas</b> o <b>coeficiente legal de caja</b>, que fijan las autoridades monetarias y que <b>hoy es del 1 %</b>. El resto lo <b>prestan</b> (PR) y cobran intereses.</p>
+  <div class="formula">Reservas (R) = Depósitos (D) · coeficiente de reservas (r)</div>
+  <figure class="fig">
+  <svg viewBox="0 0 680 280" role="img" aria-label="Laura deposita 1000 euros en el banco A, que guarda 10 y presta 990 a Javier, que los deposita en el banco B, que guarda 9,9 y presta 980,1 a Carmen, y así sucesivamente">
+    <!-- fila A -->
+    <circle class="k g4" cx="45" cy="45" r="16"/><text class="t" x="20" y="88">Laura</text><text class="ts" x="18" y="106">1000 €</text>
+    <path class="k" d="M70 45 H135"/><path class="k" d="M127 37 l10 8 -10 8"/>
+    <path class="k g2" d="M145 70 h90 M150 70 v-26 M175 70 v-26 M200 70 v-26 M225 70 v-26 M143 44 h94 l-47 -22z"/>
+    <text class="t" x="155" y="95">Banco A</text><text class="ts" x="150" y="113">D = 1000 €</text>
+    <path class="k" d="M245 40 H300"/><text class="ts" x="305" y="45">R = 10 € (se guarda el 1 %)</text>
+    <path class="k s1" d="M245 62 H300"/><text class="ts" x="305" y="67">PR = 990 € (lo presta)</text>
+    <path class="d" d="M520 62 Q600 62 600 110 Q600 140 100 140 Q60 140 60 160"/><path class="k" d="M52 152 l8 10 8 -10"/>
+    <!-- fila B -->
+    <circle class="k g4" cx="45" cy="190" r="16"/><text class="t" x="20" y="232">Javier</text><text class="ts" x="18" y="250">990 €</text>
+    <path class="k" d="M70 190 H135"/><path class="k" d="M127 182 l10 8 -10 8"/>
+    <path class="k g2" d="M145 215 h90 M150 215 v-26 M175 215 v-26 M200 215 v-26 M225 215 v-26 M143 189 h94 l-47 -22z"/>
+    <text class="t" x="155" y="240">Banco B</text><text class="ts" x="152" y="258">D = 990 €</text>
+    <path class="k" d="M245 185 H300"/><text class="ts" x="305" y="190">R = 9,90 €</text>
+    <path class="k s1" d="M245 207 H300"/><text class="ts" x="305" y="212">PR = 980,10 € → a Carmen, Banco C…</text>
+    <text class="ts" x="400" y="262">y así se va multiplicando el dinero</text>
+  </svg>
+  <figcaption>cada préstamo vuelve a depositarse en otro banco: los depósitos se expanden</figcaption>
+  </figure>
+  <p>Así empieza la <b>expansión de los depósitos</b> o <b>creación de dinero bancario</b>: el mismo dinero se deposita, se presta, se vuelve a depositar… (Banco C: D = 980,10 €, R = 9,80 €, PR = 970,30 €).</p>
+  <div class="clave" style="background:var(--tint4)"><b class="tag">Idea clave</b>R = D · r. El coeficiente legal de caja es del 1 %; el resto se presta y vuelve a los bancos como nuevos depósitos → creación de dinero bancario.</div>
+</section>
+
+<!-- 5 CUENTAS Y MEDIOS DE PAGO -->
+<section id="cuentas">
+  <h2><span class="num" style="background:var(--a5)">5</span>Cuentas bancarias y medios de pago</h2>
+  <div class="duo">
+    <div class="card"><h4>Cuenta corriente</h4>Se le pueden asociar <b>cheques</b>; los movimientos se comunican con el <b>extracto bancario</b>.</div>
+    <div class="card"><h4>Libreta de ahorro</h4>Normalmente <b>sin cheques</b>; los movimientos se anotan <b>en la libreta</b>.</div>
+  </div>
+  <p><b>Descubierto</b> («estar en números rojos»): la cuenta tiene <b>saldo negativo</b>; has gastado más de lo que tenías y se lo debes al banco.</p>
+
+  <h3>Formas de mover el dinero (medios de pago)</h3>
+  <figure class="fig">
+  <svg viewBox="0 0 680 170" role="img" aria-label="Cheque, pagaré, transferencia y tarjeta">
+    <rect class="k g1" x="15" y="30" width="145" height="80" rx="6"/><path class="kt" d="M28 50 h80 M28 66 h60"/><path class="k s1" d="M95 92 q10 -12 20 0 t20 0"/><text class="ts" x="118" y="52">nº 0473</text>
+    <text class="t" x="55" y="140">cheque</text><text class="ts" x="30" y="160">numerado y firmado</text>
+    <rect class="k g3" x="185" y="30" width="145" height="80" rx="6"/><text class="t" x="200" y="62">pagaré</text><text class="ts" x="200" y="88">pagaré el 30/06</text>
+    <text class="t" x="205" y="140">promesa de pago</text><text class="ts" x="210" y="160">futura</text>
+    <rect class="k g2" x="355" y="40" width="55" height="60" rx="6"/><rect class="k g2" x="450" y="40" width="55" height="60" rx="6"/><path class="k s2" d="M413 70 H446"/><path class="k s2" d="M438 62 l10 8 -10 8"/>
+    <text class="t" x="365" y="140">transferencia</text><text class="ts" x="355" y="160">de una cuenta a otra</text>
+    <rect class="k g5" x="530" y="35" width="135" height="80" rx="10"/><rect class="k f3" x="548" y="58" width="26" height="20" rx="3"/><path class="kt" d="M548 98 h90"/>
+    <text class="t" x="565" y="140">tarjeta</text><text class="ts" x="545" y="160">crédito o débito</text>
+  </svg>
+  </figure>
+  <h4 style="margin:6px 0 2px">a) Cheque</h4>
+  <p>Documento del banco para pagar <b>con cargo a tu cuenta</b>. Cada uno está numerado y hay que firmarlo. Tipos:</p>
+  <ul>
+    <li><b>Nominativo:</b> solo lo cobra una persona determinada.</li>
+    <li><b>A la orden:</b> lo cobra esa persona o quien ella designe.</li>
+    <li><b>Al portador:</b> lo cobra <b>quien lo tenga</b>, solo por tenerlo.</li>
+  </ul>
+  <p><b>b) Pagaré:</b> <b>promesa de pago</b>: compromiso de pagar una cantidad en el futuro a quien lo tenga. Las empresas los emiten para financiarse.</p>
+  <p><b>c) Transferencia</b> (orden de pago): pides al banco que saque dinero de tu cuenta y lo ingrese en la de otro. Es rápida (nóminas, pagos periódicos), pero puede tener <b>comisión</b>.</p>
+  <p><b>d) Tarjeta bancaria:</b> pagas o sacas dinero; el coste de la transferencia lo paga el proveedor (la tienda).</p>
+  <div class="duo">
+    <div class="card" style="background:var(--tint5)"><h4>💳 Tarjeta de crédito</h4>El banco te da un <b>crédito</b> con un límite. Las compras <b>no se cargan al momento</b>: se pagan después (normalmente cada mes). Pagar con ella no cuesta, pero sacar en cajeros puede tener comisión.</div>
+    <div class="card" style="background:var(--tint2)"><h4>💳 Tarjeta de débito</h4>Usas el <b>saldo de tu cuenta</b>: el límite es lo que tengas. El cargo es <b>inmediato</b>. En cajeros de otra red suele haber comisión.</div>
+  </div>
+  <div class="clave" style="background:var(--tint5)"><b class="tag">Idea clave</b>Cheque (nominativo, a la orden, al portador) · pagaré = promesa de pago · transferencia · tarjeta de crédito (pagas después) o de débito (al momento, con tu saldo).</div>
+</section>
+
+<!-- 6 AHORRO -->
+<section id="ahorro">
+  <h2><span class="num" style="background:var(--a1)">6</span>Instrumentos de ahorro (de menos a más riesgo y rentabilidad)</h2>
+  <figure class="fig">
+  <svg viewBox="0 0 680 252" role="img" aria-label="Escalera de instrumentos de ahorro de menor a mayor riesgo">
+    <path class="k g1" d="M20 245 V215 H125 V185 H230 V155 H335 V125 H440 V95 H545 V65 H650 V245 Z"/><path class="kt" d="M125 245 V215 M230 245 V185 M335 245 V155 M440 245 V125 M545 245 V95"/>
+    <text class="ts" x="28" y="237">plazo fijo</text><text class="ts" x="133" y="207">letras del</text><text class="ts" x="133" y="225">Tesoro</text><text class="ts" x="238" y="177">bonos y</text><text class="ts" x="238" y="195">obligaciones</text><text class="ts" x="343" y="147">empréstitos</text><text class="ts" x="343" y="165">(privados)</text><text class="ts" x="448" y="117">fondos de</text><text class="ts" x="448" y="135">inversión</text><text class="ts" x="553" y="87">planes de</text><text class="ts" x="553" y="105">pensiones</text>
+    <path class="k s4" d="M40 30 H330"/><path class="k s4" d="M322 22 l10 8 -10 8"/>
+    <text class="t" x="40" y="22">más riesgo y más rentabilidad →</text>
+  </svg>
+  <figcaption>cuanto más subes la escalera, más puedes ganar… y perder</figcaption>
+  </figure>
+  <ul>
+    <li><b>Depósitos o imposiciones a plazo fijo:</b> dejas el dinero un <b>plazo prefijado</b> sin sacarlo. Se firma un contrato con la rentabilidad, el plazo y las <b>comisiones</b> si lo retiras antes.</li>
+    <li><b>Letras del Tesoro:</b> <b>deuda pública</b>. Se compran <b>por debajo de su valor nominal</b> y al vencer te dan el valor nominal (la diferencia es tu ganancia). Las emite el <b>Tesoro Público</b>.</li>
+    <li><b>Bonos y Obligaciones del Estado:</b> deuda pública a <b>largo plazo</b>. Los intereses se cobran cada año con un <b>cupón</b>. <b>Bonos: 3 y 5 años</b>. <b>Obligaciones: 10, 15 y 30 años</b>.</li>
+    <li><b>Obligaciones privadas o empréstitos:</b> deuda que emiten <b>empresas privadas</b> para financiarse; devuelven lo prestado más intereses periódicos. Los bancos ayudan a venderlas.</li>
+    <li><b>Fondos de inversión:</b> <b>inversión colectiva</b>: muchos partícipes juntan sus ahorros y una <b>sociedad gestora</b> los invierte. El patrimonio es de los partícipes y su valor depende de los mercados.</li>
+    <li><b>Planes de pensiones:</b> seguros que garantizan prestaciones por jubilación, fallecimiento, invalidez, enfermedad grave o desempleo. Son <b>poco líquidos</b> (desde 2025 se pueden rescatar los de antes de 2015 y los que tengan al menos 10 años).</li>
+  </ul>
+  <div class="clave" style="background:var(--tint1)"><b class="tag">Idea clave</b>Plazo fijo → letras del Tesoro → bonos (3-5 años) y obligaciones del Estado (10-15-30) → empréstitos → fondos de inversión → planes de pensiones.</div>
+</section>
+
+<!-- 7 SISTEMA FINANCIERO -->
+<section id="sistema">
+  <h2><span class="num" style="background:var(--a2)">7</span>El sistema financiero</h2>
+  <p>Es el conjunto de <b>normas, instituciones, medios y mercados</b> que canaliza el dinero desde quienes <b>ahorran</b> (superávit) hacia quienes <b>invierten, consumen o gastan</b> (déficit).</p>
+  <figure class="fig">
+  <svg viewBox="0 0 680 210" role="img" aria-label="El intermediario recibe dinero de los prestamistas pagándoles un interés bajo y lo presta a los prestatarios cobrando un interés alto; el beneficio es la diferencia">
+    <rect class="k g1" x="15" y="50" width="160" height="100" rx="14"/><text class="t" x="35" y="90">ahorradores</text><text class="ts" x="35" y="115">(prestamistas)</text>
+    <path class="k s1" d="M180 85 H255"/><path class="k s1" d="M247 77 l10 8 -10 8"/><text class="ts" x="185" y="72">depositan €</text>
+    <path class="k" d="M255 120 H180"/><path class="k" d="M188 112 l-10 8 10 8"/><text class="ts" x="185" y="145">les paga 2 %</text>
+    <path class="k g2" d="M270 150 h140 M280 150 v-45 M310 150 v-45 M340 150 v-45 M370 150 v-45 M400 150 v-45 M266 105 h148 l-74 -40z"/>
+    <text class="t" x="275" y="180">intermediario</text>
+    <path class="k s1" d="M425 85 H500"/><path class="k s1" d="M492 77 l10 8 -10 8"/><text class="ts" x="430" y="72">les presta €</text>
+    <path class="k" d="M500 120 H425"/><path class="k" d="M433 112 l-10 8 10 8"/><text class="ts" x="430" y="145">le cobran 6 %</text>
+    <rect class="k g4" x="505" y="50" width="160" height="100" rx="14"/><text class="t" x="525" y="90">prestatarios</text><text class="ts" x="525" y="115">(piden prestado)</text>
+    <text class="t" x="200" y="205">beneficio del banco = 6 % − 2 % = la diferencia</text>
+  </svg>
+  <figcaption>(los porcentajes son solo un ejemplo)</figcaption>
+  </figure>
+  <p>Los <b>intermediarios financieros</b> ponen de acuerdo a prestamistas y prestatarios a cambio de una remuneración. Hay dos tipos:</p>
+  <div class="duo">
+    <div class="card" style="background:var(--tint2)"><h4>🏦 Bancarios (entidades de crédito)</h4><b>Pueden crear dinero</b>: sus activos se aceptan como medio de pago. Bancos centrales, bancos privados y cajas de ahorro.<br><span style="font-size:15px">Diferencia: los <b>bancos</b> buscan el máximo beneficio; las <b>cajas</b> dedican parte de sus beneficios a <b>obra social</b>.</span></div>
+    <div class="card" style="background:var(--tint3)"><h4>🛡️ No bancarios</h4><b>No pueden crear dinero bancario</b>. Son las <b>compañías de seguros</b>.</div>
+  </div>
+  <div class="clave" style="background:var(--tint2)"><b class="tag">Idea clave</b>El intermediario paga un interés al que ahorra y cobra otro mayor al que pide prestado: su beneficio es la diferencia. Bancarios crean dinero; no bancarios (seguros), no.</div>
+</section>
+
+<!-- 8 MERCADOS -->
+<section id="mercados">
+  <h2><span class="num" style="background:var(--a3)">8</span>Los mercados financieros españoles</h2>
+  <div class="trio">
+    <div class="card" style="background:var(--tint1)"><h4>A) Monetario</h4>Mercado <b>mayorista</b>: solo grandes instituciones (Tesoro, bancos, grandes empresas solventes). Préstamos a <b>muy corto plazo</b>.</div>
+    <div class="card" style="background:var(--tint4)"><h4>B) Derivados</h4>Sirven para <b>transmitir riesgos</b> (que suban o bajen los precios). <b>Futuros:</b> acuerdo para intercambiar en una fecha futura. <b>Opciones:</b> derecho a comprar o vender.</div>
+    <div class="card" style="background:var(--tint3)"><h4>C) Capitales: la Bolsa</h4>Mercado organizado para comprar y vender valores <b>cuando quieras</b>, a precio de mercado. Se invierte a través de <b>sociedades y agencias de valores</b>.</div>
+  </div>
+  <p>En España hay <b>cuatro bolsas</b>: <b>Madrid, Barcelona, Bilbao y Valencia</b>. La bolsa es un <b>mercado secundario oficial</b> de valores de renta fija y renta variable.</p>
+  <figure class="fig">
+  <svg viewBox="0 0 680 220" role="img" aria-label="Con renta fija eres acreedor: prestas y te devuelven; con acciones eres propietario y ganas con dividendos o plusvalía">
+    <rect class="k g1" x="15" y="15" width="310" height="180" rx="16"/>
+    <text class="t" x="35" y="45">renta fija → eres ACREEDOR</text>
+    <circle class="k w" cx="70" cy="100" r="16"/><path class="k" d="M45 150 q25 -40 50 0"/>
+    <path class="k s1" d="M100 95 H210"/><path class="k s1" d="M202 87 l10 8 -10 8"/><text class="ts" x="125" y="85">te presto</text>
+    <path class="k" d="M210 125 H100"/><path class="k" d="M108 117 l-10 8 10 8"/><text class="ts" x="110" y="145">me devuelves + interés</text>
+    <path class="k g2" d="M225 140 h80 M232 140 v-30 M252 140 v-30 M272 140 v-30 M292 140 v-30 M222 110 h86 l-43 -20z"/>
+    <text class="ts" x="35" y="185">letras (corto) · bonos (medio) · obligaciones (largo)</text>
+    <rect class="k g3" x="355" y="15" width="310" height="180" rx="16"/>
+    <text class="t" x="375" y="45">acciones → eres PROPIETARIO</text>
+    <path class="k w" d="M390 150 V80 L440 60 L490 80 V150 Z"/><path class="k f3" d="M440 60 V150 L490 150 V80 Z"/>
+    <text class="ts" x="400" y="175">un trocito de la empresa</text>
+    <text class="t" x="515" y="90">ganas con:</text>
+    <text class="ts" x="515" y="115">① dividendo</text><text class="ts" x="515" y="140">② plusvalía</text>
+  </svg>
+  </figure>
+  <ul>
+    <li><b>Renta fija:</b> deudas emitidas por empresas (empréstitos) y deuda pública. Quien la compra es <b>ACREEDOR</b>. <b>Letras a corto plazo, bonos a medio, obligaciones a largo.</b></li>
+    <li><b>Renta variable:</b> las <b>acciones</b> (partes alícuotas del capital de una sociedad anónima). Quien las compra es <b>accionista</b>: <b>PROPIETARIO</b> de esa parte.</li>
+  </ul>
+  <div class="duo">
+    <div class="card"><h4>Dividendo</h4>La parte de los <b>beneficios</b> de la empresa que los accionistas deciden repartirse.</div>
+    <div class="card"><h4>Plusvalía</h4>La diferencia <b>positiva</b> entre el precio de venta y el de compra de las acciones.</div>
+  </div>
+
+  <h3>Derechos de los accionistas</h3>
+  <ul>
+    <li>Recibir <b>dividendos</b> cuando la empresa los reparta.</li>
+    <li>Recibir <b>información</b> de los temas de la junta.</li>
+    <li><b>Voto</b> en la junta general: <b>una acción, un voto</b>. Si se exige un mínimo de acciones para entrar, se permite la <b>sindicación</b>: varios accionistas se juntan, se ponen de acuerdo y eligen a uno que vaya en nombre de todos.</li>
+    <li><b>Derecho preferente de suscripción</b> en las ampliaciones de capital: los que ya son accionistas pueden comprar primero las nuevas acciones (en su porcentaje), o vender ese derecho. Quien no es accionista tiene que <b>comprar primero el derecho</b> y luego las acciones. Durante la ampliación las acciones dejan de cotizar y cotizan los derechos.</li>
+  </ul>
+
+  <h3>Sistemas de contratación</h3>
+  <div class="duo">
+    <div class="card" style="background:var(--tint4)"><h4>1) Corros (ya no se usan)</h4>En el parquet, de lunes a viernes, de 10 a 12, en corros de 10 minutos por sectores. Variación máxima: 10 % el primer corro y 20 % el segundo.</div>
+    <div class="card" style="background:var(--tint2)"><h4>2) SIBE</h4>Sistema de Interconexión Bursátil Español: las 4 bolsas conectadas a un ordenador central, <b>un único precio</b> por valor. Subasta de apertura 8:30-9:00, contratación continua <b>9:00-17:30</b> y 5 minutos de subasta de cierre. <b>Fixing</b>: para valores con poca liquidez, órdenes juntas a las <b>12:00 y 16:00</b>.</div>
+  </div>
+  <figure class="fig">
+  <svg viewBox="0 0 680 110" role="img" aria-label="Horario del SIBE">
+    <path class="k" d="M30 60 H650"/>
+    <rect class="k g3" x="30" y="40" width="60" height="40" rx="4"/><text class="ts" x="30" y="30">8:30</text><text class="ts" x="35" y="100">subasta</text>
+    <rect class="k g2" x="90" y="40" width="470" height="40" rx="4"/><text class="ts" x="85" y="30">9:00</text><text class="t" x="230" y="67">contratación continua</text><text class="ts" x="540" y="30">17:30</text>
+    <rect class="k g4" x="560" y="40" width="30" height="40" rx="4"/><text class="ts" x="560" y="100">cierre (5 min)</text>
+    <circle class="k f5" cx="250" cy="90" r="5"/><text class="ts" x="230" y="108">fixing 12:00</text>
+    <circle class="k f5" cx="440" cy="90" r="5"/><text class="ts" x="420" y="108">fixing 16:00</text>
+  </svg>
+  </figure>
+
+  <h3>Índices bursátiles</h3>
+  <p>Reflejan cómo evolucionan los precios de los valores <b>más importantes</b>: la variación media del mercado. Sirven para evaluar un fondo o cartera y para analizar un sector.</p>
+  <div class="duo">
+    <div class="card" style="background:var(--tint1)"><h4>IGBM</h4>Índice General de la <b>Bolsa de Madrid</b>. Media ponderada de las empresas más importantes de Madrid (por capitalización, liquidez y frecuencia de cotización). Se revisa <b>cada año</b>.</div>
+    <div class="card" style="background:var(--tint3)"><h4>IBEX 35</h4>Media ponderada de las <b>35 empresas</b> más importantes de las bolsas españolas, con los mismos criterios. Se revisa <b>cada trimestre</b>.</div>
+  </div>
+  <div class="clave" style="background:var(--tint3)"><b class="tag">Idea clave</b>Monetario (mayorista, corto plazo) · derivados (futuros y opciones, transmiten riesgo) · bolsa (4 en España, mercado secundario). Renta fija = acreedor; acciones = propietario (dividendo + plusvalía). SIBE 9:00-17:30. IGBM anual, IBEX 35 trimestral.</div>
+</section>
+
+<!-- 9 RENTABILIDAD -->
+<section id="rentabilidad">
+  <h2><span class="num" style="background:var(--a4)">9</span>Cómo se calcula la rentabilidad de unas acciones</h2>
+  <p>Es el tipo de ejercicio que más cae. Siempre los mismos pasos:</p>
+  <ol>
+    <li><b>Inversión</b> = nº de acciones × precio de compra.</li>
+    <li><b>Venta</b> = nº de acciones × precio de venta.</li>
+    <li><b>Ganancia total</b> = (venta − inversión) + dividendos. <span class="nota" style="display:inline;border:0;padding:0">(venta − inversión es la plusvalía; si sale negativa es minusvalía)</span></li>
+    <li><b>Rentabilidad del periodo</b> = ganancia ÷ inversión × 100.</li>
+    <li><b>Rentabilidad anual</b> = rentabilidad del periodo × 12 ÷ nº de meses que has tenido las acciones.</li>
+  </ol>
+  <div class="formula">Rentab. anual = [(Venta − Inversión) + Dividendos] ÷ Inversión × 100 × 12 ÷ meses</div>
+  <p class="nota">Cuenta los meses entre las dos fechas: del 1 de septiembre al 1 de diciembre son 3 meses; del 15 de abril al 30 de junio, 2,5 meses.</p>
+  <div class="clave" style="background:var(--tint4)"><b class="tag">Idea clave</b>Ganancia = plusvalía + dividendos. Divide entre lo invertido y pásalo a anual multiplicando por 12 / meses.</div>
+</section>
+
+<!-- EJERCICIOS -->
+<section id="ejercicios">
+  <h2><span class="num" style="background:var(--a5)">✎</span>Ejercicios del tema, resueltos</h2>
+  <p>Intenta hacerlos primero y luego pulsa <b>Ver solución</b>.</p>
+  <div class="botones"><button type="button" id="abrirTodas">Ver todas las soluciones</button><button type="button" id="cerrarTodas">Ocultarlas todas</button></div>
+
+  <details class="sol"><summary>1) Si un activo financiero tiene mucho riesgo en comparación con otro de similares características, ¿cuál ofrecerá un tipo de interés mayor? <span class="ver">Ver solución</span></summary><div class="res">
+    <p class="ok">El que tiene más riesgo.</p><p>El rendimiento varía en el mismo sentido que el riesgo: para que alguien acepte arriesgarse, hay que pagarle más (el interés lleva una <b>prima de riesgo</b>).</p></div></details>
+
+  <details class="sol"><summary>2) Si un activo financiero tiene más liquidez en comparación con otro de similares características, ¿cuál ofrecerá mayor rentabilidad? <span class="ver">Ver solución</span></summary><div class="res">
+    <p class="ok">El otro, el que tiene menos liquidez.</p><p>Un activo genera más rentabilidad cuanto <b>menor</b> es su liquidez: si no puedes recuperar tu dinero fácilmente, te compensan pagándote más.</p></div></details>
+
+  <details class="sol"><summary>3) Si un activo financiero por el que se pagó 600 € recibe una remuneración anual de 30 €, ¿cuál es el tipo de interés asociado? <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Tipo de interés = 30 ÷ 600 × 100</p><p class="ok">= 5 % anual</p></div></details>
+
+  <details class="sol"><summary>4) Un activo costaba 900 € en el año x y en el x+1 subió a 1050 €. a) ¿En qué porcentaje se incrementó? b) ¿Cuánto costó en x+2 si subió un 8 % más? <span class="ver">Ver solución</span></summary><div class="res">
+    <p>a) (1050 − 900) ÷ 900 × 100 = 150 ÷ 900 × 100 = <span class="ok">16,67 %</span></p>
+    <p>b) 1050 × 1,08 = <span class="ok">1134 €</span></p></div></details>
+
+  <details class="sol"><summary>5) ¿Cómo se denomina el cheque que se puede cobrar simplemente por tenerlo en nuestro poder? <span class="ver">Ver solución</span></summary><div class="res">
+    <p class="ok">Cheque al portador.</p><p>Legitima a quien lo tiene para cobrarlo, solo por poseerlo.</p></div></details>
+
+  <details class="sol"><summary>6) Explica las diferencias más significativas entre tarjetas de crédito y tarjetas de débito. <span class="ver">Ver solución</span></summary><div class="res">
+    <div class="tabla"><table class="t"><tr><th></th><th>Crédito</th><th>Débito</th></tr>
+    <tr><td>De dónde sale el dinero</td><td>De un <b>crédito</b> que te concede el banco</td><td>Del <b>saldo</b> de tu cuenta</td></tr>
+    <tr><td>Límite</td><td>El límite de crédito pactado</td><td>Lo que tengas en la cuenta</td></tr>
+    <tr><td>Cuándo se cobra</td><td><b>Más tarde</b> (normalmente cada mes)</td><td><b>Al momento</b></td></tr>
+    <tr><td>Comisiones</td><td>Pagar no cuesta; sacar en cajeros puede tener comisión</td><td>Comisión en cajeros de otra red</td></tr></table></div></div></details>
+
+  <details class="sol"><summary>7) ¿Qué analogías y diferencias hay entre los empréstitos y la deuda pública? <span class="ver">Ver solución</span></summary><div class="res">
+    <p><b>Se parecen en que…</b> los dos son <b>renta fija</b>: títulos de deuda con los que quien emite consigue financiación, y quien los compra es <b>acreedor</b> y cobra unos intereses prefijados y la devolución de lo prestado al vencimiento. Los dos se pueden comprar y vender en bolsa.</p>
+    <p><b>Se diferencian en…</b> <b>quién los emite</b>: los empréstitos (obligaciones privadas) los emiten <b>empresas privadas</b>; la deuda pública (letras, bonos y obligaciones del Estado) la emite el <b>Tesoro Público</b>. Por eso la deuda pública suele tener <b>menos riesgo</b> (y menos rentabilidad) que los empréstitos.</p></div></details>
+
+  <details class="sol"><summary>8) Sonia compra el 1 de septiembre 600 acciones a 15 € y las vende el 1 de diciembre a 17,25 €; recibe 20 € de dividendos. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 600 × 15 = 9000 € · Venta = 600 × 17,25 = 10 350 €</p>
+    <p>Ganancia = (10 350 − 9000) + 20 = 1370 €</p>
+    <p>Rentabilidad del periodo = 1370 ÷ 9000 × 100 = 15,22 % (en 3 meses)</p>
+    <p>Rentabilidad anual = 15,22 × 12 ÷ 3 = <span class="ok">60,89 %</span></p></div></details>
+
+  <details class="sol"><summary>9) Laura compra el 1 de mayo 400 acciones a 12 € y las vende el 1 de septiembre a 14,5 € (dividendos 34 €). Lucía compra el 31 de mayo 500 acciones a 19 € y las vende el 30 de noviembre a 21 € (dividendos 29 €). ¿Quién tiene mejor rentabilidad anual? <span class="ver">Ver solución</span></summary><div class="res">
+    <p><b>Laura:</b> inversión 400 × 12 = 4800 €; venta 400 × 14,5 = 5800 €; ganancia = 1000 + 34 = 1034 €.<br>1034 ÷ 4800 × 100 = 21,54 % en 4 meses → anual = 21,54 × 12 ÷ 4 = <b>64,63 %</b></p>
+    <p><b>Lucía:</b> inversión 500 × 19 = 9500 €; venta 500 × 21 = 10 500 €; ganancia = 1000 + 29 = 1029 €.<br>1029 ÷ 9500 × 100 = 10,83 % en 6 meses → anual = 10,83 × 12 ÷ 6 = <b>21,66 %</b></p>
+    <p class="ok">Laura ha obtenido mejor rentabilidad anual (64,63 % frente a 21,66 %).</p></div></details>
+
+  <details class="sol"><summary>10) Ana compra el 1 de junio 400 acciones a 20 € y las vende el 1 de octubre a 23,75 €; dividendos 200 €. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 400 × 20 = 8000 € · Venta = 400 × 23,75 = 9500 €</p>
+    <p>Ganancia = (9500 − 8000) + 200 = 1700 €</p>
+    <p>Rentabilidad del periodo = 1700 ÷ 8000 × 100 = 21,25 % (4 meses)</p>
+    <p>Rentabilidad anual = 21,25 × 12 ÷ 4 = <span class="ok">63,75 %</span></p></div></details>
+
+  <details class="sol"><summary>11) Óscar compra el 30 de marzo 362 acciones a 4,8 € y las vende el 30 de mayo a 6,9 €; dividendos 260 €. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 362 × 4,8 = 1737,60 € · Venta = 362 × 6,9 = 2497,80 €</p>
+    <p>Ganancia = (2497,80 − 1737,60) + 260 = 760,20 + 260 = 1020,20 €</p>
+    <p>Rentabilidad del periodo = 1020,20 ÷ 1737,60 × 100 = 58,71 % (2 meses)</p>
+    <p>Rentabilidad anual = 58,71 × 12 ÷ 2 = <span class="ok">352,28 %</span></p></div></details>
+
+  <details class="sol"><summary>12) Cristina compra el 15 de febrero 64 acciones de Repsol a 32,7 € y 125 de Inditex a 45,3 €. Vende todo el 15 de julio: Repsol a 28,5 € e Inditex a 46,5 €. Dividendos 480 €. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 64 × 32,7 + 125 × 45,3 = 2092,80 + 5662,50 = 7755,30 €</p>
+    <p>Venta = 64 × 28,5 + 125 × 46,5 = 1824 + 5812,50 = 7636,50 €</p>
+    <p>Ganancia = (7636,50 − 7755,30) + 480 = −118,80 + 480 = 361,20 € <span class="nota" style="display:inline;border:0;padding:0">(con las acciones pierde, pero los dividendos lo compensan)</span></p>
+    <p>Rentabilidad del periodo = 361,20 ÷ 7755,30 × 100 = 4,66 % (5 meses)</p>
+    <p>Rentabilidad anual = 4,66 × 12 ÷ 5 = <span class="ok">11,18 %</span></p></div></details>
+
+  <details class="sol"><summary>13) Pablo compra el 20 de julio 589 acciones de Telefónica a 8,6 € y 230 de BBVA a 37,4 €. Vende todo el 20 de noviembre: Telefónica a 11,7 € y BBVA a 34,3 €. Dividendos 38 €. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 589 × 8,6 + 230 × 37,4 = 5065,40 + 8602 = 13 667,40 €</p>
+    <p>Venta = 589 × 11,7 + 230 × 34,3 = 6891,30 + 7889 = 14 780,30 €</p>
+    <p>Ganancia = (14 780,30 − 13 667,40) + 38 = 1112,90 + 38 = 1150,90 €</p>
+    <p>Rentabilidad del periodo = 1150,90 ÷ 13 667,40 × 100 = 8,42 % (4 meses)</p>
+    <p>Rentabilidad anual = 8,42 × 12 ÷ 4 = <span class="ok">25,26 %</span></p></div></details>
+
+  <details class="sol"><summary>14) Pilar compra el 15 de abril 157 acciones de «A» a 13,67 € y 365 de «B» a 78,43 €. Vende todo el 30 de junio: «A» a 9,5 € y «B» a 77,38 €. Dividendos 24 €. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 157 × 13,67 + 365 × 78,43 = 2146,19 + 28 626,95 = 30 773,14 €</p>
+    <p>Venta = 157 × 9,5 + 365 × 77,38 = 1491,50 + 28 243,70 = 29 735,20 €</p>
+    <p>Ganancia = (29 735,20 − 30 773,14) + 24 = −1037,94 + 24 = −1013,94 € (pérdida)</p>
+    <p>Rentabilidad del periodo = −1013,94 ÷ 30 773,14 × 100 = −3,29 % (del 15 de abril al 30 de junio: 2,5 meses)</p>
+    <p>Rentabilidad anual = −3,29 × 12 ÷ 2,5 = <span class="ok">−15,82 %</span> (rentabilidad negativa: ha perdido dinero)</p></div></details>
+
+  <details class="sol"><summary>15) Jorge compra el 13 de agosto 530 acciones a 17,56 € y las vende el 13 de septiembre a 27,59 €; dividendos 85 €. Rentabilidad anual. <span class="ver">Ver solución</span></summary><div class="res">
+    <p>Inversión = 530 × 17,56 = 9306,80 € · Venta = 530 × 27,59 = 14 622,70 €</p>
+    <p>Ganancia = (14 622,70 − 9306,80) + 85 = 5315,90 + 85 = 5400,90 €</p>
+    <p>Rentabilidad del periodo = 5400,90 ÷ 9306,80 × 100 = 58,03 % (1 mes)</p>
+    <p>Rentabilidad anual = 58,03 × 12 ÷ 1 = <span class="ok">696,38 %</span></p></div></details>
+
+  <div class="card" style="background:var(--tint3);margin:16px 0 6px"><h4>🛡️ Antes de los casos de seguros</h4>
+    <b>Seguro a terceros</b> (el obligatorio): paga los daños que <b>tú causas a otros</b>, no los tuyos.<br>
+    <b>Seguro a todo riesgo</b>: además paga los daños de <b>tu propio vehículo</b>, aunque tengas tú la culpa.<br>
+    <b>Franquicia</b>: la parte de cada reparación propia que pagas <b>tú</b>; la aseguradora paga el resto.<br>
+    <b>Regla de oro:</b> los daños del inocente los paga siempre el <b>seguro del culpable</b>.</div>
+
+  <details class="sol"><summary>16) CASO 1: golpe entre furgoneta (culpable, seguro a terceros) y coche (todo riesgo). ¿Quién paga cada cantidad? <span class="ver">Ver solución</span></summary><div class="res">
+    <div class="tabla"><table class="t"><tr><th>Concepto</th><th>€</th><th>¿Quién paga?</th></tr>
+    <tr><td>Reparación del coche</td><td>2500</td><td><b>Seguro de la furgoneta</b> (es la culpable: daños a un tercero)</td></tr>
+    <tr><td>Lesiones del conductor del coche</td><td>1800</td><td><b>Seguro de la furgoneta</b></td></tr>
+    <tr><td>Daños en la furgoneta</td><td>3000</td><td><b>El dueño de la furgoneta</b>: su seguro a terceros no cubre sus propios daños</td></tr>
+    <tr><td>Lesión del conductor de la furgoneta</td><td>700</td><td><b>El propio conductor de la furgoneta</b> (el seguro a terceros no le cubre; solo si tuviera contratado un seguro del conductor)</td></tr></table></div>
+    <p>El seguro del coche no paga nada: no tiene culpa y todo lo suyo lo paga la aseguradora de la furgoneta.</p></div></details>
+
+  <details class="sol"><summary>17) CASO 2: golpe entre moto (todo riesgo) y coche (culpable, todo riesgo con franquicia de 200 €). ¿Quién paga cada cantidad? <span class="ver">Ver solución</span></summary><div class="res">
+    <div class="tabla"><table class="t"><tr><th>Concepto</th><th>€</th><th>¿Quién paga?</th></tr>
+    <tr><td>Reparación de la moto</td><td>2000</td><td><b>Seguro del coche</b> (culpable)</td></tr>
+    <tr><td>Casco y chaqueta</td><td>600</td><td><b>Seguro del coche</b></td></tr>
+    <tr><td>Lesiones y baja del motorista</td><td>3500</td><td><b>Seguro del coche</b></td></tr>
+    <tr><td>Reparación del coche</td><td>1200</td><td>Su <b>todo riesgo</b>, menos la franquicia: <b>200 € el conductor del coche</b> y <b>1000 € su aseguradora</b></td></tr>
+    <tr><td>Lesiones leves del conductor del coche</td><td>500</td><td><b>Su propia aseguradora</b>, si su todo riesgo incluye la cobertura del conductor (lo normal)</td></tr></table></div>
+    <p>El seguro de la moto no paga nada porque el motorista no tiene la culpa.</p></div></details>
+
+  <details class="sol"><summary>18) Texto «La gran ventaja de un mundo sin dinero en efectivo». Explica tu postura (favorable o contraria) sobre una sociedad española sin dinero en efectivo. <span class="ver">Ver respuesta modelo</span></summary><div class="res">
+    <p>Es una pregunta de opinión: vale cualquier postura bien argumentada. Para que te salga completa, <b>da tu postura, justifícala con 2-3 argumentos del tema y reconoce algo del otro lado</b>. Ideas que puedes usar:</p>
+    <div class="duo">
+      <div class="card"><h4>👍 A favor</h4><ul><li>Desaparecería el <b>dinero negro</b>: el efectivo es el único medio de pago anónimo («al portador»).</li><li>Sería más difícil financiar actividades ilegales (tráfico, corrupción, <b>evasión fiscal</b>) → más recaudación para servicios públicos.</li><li>Ya hay alternativas cómodas: <b>tarjetas de débito y crédito</b>, transferencias, móvil.</li></ul></div>
+      <div class="card"><h4>👎 En contra</h4><ul><li>Se pierde la <b>privacidad</b>: bancos y Estado sabrían todo lo que compramos.</li><li>Deja fuera a quien no maneja la tecnología o no tiene cuenta (personas mayores, sin recursos).</li><li>Dependemos de que <b>funcionen los sistemas</b> (apagones, ciberataques) y pagamos <b>comisiones</b> a los bancos.</li></ul></div>
+    </div>
+    <p><b>Ejemplo de conclusión:</b> «Estoy a favor de reducir mucho el uso del efectivo porque así se reduce el dinero negro y la evasión fiscal, pero creo que no debería desaparecer del todo hasta que todo el mundo tenga acceso fácil a los pagos electrónicos y se proteja su privacidad».</p></div></details>
+</section>
+
+<footer>Tema 3 · Economía · 1.º Bachillerato</footer>
+</div>
+<span class="marca" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<script>
+(function(){
+  var b=document.getElementById('modo'),h=document.documentElement;
+  function set(on){h.classList.toggle('noche',on);b.textContent=on?'☀️ Modo día':'🌙 Modo noche (rojo)';try{localStorage.setItem('eco3noche',on?'1':'0')}catch(e){}}
+  var on=false;try{on=localStorage.getItem('eco3noche')==='1'}catch(e){}
+  set(on);
+  b.addEventListener('click',function(){set(!h.classList.contains('noche'))});
+  document.getElementById('abrirTodas').addEventListener('click',function(){document.querySelectorAll('details.sol').forEach(function(d){d.open=true})});
+  document.getElementById('cerrarTodas').addEventListener('click',function(){document.querySelectorAll('details.sol').forEach(function(d){d.open=false})});
+  document.getElementById('volver').addEventListener('click',function(e){try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back()}}catch(x){}});
+})();
+</script>
+</body>
+</html>

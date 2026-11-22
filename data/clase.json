@@ -89,6 +89,15 @@
    "titulo": "Unidad 4 · La estructura de la personalidad",
    "tri": 1,
    "id": "f4"
+  },
+  {
+   "asig": "economia",
+   "estado": "sin",
+   "nota": "El dinero (funciones, evolución, condiciones), activos financieros, liquidez-rentabilidad-riesgo, creación de dinero bancario, medios de pago, instrumentos de ahorro, sistema financiero, mercados y bolsa, rentabilidad de acciones",
+   "orden": 3,
+   "titulo": "Tema 3 · El dinero y el sistema financiero",
+   "tri": 1,
+   "id": "ec3"
   }
  ],
  "recursos": [
@@ -304,6 +313,20 @@
    "url": "filosofia/test-u4.html",
    "app": "filo4",
    "nuevo": 1795349612262
+  },
+  {
+   "id": "p-eco-t3",
+   "asig": "economia",
+   "tri": 1,
+   "tema": "ec3",
+   "tipo": "doc",
+   "cat": "Apuntes",
+   "claude": true,
+   "destacado": true,
+   "titulo": "Apuntes ilustrados · Tema 3: el dinero y el sistema financiero",
+   "nota": "Con dibujos, los apuntes originales en PDF y los 18 ejercicios resueltos",
+   "url": "economia/tema3.html",
+   "nuevo": 1795372666768
   }
  ],
  "examenes": [
@@ -417,10 +440,12 @@
    "id": "ge",
    "asig": "economia",
    "fecha": "2026-11-26",
-   "titulo": "Global de Economía",
-   "alcance": "",
+   "titulo": "Economía · Tema 3",
+   "alcance": "Tema 3: el dinero y el sistema financiero",
    "hecho": false,
-   "temas": [],
+   "temas": [
+    "ec3"
+   ],
    "nota": null
   },
   {
