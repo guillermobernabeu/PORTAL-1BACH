@@ -288,7 +288,7 @@
    "titulo": "Apuntes ilustrados · Unidad 4: la personalidad",
    "nota": "Todo el tema ordenado y con dibujos",
    "url": "filosofia/unidad4.html",
-   "pub": 1795349612262
+   "nuevo": 1795349612262
   },
   {
    "id": "p-filo-u4-test",
@@ -303,7 +303,7 @@
    "nota": "Tipo test, por apartados, con repaso de falladas",
    "url": "filosofia/test-u4.html",
    "app": "filo4",
-   "pub": 1795349612262
+   "nuevo": 1795349612262
   }
  ],
  "examenes": [

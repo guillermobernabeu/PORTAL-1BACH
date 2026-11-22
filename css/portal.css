@@ -778,3 +778,7 @@ button.pts{background:none;border:0;cursor:pointer;padding:4px 6px;border-radius
 .en-todo{grid-template-columns:minmax(0,1fr) auto;border-style:dashed;border-width:1.5px}
 a.en-i[href]:hover{border-color:var(--accent,#2156c9)}
 @media (max-width:480px){.en-i{grid-template-columns:minmax(0,1fr) 44px auto}.en-b{display:none}}
+
+/* novedades para ti (exámenes en rojo) */
+.nuevo-ti{border:2px solid #d8341f;border-radius:18px;padding:12px;background:var(--sheet)}
+.nuevo-ti .recos-t{color:#d8341f}

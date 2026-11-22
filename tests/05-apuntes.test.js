@@ -41,7 +41,7 @@ module.exports = {
     assert.ok(/55 puntos/.test(await A.texto(s, ".ap-yo")), "50 por el apunte + 5 por el 👍");
     assert.ok(/Sergio.*20 pts/.test(await A.texto(s, ".ap-top")), "20 por la mejora aceptada");
     await A.abrir(s);
-    assert.ok(/Disoluciones/.test(await A.texto(s, ".novs")), "sale en novedades");
+    assert.ok(/Disoluciones/.test(await A.texto(s, ".novs:not(.nuevo-ti)")), "sale en novedades");
     assert.ok(!(await p.evaluate(() => document.querySelector("#apMd")?.innerHTML.includes("<script"))));
   },
   "el XSS en un apunte no se ejecuta": async (A, ctx) => {
