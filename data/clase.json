@@ -98,6 +98,15 @@
    "titulo": "Tema 3 · El dinero y el sistema financiero",
    "tri": 1,
    "id": "ec3"
+  },
+  {
+   "asig": "mates",
+   "estado": "sin",
+   "nota": "Radianes, razones, ángulos notables, cuadrantes, suma/resta, ángulo doble y mitad, identidades, ecuaciones y resolución de triángulos (seno y coseno)",
+   "orden": 4,
+   "titulo": "Tema 4 · Trigonometría",
+   "tri": 1,
+   "id": "m4"
   }
  ],
  "recursos": [
@@ -327,6 +336,20 @@
    "nota": "Con dibujos, los apuntes originales en PDF y los 18 ejercicios resueltos",
    "url": "economia/tema3.html",
    "nuevo": 1795372666768
+  },
+  {
+   "id": "p-mat-t4",
+   "asig": "mates",
+   "tri": 1,
+   "tema": "m4",
+   "tipo": "doc",
+   "cat": "Apuntes",
+   "claude": true,
+   "destacado": true,
+   "titulo": "Apuntes en limpio · Tema 4: Trigonometría",
+   "nota": "PDF de 8 páginas, ordenado y corregido, para el global del viernes",
+   "url": "mates/tema4-trigonometria.pdf",
+   "nuevo": 1795373717844
   }
  ],
  "examenes": [
@@ -455,7 +478,9 @@
    "titulo": "Global de Matemáticas",
    "alcance": "",
    "hecho": false,
-   "temas": [],
+   "temas": [
+    "m4"
+   ],
    "nota": null
   },
   {
