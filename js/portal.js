@@ -1,7 +1,7 @@
 // 1 BACH · Conexión con Firebase (módulo; antes dentro de index.html)
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin, enviarPush, pedirPush, quitarPush, pushEstado } from "../shared/fb.js?v=1795373718";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin, enviarPush, pedirPush, quitarPush, pushEstado } from "../shared/fb.js?v=1795374493";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }

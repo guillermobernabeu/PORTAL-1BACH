@@ -80,9 +80,9 @@ header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:
 <div class="card dominio" id="dominio"></div>
 <main id="main"></main>
 </div>
-<script src="../vocabulary/palabras.js?v=1795373718"></script>
-<script src="../idioms/datos.js?v=1795373718"></script>
-<script src="datos.js?v=1795373718"></script>
+<script src="../vocabulary/palabras.js?v=1795374493"></script>
+<script src="../idioms/datos.js?v=1795374493"></script>
+<script src="datos.js?v=1795374493"></script>
 <script>
 // ---------- Juegos del global de Inglés ----------
 const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -320,9 +320,9 @@ render();
 document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
 </script>
 <script type="module">
-import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795373718";
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795374493";
 exigirCuenta();
-import { iniciarLateral } from "../shared/lateral.js?v=1795373718";
+import { iniciarLateral } from "../shared/lateral.js?v=1795374493";
 copiaEnLaNube("ingles", () => ["global_ingles_v1", "idioms_v1"]);
 const ult = {}; let t = null;
 function enviar() { for (const j of ["def", "trad", "gi", "past", "preg", "idioms"]) { const k = nDom(j) + "/" + total(j); if (ult[j] === k) continue; ult[j] = k; guardarProgreso(j, nDom(j), total(j)); } }

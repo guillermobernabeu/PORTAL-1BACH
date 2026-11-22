@@ -82,15 +82,6 @@
    "id": "i9"
   },
   {
-   "asig": "filosofia",
-   "estado": "sin",
-   "nota": "Darwin, sensibilidad y percepción, emociones y deseos, memoria, inteligencia, conciencia y lenguaje, el yo y la construcción de la personalidad",
-   "orden": 4,
-   "titulo": "Unidad 4 · La estructura de la personalidad",
-   "tri": 1,
-   "id": "f4"
-  },
-  {
    "asig": "economia",
    "estado": "sin",
    "nota": "El dinero (funciones, evolución, condiciones), activos financieros, liquidez-rentabilidad-riesgo, creación de dinero bancario, medios de pago, instrumentos de ahorro, sistema financiero, mercados y bolsa, rentabilidad de acciones",
@@ -295,35 +286,6 @@
    "pub": 1794956098345
   },
   {
-   "id": "p-filo-u4",
-   "asig": "filosofia",
-   "tri": 1,
-   "tema": "f4",
-   "tipo": "doc",
-   "cat": "Apuntes",
-   "claude": true,
-   "destacado": true,
-   "titulo": "Apuntes ilustrados · Unidad 4: la personalidad",
-   "nota": "Todo el tema ordenado y con dibujos",
-   "url": "filosofia/unidad4.html",
-   "nuevo": 1795349612262
-  },
-  {
-   "id": "p-filo-u4-test",
-   "asig": "filosofia",
-   "tri": 1,
-   "tema": "f4",
-   "tipo": "app",
-   "cat": "App",
-   "claude": true,
-   "destacado": true,
-   "titulo": "Test · Unidad 4 (150 preguntas)",
-   "nota": "Tipo test, por apartados, con repaso de falladas",
-   "url": "filosofia/test-u4.html",
-   "app": "filo4",
-   "nuevo": 1795349612262
-  },
-  {
    "id": "p-eco-t3",
    "asig": "economia",
    "tri": 1,
@@ -454,9 +416,7 @@
    "titulo": "Global de Filosofía",
    "alcance": "Solo temas nuevos (no entran los temas 1, 2 y 3)",
    "hecho": false,
-   "temas": [
-    "f4"
-   ],
+   "temas": [],
    "nota": null
   },
   {
