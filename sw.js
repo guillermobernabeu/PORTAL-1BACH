@@ -2,11 +2,11 @@
 // 1) Funciona sin conexión: guarda lo que vas visitando (portal, apps de Inglés, librerías) y lo sirve si no hay red.
 //    Con red, siempre pide la versión nueva (así la recarga automática por version.json sigue funcionando).
 // 2) Notificaciones push (FCM) aunque el portal esté cerrado.
-const VERSION = "1795350199";                       // la cambia tools/version.sh en cada subida
+const VERSION = "1795354036";                       // la cambia tools/version.sh en cada subida
 const CACHE = "1bach-" + VERSION;
 const RAIZ = new URL("./", self.location).pathname;
-const PRECARGA = ["./", "./index.html", "./css/portal.css?v=1795350199", "./data/clase.json", "./fondo.jpg", "./manifest.webmanifest", "./iconos/icono-192.png",
-  "./vocabulary/", "./vocabulary/lista.html", "./vocabulary/palabras.js?v=1795350199", "./vocabulary/plurales.js?v=1795350199", "./verbos/", "./afijos/", "./wordformation/", "./apuntes/"];
+const PRECARGA = ["./", "./index.html", "./css/portal.css?v=1795354036", "./data/clase.json", "./fondo.jpg", "./manifest.webmanifest", "./iconos/icono-192.png",
+  "./vocabulary/", "./vocabulary/lista.html", "./vocabulary/palabras.js?v=1795354036", "./vocabulary/plurales.js?v=1795354036", "./verbos/", "./afijos/", "./wordformation/", "./apuntes/"];
 const CACHEABLE = (u) => u.origin === self.location.origin
   || /^https:\/\/(www\.gstatic\.com\/firebasejs|cdn\.jsdelivr\.net|fonts\.(googleapis|gstatic)\.com)\//.test(u.href);
 

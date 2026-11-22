@@ -29,10 +29,10 @@ function pintarChat(abajo){const L=document.getElementById("chatlist");if(!L)ret
   const pegado=abajo||L.scrollHeight-L.scrollTop-L.clientHeight<60;
   if(priv&&S.privError){L.innerHTML=`<div class="empty">${esc(S.privError)}</div>`;return}
   if(!priv&&S.chatError){L.innerHTML=`<div class="empty">${esc(S.chatError)}</div>`;return}
-  L.innerHTML=ms.length?ms.map(m=>{const yo=m.uid===S.uid;
-    return `<div class="msg ${yo?"mio":""} ${(m.menc||[]).includes(S.uid)?"mencionado":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}"><button class="ava-b" data-perfil="${esc(m.uid)}" aria-label="Ver perfil">${avatar(m.uid,32)}</button><div class="bur"><div class="mh"><b class="nombre-b" data-perfil="${esc(m.uid)}">${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div>${m.texto?`<p>${conMenciones(m.texto,m.menc)}</p>`:""}${Array.isArray(m.fotos)&&m.fotos.length?`<div class="mfotos">${m.fotos.filter(u=>/^data:image\/(jpeg|png|webp);base64,/.test(u)).map(u=>`<img src="${u}" alt="Foto" loading="lazy" data-verfoto>`).join("")}</div>`:""}${yo||(S.esAdmin&&!priv)?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}${!yo&&!priv?`<button class="mrep" data-reportar="${esc(m.uid)}" data-msgtxt="${esc((m.texto||"").slice(0,200))}">🚩 Reportar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
+  L.innerHTML=ms.length?ms.map((m,mi)=>{const yo=m.uid===S.uid;
+    return `<div data-mi="${mi}" title="Clic derecho (o mantén pulsado) para ver quién lo ha leído" class="msg ${yo?"mio":""} ${(m.menc||[]).includes(S.uid)?"mencionado":""} ${m.tag&&m.tag!=="general"?"t-"+esc(m.tag):""}"><button class="ava-b" data-perfil="${esc(m.uid)}" aria-label="Ver perfil">${avatar(m.uid,32)}</button><div class="bur"><div class="mh"><b class="nombre-b" data-perfil="${esc(m.uid)}">${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b><span>${horaChat(m.t||0)}</span>${m.tag&&m.tag!=="general"?`<em>${esc(ETQ[m.tag]||"")}</em>`:""}</div>${m.texto?`<p>${conMenciones(m.texto,m.menc)}</p>`:""}${Array.isArray(m.fotos)&&m.fotos.length?`<div class="mfotos">${m.fotos.filter(u=>/^data:image\/(jpeg|png|webp);base64,/.test(u)).map(u=>`<img src="${u}" alt="Foto" loading="lazy" data-verfoto>`).join("")}</div>`:""}${yo||(S.esAdmin&&!priv)?`<button class="mdel" data-delmsg="${esc(m.id)}">Borrar</button>`:""}${!yo&&!priv?`<button class="mrep" data-reportar="${esc(m.uid)}" data-msgtxt="${esc((m.texto||"").slice(0,200))}">🚩 Reportar</button>`:""}</div></div>`}).join(""):'<div class="empty">Todavía no hay mensajes. Escribe el primero.</div>';
   if(pegado)L.scrollTop=L.scrollHeight;
-  if(ms.length&&!priv){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0;S.mencNuevas=0}
+  if(ms.length&&!priv){try{localStorage.setItem("chatVisto",String(ms[ms.length-1].t||0))}catch(e){}S.sinLeer=0;S.mencNuevas=0;if(window.marcarChatLeido)marcarChatLeido(ms[ms.length-1].t||0)}
   if(ms.length&&priv&&window.marcarLeido)window.marcarLeido()}
 
 const convId=(a,b)=>[a,b].sort().join("_");
@@ -68,3 +68,26 @@ function abrirPerfil(id){if(!id)return;const lista=clasificacion("hoy"),pos=list
   $("#pfm").hidden=false;history.pushState({modal:"p"},"")}
 function cerrarPerfil(pop){if($("#pfm").hidden)return;if(pop!==true&&history.state&&history.state.modal==="p"){history.back();return}$("#pfm").hidden=true;$("#pfm").innerHTML=""}
 
+
+/* ---------- información del mensaje: quién lo ha leído (clic derecho o mantener pulsado) ---------- */
+function lectoresDe(m,priv){const out={si:[],no:[]};
+  if(priv){const otro=route().slice(8),c=(S.privs||[]).find(x=>x.id===convId(S.uid,otro))||{},le=c.leido||{};
+    for(const id of [S.uid,otro]){if(id===m.uid)continue;const t=le[id]||0;(t>=(m.t||0)?out.si:out.no).push({id,t})}}
+  else for(const id in (S.amigos||{})){if(id===m.uid||(S.amigos[id]||{}).baneado)continue;const t=(S.amigos[id]||{}).chatLeido||0;(t>=(m.t||0)?out.si:out.no).push({id,t})}
+  const ord=(a,b)=>(nombreDe(a.id)||"").localeCompare(nombreDe(b.id)||"");out.si.sort(ord);out.no.sort(ord);return out}
+function infoMensaje(mi){const priv=route().startsWith("privado-"),m=((priv?S.privMsgs:S.chat)||[])[mi];if(!m)return;
+  const {si,no}=lectoresDe(m,priv),fila=(x,leido)=>`<li class="mi-u">${avatar(x.id,30)}<b>${esc(nombreDe(x.id)||"Alguien")}${x.id===S.uid?" (tú)":""}</b><span>${leido?"✓✓ visto · "+horaChat(x.t):"sin leer"}</span></li>`;
+  $("#pfm").innerHTML=`<div class="pfm-c mi-c" role="dialog" aria-modal="true" aria-label="Información del mensaje"><button class="pfm-x" data-pfmcerrar aria-label="Cerrar">← Volver</button>
+    <h2>Información del mensaje</h2>
+    <div class="mi-m"><b>${esc(nombreDe(m.uid)||m.nombre||"Alguien")}</b>${m.texto?`<p>${esc(m.texto.length>220?m.texto.slice(0,220)+"…":m.texto)}</p>`:Array.isArray(m.fotos)&&m.fotos.length?"<p>📷 Foto</p>":""}<span>Enviado: ${new Date(m.t||0).toLocaleString("es-ES",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})}</span></div>
+    <div class="mi-n"><span><b>${si.length}</b><small>lo han leído</small></span><span><b>${no.length}</b><small>sin leer</small></span></div>
+    <h3>✓✓ Leído por</h3><ul class="mi-l">${si.map(x=>fila(x,1)).join("")||'<li class="empty">Nadie todavía.</li>'}</ul>
+    ${no.length?`<h3>Sin leer</h3><ul class="mi-l no">${no.map(x=>fila(x,0)).join("")}</ul>`:""}
+    <p class="note" style="margin:0">«Visto» es la última vez que esa persona abrió el chat después de este mensaje.</p></div>`;
+  $("#pfm").hidden=false;history.pushState({modal:"p"},"")}
+document.addEventListener("contextmenu",ev=>{const b=ev.target.closest&&ev.target.closest("#chatlist .msg[data-mi]");if(!b||ev.target.closest("img,a"))return;ev.preventDefault();infoMensaje(+b.dataset.mi)});
+{let tm=null,x0=0,y0=0;const fin=()=>{clearTimeout(tm);tm=null};
+  document.addEventListener("touchstart",ev=>{const b=ev.target.closest&&ev.target.closest("#chatlist .msg[data-mi]");if(!b)return;const t=ev.touches[0];x0=t.clientX;y0=t.clientY;
+    tm=setTimeout(()=>{tm=null;if(navigator.vibrate)try{navigator.vibrate(15)}catch(e){}infoMensaje(+b.dataset.mi)},550)},{passive:true});
+  document.addEventListener("touchmove",ev=>{if(!tm)return;const t=ev.touches[0];if(Math.abs(t.clientX-x0)+Math.abs(t.clientY-y0)>12)fin()},{passive:true});
+  document.addEventListener("touchend",fin);document.addEventListener("touchcancel",fin)}

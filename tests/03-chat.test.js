@@ -77,4 +77,18 @@ module.exports = {
     await p.goto(A.url + "/vocabulary/"); await p.waitForTimeout(1500);
     assert.ok(await A.hay(p, "#ban1b"), "también en la app de vocabulario");
   },
+  "quién ha leído un mensaje: al abrir el chat se guarda chatLeido y el clic derecho lo enseña": async (A, ctx) => {
+    const d = base(); const t = Date.now() - 60000;
+    d.chat = { m1: { uid: "u1", nombre: "Guillermo", texto: "¿Quién ha hecho los deberes?", t, tag: "general" } };
+    d.usuarios.u3.chatLeido = t + 1000;   // Sergio ya lo vio
+    const p = await A.pagina(ctx, { usuario: U.gon, datos: d });
+    await A.abrir(p, "#chat"); await p.waitForTimeout(2200);
+    const x = await A.datos(p);
+    assert.ok(x.usuarios.u2.chatLeido >= t, "Gonzalo queda como que lo ha leído");
+    await p.click("#chatlist .msg[data-mi='0'] .bur p", { button: "right" }); await p.waitForTimeout(300);
+    const info = await A.texto(p, "#pfm");
+    assert.ok(/Información del mensaje/.test(info) && /Leído por/.test(info), info);
+    const leidos = await p.evaluate(() => [...document.querySelectorAll(".mi-l:not(.no) .mi-u b")].map(b => b.textContent).join(","));
+    assert.ok(/Sergio/.test(leidos) && /Gonzalo/.test(leidos) && !/Guillermo/.test(leidos), leidos);
+  },
 };

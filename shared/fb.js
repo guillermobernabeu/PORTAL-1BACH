@@ -230,7 +230,7 @@ export async function enviarPush(m) {
 export const pushEstado = () => ({ soportado: "Notification" in window && "serviceWorker" in navigator && "PushManager" in window, permiso: "Notification" in window ? Notification.permission : "denied", configurado: !!(pushCfg && pushCfg.vapid), activo: pushListo });
 let regSW = null;
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register(new URL("../sw.js?v=1795350199", import.meta.url).href).then(r => { regSW = r; }).catch(() => {});
+  navigator.serviceWorker.register(new URL("../sw.js?v=1795354036", import.meta.url).href).then(r => { regSW = r; }).catch(() => {});
 }
 async function activarPush(u) {
   if (!("Notification" in window) || !("PushManager" in window) || !pushCfg || !pushCfg.vapid || Notification.permission !== "granted") return;

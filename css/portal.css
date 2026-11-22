@@ -782,3 +782,11 @@ a.en-i[href]:hover{border-color:var(--accent,#2156c9)}
 /* novedades para ti (exámenes en rojo) */
 .nuevo-ti{border:2px solid #d8341f;border-radius:18px;padding:12px;background:var(--sheet)}
 .nuevo-ti .recos-t{color:#d8341f}
+
+/* información del mensaje (quién lo ha leído) */
+#chatlist .msg[data-mi]{-webkit-touch-callout:none}
+.mi-c{align-items:stretch;text-align:left}.mi-c h2{text-align:center}.mi-c h3{margin:6px 0 0;font-size:15px}
+.mi-m{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}.mi-m p{margin:0;white-space:pre-wrap}.mi-m span{font-size:12.5px;color:var(--ink-2)}
+.mi-n{display:flex;gap:26px;justify-content:center}.mi-n span{display:flex;flex-direction:column;align-items:center}.mi-n b{font:800 28px/1 var(--f-display);color:var(--accent)}.mi-n small{font-size:12px;color:var(--ink-2)}
+.mi-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.mi-u{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;align-items:center}.mi-u>:first-child{grid-row:span 2}.mi-u b{font-size:14.5px}.mi-u span{font-size:12.5px;color:var(--ok)}.mi-l.no .mi-u span{color:var(--ink-2)}

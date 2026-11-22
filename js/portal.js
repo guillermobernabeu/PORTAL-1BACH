@@ -1,7 +1,7 @@
 // 1 BACH · Conexión con Firebase (módulo; antes dentro de index.html)
 // Conexión del panel con Firebase: datos de la clase (data/clase.json) para cualquiera con el enlace;
 // con cuenta de Google, además: progreso propio, amigos, ranking, perfil y chat.
-import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin, enviarPush, pedirPush, quitarPush, pushEstado } from "../shared/fb.js?v=1795350199";
+import { db as fdb, fs, entrar as gEntrar, salir as gSalir, alCambiarSesion, alCambiarClase, conectado, modoAdmin, enviarPush, pedirPush, quitarPush, pushEstado } from "../shared/fb.js?v=1795354036";
 let datos = null, prog = {}, quitar = [];
 try { datos = await (await fetch("data/clase.json", { cache: "no-store" })).json(); }
 catch (e) { S.error = "No se pudieron leer los datos del curso."; render(); }
@@ -135,6 +135,10 @@ function abrirConv() {
   }, err => { S.privError = err && err.code === "permission-denied" ? "Los chats privados todavía no tienen permiso en Firebase: hay que añadir la regla nueva de «privados»." : "No se puede cargar este chat ahora mismo."; pintarChat(); });
 }
 addEventListener("hashchange", abrirConv);
+// chat general: guarda hasta qué mensaje has leído (para «quién lo ha leído»)
+let chatLeidoYo = 0, tChatLeido = null;
+window.marcarChatLeido = (t) => { if (!S.uid || !t || t <= chatLeidoYo || document.hidden) return; const yo = (S.amigos || {})[S.uid] || {}; if ((yo.chatLeido || 0) >= t) { chatLeidoYo = t; return; }
+  chatLeidoYo = t; clearTimeout(tChatLeido); tChatLeido = setTimeout(() => fs.updateDoc(fs.doc(fdb, "usuarios", S.uid), { chatLeido: t }).catch(() => { chatLeidoYo = 0; }), 1500); };
 let tLeido = null;
 window.marcarLeido = () => { if (!convAbierta || !S.uid) return; const c = (S.privs || []).find(x => x.id === convAbierta); if (c && !noLeido(c)) return;
   clearTimeout(tLeido); tLeido = setTimeout(() => fs.setDoc(fs.doc(fdb, "privados", convAbierta), { miembros: convAbierta.split("_"), leido: { [S.uid]: Date.now() } }, { merge: true }).catch(() => {}), 400); };
