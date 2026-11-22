@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test Filosofía U4 · 1.º Bachillerato</title>
+<style>
+:root{--bg:#f2f4f7;--paper:#fff;--ink:#17202b;--ink2:#5f6b7a;--rule:#dde3ea;--acc:#2156c9;--acc2:#e8efff;--ok:#1b7a3d;--okbg:#e4f5ea;--ko:#c0352b;--kobg:#fde8e6;--warn:#8a5a00;--warnbg:#fff3d6;--gold:#b7791f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a;--gold:#f0c060;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#11151b;--paper:#1a2029;--ink:#e9eef4;--ink2:#9eabba;--rule:#2c3542;--acc:#7aa2ff;--acc2:#1b2a4a;--okbg:#14301f;--ok:#6fd394;--kobg:#3a1c1a;--ko:#ff8a7f;--warnbg:#3a2f12;--warn:#f5d38a;--gold:#f0c060;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+[hidden]{display:none!important}
+.claude{position:fixed;top:14px;left:56px;z-index:9;font:600 12px/1 system-ui;padding:5px 11px;border:1.5px solid #c3132b;color:#c3132b;border-radius:999px;background:var(--paper)}
+a.back{color:var(--acc);font-weight:700;text-decoration:none}
+#start{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
+#start h1{margin:0;font-size:clamp(30px,7vw,52px);letter-spacing:-.02em}#start p{margin:0;color:var(--ink2);max-width:440px}
+.go{font:700 20px/1 system-ui;padding:15px 44px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:62px 16px 60px}
+header h1{margin:0;font-size:26px;letter-spacing:-.01em}header h1 small{display:block;font-size:13px;color:var(--ink2);font-weight:600}
+.tabs,.filt{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tabs{margin:14px 0 10px}.filt{margin-bottom:10px}
+.filt .lb{font:700 11.5px system-ui;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);margin-right:2px}
+.tabs button,.chip{font:600 14px/1 system-ui;padding:9px 13px;border-radius:999px;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.chip{padding:7px 11px;font-size:13px}
+.tabs button[aria-pressed=true],.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:16px;padding:20px 18px}
+.dominio{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;margin:0 0 12px;padding:14px 16px}
+.dominio .t{font-size:14px;color:var(--ink2)}.dominio .t b{color:var(--ink)}
+.bar{height:8px;border-radius:4px;background:var(--rule);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);transition:width .4s}
+.pts-v{grid-row:span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--ink);color:var(--bg)}
+.pts-v b{font:800 26px/1 system-ui}.pts-v span{font:700 10.5px system-ui;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.ronda-t{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:14px}.ronda-t span{color:var(--ink2);font-weight:700}
+.ronda-t .rb{flex:1;min-width:80px;height:6px;border-radius:3px;background:var(--rule);overflow:hidden}.ronda-t .rb i{display:block;height:100%;background:var(--acc)}
+.tag{display:inline-block;font:700 11px/1 system-ui;text-transform:uppercase;letter-spacing:.06em;padding:5px 8px;border-radius:6px;background:var(--acc2);color:var(--acc)}
+.ask{font-size:14px;color:var(--ink2);margin:12px 0 4px}
+.prompt{font-size:clamp(22px,5vw,30px);font-weight:800;margin:0 0 14px;line-height:1.25;text-wrap:balance}
+.inp{display:flex;gap:8px}.inp input{flex:1;min-width:0;height:50px;border:2px solid var(--rule);border-radius:12px;padding:0 14px;font:600 18px system-ui;background:var(--paper);color:var(--ink)}
+.inp input:focus{outline:none;border-color:var(--acc)}.inp input.ok{border-color:var(--ok);background:var(--okbg)}.inp input.ko{border-color:var(--ko);background:var(--kobg)}
+.btn{height:46px;padding:0 16px;border-radius:12px;border:0;background:var(--acc);color:#fff;font:700 15px system-ui;cursor:pointer}
+.btn.sec{background:var(--paper);color:var(--ink);border:1.5px solid var(--rule)}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;font:600 16px/1.35 system-ui;padding:13px 14px;border-radius:12px;border:2px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--acc)}
+.opts button.ok{border-color:var(--ok);background:var(--okbg)}.opts button.ko{border-color:var(--ko);background:var(--kobg)}
+.fb{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:15px}
+.fb.ok{background:var(--okbg);color:var(--ok)}.fb.ko{background:var(--kobg);color:var(--ko)}.fb.casi{background:var(--warnbg);color:var(--warn)}
+.fb b{color:inherit}.fb .ej{display:block;margin-top:6px;color:var(--ink2);font-style:italic}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lnk{background:none;border:0;color:var(--acc);font:700 14px system-ui;cursor:pointer;padding:6px 0}
+.pista{margin-top:8px;font-size:14px;color:var(--ink2)}
+.fin h2{margin:0 0 6px;font-size:26px}.fin p{margin:4px 0;color:var(--ink2)}.fin .big{font:800 44px/1 system-ui;color:var(--ink);margin:6px 0}
+.fin .mas{color:var(--ok);font-weight:800}
+.lista{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px 14px}
+.row .en{font-weight:800}.row .es{color:var(--ink2);font-size:14.5px}.row .ex{grid-column:1/-1;font-size:13.5px;color:var(--ink2);font-style:italic}
+.dots{display:flex;gap:10px;font:700 12px system-ui;color:var(--ink2)}.dots span{display:flex;align-items:center;gap:4px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--rule)}.dots i.m{background:var(--gold)}.dots i.d{background:var(--ok)}
+.nota{font-size:12.5px;color:var(--ink2);margin:0 0 8px}
+@media (max-width:480px){.dominio{grid-template-columns:1fr}.pts-v{grid-row:auto;flex-direction:row;gap:6px;width:auto;height:auto;border-radius:12px;padding:6px 12px;justify-self:start}.row{grid-template-columns:1fr}}
+</style></head><body>
+<span class="claude" title="Desarrollado por Guillermo Bernabéu">Bernabéu</span>
+<div class="wrap" id="app">
+<header><p style="margin:0 0 6px"><a href="../" class="back vback1">← Volver</a> · <a href="unidad4.html" class="back">📖 Apuntes de la unidad 4</a></p><h1><small>Filosofía · Global del 26 de noviembre</small>Test · Unidad 4: la personalidad</h1></header>
+<div class="card dominio" id="dominio"></div>
+<main id="main"></main>
+</div>
+<script src="u4-preguntas.js?v=1795349621"></script>
+<script>
+const $ = (s) => document.querySelector(s), H = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const azar = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const KEY = "filo_u4_v1", TOTAL = U4.length, SECS = [...new Set(U4.map(q => q.s))];
+function leer() { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; } }
+const S = leer(); S.s = S.s || {};
+function guardar() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+// cada pregunta cuenta como hecha cuando la aciertas; las falladas solo vuelven si eliges repasarlas
+const hecha = (id) => (S.s[id] || {}).r > 0;
+const nDom = () => U4.filter(q => hecha(q.id)).length;
+const falladas = () => U4.filter(q => { const x = S.s[q.id]; return x && x.f > 0 && !(x.r > 0); });
+let modo = "nuevas", sec = "todo", tam = 10, R = null;
+function nuevaRonda() {
+  const I = sec === "todo" ? U4 : U4.filter(q => q.s === sec);
+  const L = modo === "falladas" ? azar(falladas().filter(q => I.includes(q))) : [...azar(I.filter(q => !S.s[q.id])), ...azar(I.filter(q => S.s[q.id] && !hecha(q.id))), ...azar(I.filter(q => hecha(q.id)))];
+  R = { qs: L.slice(0, tam).map(q => ({ q, opts: azar([q.ok, ...q.no]) })), n: 0, bien: 0, d0: nDom(), resp: null };
+}
+function chips(k, l, cur) { return l.map(([v, t]) => `<button type="button" class="chip" data-${k}="${H(v)}" aria-pressed="${cur === v}">${t}</button>`).join(""); }
+function render() {
+  if (!R) nuevaRonda();
+  const d = nDom();
+  $("#dominio").innerHTML = `<div class="t"><b>${d}</b> de ${TOTAL} preguntas acertadas · ${falladas().length} falladas por repasar</div><div class="pts-v"><b>${Math.round(d / TOTAL * 100)}</b><span>puntos</span></div><div class="bar"><i style="width:${d / TOTAL * 100}%"></i></div>`;
+  const filtros = `<div class="filt"><span class="lb">Modo</span>${chips("modo", [["nuevas", "🆕 Nuevas"], ["falladas", `🔁 Repasar falladas (${falladas().length})`]], modo)}</div>
+  <div class="filt"><span class="lb">Apartado</span>${chips("sec", [["todo", "Todo el tema"], ...SECS.map(s => [s, s])], sec)}</div>
+  <div class="filt"><span class="lb">Preguntas</span>${chips("tam", [["10", "10"], ["20", "20"], ["50", "50"]], String(tam))}</div>`;
+  if (!R.qs.length) { $("#main").innerHTML = filtros + `<div class="card fin"><h2>${modo === "falladas" ? "No tienes falladas 🎉" : "¡Ya las has acertado todas! 🎉"}</h2><p>${modo === "falladas" ? "Cuando falles alguna, aparecerá aquí para repasarla." : ""}</p></div>`; return; }
+  if (R.n >= R.qs.length) {
+    const g = nDom() - R.d0, nota = Math.round(R.bien / R.qs.length * 100) / 10;
+    $("#main").innerHTML = filtros + `<div class="card fin"><h2>${nota >= 9 ? "¡Perfecto! 🎉" : nota >= 7 ? "¡Muy bien! 💪" : nota >= 5 ? "Aprobado 👍" : "A repasar los apuntes 📚"}</h2><p class="big">${R.bien} / ${R.qs.length}</p><p>Nota: <b>${nota}</b></p>
+    <p>${g > 0 ? `<span class="mas">+${g} pregunta${g > 1 ? "s" : ""} nueva${g > 1 ? "s" : ""} acertada${g > 1 ? "s" : ""}</span>` : ""}</p>
+    <div class="acts"><button type="button" class="btn" data-otra>Otro test</button>${falladas().length ? `<button type="button" class="btn sec" data-modo="falladas">Repasar falladas</button>` : ""}<a class="btn sec" style="display:inline-flex;align-items:center;text-decoration:none" href="unidad4.html">Leer los apuntes</a></div></div>`;
+    return;
+  }
+  const { q, opts } = R.qs[R.n], r = R.resp;
+  $("#main").innerHTML = filtros + `<div class="card"><div class="ronda-t"><span>${R.n + 1} / ${R.qs.length}</span><div class="rb"><i style="width:${R.n / R.qs.length * 100}%"></i></div><span>✅ ${R.bien}</span></div>
+  <span class="tag">${H(q.s)}</span><p class="prompt" style="font-size:clamp(19px,4.4vw,24px)">${H(q.q)}</p>
+  <div class="opts">${opts.map((o, k) => `<button type="button" data-op="${k}" class="${r ? (o === q.ok ? "ok" : r.k === k ? "ko" : "") : ""}" ${r ? "disabled" : ""}><b>${"abcd"[k]})</b> ${H(o)}</button>`).join("")}</div>
+  ${r ? `<div class="fb ${r.v ? "ok" : "ko"}">${r.v ? "✅ <b>Correcto.</b>" : `❌ <b>No.</b> Era: <b>${H(q.ok)}</b>`}</div><div class="acts"><button type="button" class="btn" data-sig>${R.n + 1 >= R.qs.length ? "Ver nota" : "Siguiente →"}</button></div>` : ""}</div>`;
+}
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.modo) { modo = t.dataset.modo; R = null; render(); return; }
+  if (t.dataset.sec) { sec = t.dataset.sec; R = null; render(); return; }
+  if (t.dataset.tam) { tam = +t.dataset.tam; R = null; render(); return; }
+  if (t.hasAttribute("data-otra")) { R = null; render(); return; }
+  if (t.hasAttribute("data-sig")) { R.n++; R.resp = null; render(); return; }
+  if (t.hasAttribute("data-op") && R && !R.resp) {
+    const k = +t.dataset.op, { q, opts } = R.qs[R.n], v = opts[k] === q.ok, x = S.s[q.id] = S.s[q.id] || { a: 0, f: 0, r: 0 };
+    if (v) { x.a++; x.r = 1; R.bien++; } else { x.f++; x.r = 0; }
+    R.resp = { v, k }; guardar(); render(); window.dispatchEvent(new Event("u4-cambio"));
+  }
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && R && R.resp) { const b = $("[data-sig]"); if (b) { e.preventDefault(); b.click(); } } });
+render();
+document.addEventListener("click", function (e) { const a = e.target.closest && e.target.closest("a.vback1"); if (!a) return; try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) {} });
+</script>
+<script type="module">
+import { alCambiarSesion, guardarProgreso, exigirCuenta, copiaEnLaNube } from "../shared/fb.js?v=1795349621";
+exigirCuenta();
+import { iniciarLateral } from "../shared/lateral.js?v=1795349621";
+copiaEnLaNube("filo4", () => ["filo_u4_v1"]);
+let ult = "", t = null;
+function enviar() { const k = nDom() + "/" + TOTAL; if (k === ult) return; ult = k; guardarProgreso("filo4", nDom(), TOTAL); }
+window.addEventListener("u4-cambio", enviar);
+alCambiarSesion(u => { clearInterval(t); if (u) { ult = ""; enviar(); t = setInterval(enviar, 8000); } });
+iniciarLateral({ recurso: "p-filo-u4-test", stats: () => ({ dom: nDom(), ctrl: falladas().length, total: TOTAL }) });
+</script>
+</body></html>

@@ -131,7 +131,7 @@ function avisar(html, ir, dura = 7000) {
   document.body.append(d); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("ver")));
   setTimeout(() => { d.classList.remove("ver"); setTimeout(() => d.remove(), 400); }, dura);
 }
-const APPS_R = ["vocab", "plur", "verbos", "afijos", "wf", "idioms", "def", "trad", "past", "preg", "gi"];
+const APPS_R = ["vocab", "plur", "verbos", "afijos", "wf", "idioms", "def", "trad", "past", "preg", "gi", "filo4"];
 // Puntos del día: lo que has avanzado hoy en cada app (vuelven a 0 cada día). Se guardan en progreso.dias[fecha] y nunca bajan.
 // Topes (contra trampas editando la base de datos): como mucho 100 puntos por app y día, 500 al día en total.
 const TOPE_DIA = 100 * APPS_R.length;
@@ -230,7 +230,7 @@ export async function enviarPush(m) {
 export const pushEstado = () => ({ soportado: "Notification" in window && "serviceWorker" in navigator && "PushManager" in window, permiso: "Notification" in window ? Notification.permission : "denied", configurado: !!(pushCfg && pushCfg.vapid), activo: pushListo });
 let regSW = null;
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register(new URL("../sw.js?v=1795029167", import.meta.url).href).then(r => { regSW = r; }).catch(() => {});
+  navigator.serviceWorker.register(new URL("../sw.js?v=1795349621", import.meta.url).href).then(r => { regSW = r; }).catch(() => {});
 }
 async function activarPush(u) {
   if (!("Notification" in window) || !("PushManager" in window) || !pushCfg || !pushCfg.vapid || Notification.permission !== "granted") return;

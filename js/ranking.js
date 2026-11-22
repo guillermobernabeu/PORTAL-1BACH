@@ -1,6 +1,6 @@
 // 1 BACH · Puntos diarios/semanales, clasificación, avatares
 // (parte del antiguo script de index.html; los archivos js/ se cargan en orden y comparten las variables)
-const APPS=[["vocab","Vocabulary"],["plur","Plurales"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"],["idioms","Idioms"],["def","Definitions"],["trad","Translate"],["past","Passive voice"],["preg","Make questions"],["gi","Gerund & infinitive"]];
+const APPS=[["vocab","Vocabulary"],["plur","Plurales"],["verbos","Verbos"],["afijos","Afijos"],["wf","Word formation"],["idioms","Idioms"],["def","Definitions"],["trad","Translate"],["past","Passive voice"],["preg","Make questions"],["gi","Gerund & infinitive"],["filo4","Filosofía U4"]];
 const enLinea=u=>!!u&&Date.now()-(u.visto||0)<150000;
 function pctApp(p,k){const a=p&&p.apps&&p.apps[k];return a&&a.total?Math.min(1,a.ok/a.total):0}
 function hoyStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
